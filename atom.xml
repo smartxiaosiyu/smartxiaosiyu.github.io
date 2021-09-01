@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://smartxiaosiyu.github.io</id>
     <title>SmartXiaosiyu</title>
-    <updated>2021-09-01T03:03:33.587Z</updated>
+    <updated>2021-09-01T03:56:32.320Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://smartxiaosiyu.github.io"/>
     <link rel="self" href="https://smartxiaosiyu.github.io/atom.xml"/>
@@ -11,12 +11,12 @@
     <icon>https://smartxiaosiyu.github.io/favicon.ico</icon>
     <rights>All rights reserved 2021, SmartXiaosiyu</rights>
     <entry>
-        <title type="html"><![CDATA[lalal ]]></title>
+        <title type="html"><![CDATA[默然相爱寂静欢喜]]></title>
         <id>https://smartxiaosiyu.github.io/post/lalal/</id>
         <link href="https://smartxiaosiyu.github.io/post/lalal/">
         </link>
         <updated>2021-08-31T12:54:10.000Z</updated>
-        <content type="html"><![CDATA[<p>lal</p>
+        <content type="html"><![CDATA[<p><code>齐保然最爱肖丝雨！</code></p>
 ]]></content>
     </entry>
 </feed>
