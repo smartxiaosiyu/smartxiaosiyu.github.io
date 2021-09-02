@@ -1,0 +1,222 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>OpenGL ES 封装顶点数据和绘制代码 | SmartXiaosiyu</title>
+<link rel="shortcut icon" href="http://localhost:4000/favicon.ico?v=1630585391899">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
+<link rel="stylesheet" href="http://localhost:4000/styles/main.css">
+<link rel="alternate" type="application/atom+xml" title="OpenGL ES 封装顶点数据和绘制代码 | SmartXiaosiyu - Atom Feed" href="http://localhost:4000/atom.xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
+
+
+
+    <meta name="description" content="VBO
+
+顶点缓冲对象VBO是在显卡存储空间中开辟出的一块内存缓存区，用于存储顶点的各类属性信息，如顶点坐标，顶点法向量，顶点颜色数据等。 在渲染时，可以直接从VBO中取出顶点的各类属性数据，由于VBO在显存而不是在内存中，不需要从CPU传..." />
+    <meta name="keywords" content="OpenGL" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+    <script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+  </head>
+  <body>
+    <div class="main">
+      <div class="main-content">
+        <div class="site-header">
+  <a href="http://localhost:4000">
+  <img class="avatar" src="http://localhost:4000/images/avatar.png?v=1630585391899" alt="">
+  </a>
+  <h1 class="site-title">
+    SmartXiaosiyu
+  </h1>
+  <p class="site-description">
+    BugMaker
+  </p>
+  <div class="menu-container">
+    
+      
+        <a href="/" class="menu">
+          首页
+        </a>
+      
+    
+      
+        <a href="/archives" class="menu">
+          归档
+        </a>
+      
+    
+      
+        <a href="/tags" class="menu">
+          标签
+        </a>
+      
+    
+      
+        <a href="/post/about" class="menu">
+          关于
+        </a>
+      
+    
+  </div>
+  <div class="social-container">
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+</div>
+
+        <div class="post-detail">
+          <article class="post">
+            <h2 class="post-title">
+              OpenGL ES 封装顶点数据和绘制代码
+            </h2>
+            <div class="post-info">
+              <span>
+                2021-09-01
+              </span>
+              <span>
+                3 min read
+              </span>
+              
+                <a href="http://localhost:4000/tag/YIh5C4kIq/" class="post-tag">
+                  # OpenGL
+                </a>
+              
+            </div>
+            
+            <div class="post-content-wrapper">
+              <div class="post-content">
+                <p><strong>VBO</strong></p>
+<blockquote>
+<p>顶点缓冲对象VBO是在显卡存储空间中开辟出的一块内存缓存区，用于存储顶点的各类属性信息，如顶点坐标，顶点法向量，顶点颜色数据等。 在渲染时，可以直接从VBO中取出顶点的各类属性数据，由于VBO在显存而不是在内存中，不需要从CPU传输数据，处理效率更高。</p>
+</blockquote>
+<p><strong>创建一个顶点属性数组缓冲区</strong></p>
+<blockquote>
+<p>//创建缓存对象并返回缓存对象的标识符<br>
+<code>1.glGenBuffers(1, &amp;name)</code></p>
+</blockquote>
+<blockquote>
+<p>//将缓存对象对应到相应的缓存上<br>
+<code>2.glBindBuffer(GL_ARRAY_BUFFER,self.name);</code></p>
+</blockquote>
+<blockquote>
+<p>//将数据拷贝到缓存对象<br>
+<code>3.glBufferData(</code><br>
+<code>GL_ARRAY_BUFFER, // Initialize buffer contents</code><br>
+<code>bufferSizeBytes, // Number of bytes to copy</code><br>
+<code>dataPtr, // Address of bytes to copy</code><br>
+<code>usage); // Hint: cache in GPU memory</code></p>
+</blockquote>
+<p><strong>准备顶点绘制</strong></p>
+<blockquote>
+<p>//将缓存对象对应到相应的缓存上<br>
+<code>1.glBindBuffer(GL_ARRAY_BUFFER,self.name);</code></p>
+</blockquote>
+<blockquote>
+<p>//启用指定属性  1.出于性能考虑，所有顶点着色器的属性 （Attribute）变量都是关闭的，意味着数据在着色器端是不可见的，哪怕数据已经上传到GPU，由glEnableVertexAttribArray启用指定属性，才可在顶点着色器中访问逐顶点的属性数据. 2.VBO只是建立CPU和GPU之间的逻辑连接，从而实现了CPU数据上传至GPU。但是，数据在GPU端是否可见，即，着色器能否读取到数据，由是否启用了对应的属性决定，这就是glEnableVertexAttribArray的功能，允许顶点着色器读取GPU（服务器端）数据。<br>
+<code>2.glEnableVertexAttribArray(属性);</code></p>
+</blockquote>
+<blockquote>
+<p>//顶点数据传入GPU之后，还需要通知OpenGL如何解释这些顶点数据，这个工作由函数glVertexAttribPointer完成<br>
+<code>3.glVertexAttribPointer(</code><br>
+<code>index,//参数指定顶点属性位置</code><br>
+<code>count,//指定顶点属性大小</code><br>
+<code>GL_FLOAT,//指定数据类型</code><br>
+<code>GL_FALSE,//数据被标准化</code><br>
+<code>(int)self.stride,//步长</code><br>
+<code>NULL + offset);//偏移量 NULL+offset</code></p>
+</blockquote>
+<p><strong>绘制</strong></p>
+<blockquote>
+<p>//绘制<br>
+/*<br>
+glDrawArrays (GLenum mode, GLint first, GLsizei count);提供绘制功能。当采用顶点数组方式绘制图形时，使用该函数。该函数根据顶点数组中的坐标数据和指定的模式，进行绘制。<br>
+参数列表:<br>
+mode，绘制方式，OpenGL2.0以后提供以下参数：GL_POINTS、GL_LINES、GL_LINE_LOOP、GL_LINE_STRIP、GL_TRIANGLES、GL_TRIANGLE_STRIP、GL_TRIANGLE_FAN。<br>
+first，从数组缓存中的哪一位开始绘制，一般为0。<br>
+count，数组中顶点的数量。<br>
+*/<br>
+<code>glDrawArrays(mode, first, count);</code></p>
+</blockquote>
+
+              </div>
+              <div class="toc-container">
+                
+              </div>
+            </div>
+          </article>
+        </div>
+
+        
+          <div class="next-post">
+            <div class="next">下一篇</div>
+            <a href="http://localhost:4000/post/lalal/">
+              <h3 class="post-title">
+                默然相爱寂静欢喜
+              </h3>
+            </a>
+          </div>
+        
+
+        
+
+        <div class="site-footer">
+  Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a>
+  <a class="rss" href="http://localhost:4000/atom.xml" target="_blank">
+    <i class="ri-rss-line"></i> RSS
+  </a>
+</div>
+
+      </div>
+    </div>
+
+    <script>
+      hljs.initHighlightingOnLoad()
+
+      let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
+
+      // This should probably be throttled.
+      // Especially because it triggers during smooth scrolling.
+      // https://lodash.com/docs/4.17.10#throttle
+      // You could do like...
+      // window.addEventListener("scroll", () => {
+      //    _.throttle(doThatStuff, 100);
+      // });
+      // Only not doing it here to keep this Pen dependency-free.
+
+      window.addEventListener("scroll", event => {
+        let fromTop = window.scrollY;
+
+        mainNavLinks.forEach((link, index) => {
+          let section = document.getElementById(decodeURI(link.hash).substring(1));
+          let nextSection = null
+          if (mainNavLinks[index + 1]) {
+            nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
+          }
+          if (section.offsetTop <= fromTop) {
+            if (nextSection) {
+              if (nextSection.offsetTop > fromTop) {
+                link.classList.add("current");
+              } else {
+                link.classList.remove("current");    
+              }
+            } else {
+              link.classList.add("current");
+            }
+          } else {
+            link.classList.remove("current");
+          }
+        });
+      });
+
+    </script>
+  </body>
+</html>

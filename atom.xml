@@ -1,19 +1,168 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
-    <id>https://smartxiaosiyu.github.io</id>
+    <id>http://localhost:4000</id>
     <title>SmartXiaosiyu</title>
-    <updated>2021-09-01T03:56:32.320Z</updated>
+    <updated>2021-09-02T12:23:16.212Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
-    <link rel="alternate" href="https://smartxiaosiyu.github.io"/>
-    <link rel="self" href="https://smartxiaosiyu.github.io/atom.xml"/>
+    <link rel="alternate" href="http://localhost:4000"/>
+    <link rel="self" href="http://localhost:4000/atom.xml"/>
     <subtitle>BugMaker</subtitle>
-    <logo>https://smartxiaosiyu.github.io/images/avatar.png</logo>
-    <icon>https://smartxiaosiyu.github.io/favicon.ico</icon>
+    <logo>http://localhost:4000/images/avatar.png</logo>
+    <icon>http://localhost:4000/favicon.ico</icon>
     <rights>All rights reserved 2021, SmartXiaosiyu</rights>
     <entry>
+        <title type="html"><![CDATA[iOS Block]]></title>
+        <id>http://localhost:4000/post/ios-block/</id>
+        <link href="http://localhost:4000/post/ios-block/">
+        </link>
+        <updated>2021-09-02T11:09:23.000Z</updated>
+        <content type="html"><![CDATA[<h3 id="block的数据结构">Block的数据结构</h3>
+<figure data-type="image" tabindex="1"><img src="http://localhost:4000/post-images/1630582433987.png" alt="" loading="lazy"></figure>
+<blockquote>
+<ul>
+<li>block本质上也是一个OC对象，它内部也有个isa指针</li>
+<li>block是封装了函数调用以及函数调用环境的OC对象</li>
+</ul>
+</blockquote>
+<h3 id="block的变量捕获">Block的变量捕获</h3>
+<p>为了保证block内部能够正常访问外部的变量，block有个变量捕获机制</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">变量类型</th>
+<th style="text-align:center">是否捕获到block内部</th>
+<th style="text-align:center">访问方式</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">局部变量：auto  离开作用域就会销毁</td>
+<td style="text-align:center">⭕️</td>
+<td style="text-align:center">值传递</td>
+</tr>
+<tr>
+<td style="text-align:center">局部变量：static</td>
+<td style="text-align:center">⭕️</td>
+<td style="text-align:center">指针传递（地址传递）</td>
+</tr>
+<tr>
+<td style="text-align:center">全局变量</td>
+<td style="text-align:center">❌</td>
+<td style="text-align:center">直接访问</td>
+</tr>
+</tbody>
+</table>
+<p><code>当问会不会捕获，只要分析清楚是局部变量还是全局变量 局部变量就会捕获 全局变量不用捕获</code><br>
+<code>OC里所有方法 前面两个参数都是调用者本身</code><em>self</em> <code>调用者本身的函数名</code><em>_cmd</em><br>
+<code>如果block访问属性 （name），其实就是访问 self.name，self是局部变量，所以会捕获</code></p>
+<h3 id="block类型">Block类型</h3>
+<p>block有3种类型，可以通过调用class方法或者isa指针查看具体类型，最终都是继承自NSBlock类型</p>
+<blockquote>
+<ul>
+<li>GlobalBlock</li>
+<li>StackBlock</li>
+<li>MallocBlock<br>
+<img src="http://localhost:4000/post-images/1630583404563.png" alt="" loading="lazy"><br>
+text 代码段 内存地址比较小<br>
+data段 存储着全局变量<br>
+堆段 一般放alloc出来的内存 动态分配内存 需要自己申请、清理内存（管理内存）<br>
+栈 存放局部变量 系统会自动分配内存 函数调用完毕 栈里的数据可能是垃圾数据 内存地址比较大</li>
+</ul>
+</blockquote>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">block类型</th>
+<th style="text-align:center">环境</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">GlobalBlock</td>
+<td style="text-align:center">不访问auto变量</td>
+</tr>
+<tr>
+<td style="text-align:center">StackBlock</td>
+<td style="text-align:center">访问了auto变量</td>
+</tr>
+<tr>
+<td style="text-align:center">MallocBlock</td>
+<td style="text-align:center">stackBlock调用copy</td>
+</tr>
+</tbody>
+</table>
+<figure data-type="image" tabindex="2"><img src="http://localhost:4000/post-images/1630584618950.png" alt="" loading="lazy"></figure>
+<blockquote>
+<p>如上图所示 由于访问了auto变量 所以block是一个stack类型 test函数调用完毕 栈内存里的数据可能就被销毁 变成垃圾数据 所以在访问 block里的age变量 获取不到真正的值 只需要copy block  就是MallocBlock 存放到堆上 就可以正确使用</p>
+</blockquote>
+<p>每一种类型的block调用copy后的结果如下所示<br>
+<img src="http://localhost:4000/post-images/1630584991343.png" alt="" loading="lazy"></p>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[OpenGL ES 封装顶点数据和绘制代码]]></title>
+        <id>http://localhost:4000/post/opengl-es-feng-zhuang-ding-dian-shu-ju-he-hui-zhi-dai-ma/</id>
+        <link href="http://localhost:4000/post/opengl-es-feng-zhuang-ding-dian-shu-ju-he-hui-zhi-dai-ma/">
+        </link>
+        <updated>2021-09-01T07:00:10.000Z</updated>
+        <content type="html"><![CDATA[<p><strong>VBO</strong></p>
+<blockquote>
+<p>顶点缓冲对象VBO是在显卡存储空间中开辟出的一块内存缓存区，用于存储顶点的各类属性信息，如顶点坐标，顶点法向量，顶点颜色数据等。 在渲染时，可以直接从VBO中取出顶点的各类属性数据，由于VBO在显存而不是在内存中，不需要从CPU传输数据，处理效率更高。</p>
+</blockquote>
+<p><strong>创建一个顶点属性数组缓冲区</strong></p>
+<blockquote>
+<p>//创建缓存对象并返回缓存对象的标识符<br>
+<code>1.glGenBuffers(1, &amp;name)</code></p>
+</blockquote>
+<blockquote>
+<p>//将缓存对象对应到相应的缓存上<br>
+<code>2.glBindBuffer(GL_ARRAY_BUFFER,self.name);</code></p>
+</blockquote>
+<blockquote>
+<p>//将数据拷贝到缓存对象<br>
+<code>3.glBufferData(</code><br>
+<code>GL_ARRAY_BUFFER, // Initialize buffer contents</code><br>
+<code>bufferSizeBytes, // Number of bytes to copy</code><br>
+<code>dataPtr, // Address of bytes to copy</code><br>
+<code>usage); // Hint: cache in GPU memory</code></p>
+</blockquote>
+<p><strong>准备顶点绘制</strong></p>
+<blockquote>
+<p>//将缓存对象对应到相应的缓存上<br>
+<code>1.glBindBuffer(GL_ARRAY_BUFFER,self.name);</code></p>
+</blockquote>
+<blockquote>
+<p>//启用指定属性  1.出于性能考虑，所有顶点着色器的属性 （Attribute）变量都是关闭的，意味着数据在着色器端是不可见的，哪怕数据已经上传到GPU，由glEnableVertexAttribArray启用指定属性，才可在顶点着色器中访问逐顶点的属性数据. 2.VBO只是建立CPU和GPU之间的逻辑连接，从而实现了CPU数据上传至GPU。但是，数据在GPU端是否可见，即，着色器能否读取到数据，由是否启用了对应的属性决定，这就是glEnableVertexAttribArray的功能，允许顶点着色器读取GPU（服务器端）数据。<br>
+<code>2.glEnableVertexAttribArray(属性);</code></p>
+</blockquote>
+<blockquote>
+<p>//顶点数据传入GPU之后，还需要通知OpenGL如何解释这些顶点数据，这个工作由函数glVertexAttribPointer完成<br>
+<code>3.glVertexAttribPointer(</code><br>
+<code>index,//参数指定顶点属性位置</code><br>
+<code>count,//指定顶点属性大小</code><br>
+<code>GL_FLOAT,//指定数据类型</code><br>
+<code>GL_FALSE,//数据被标准化</code><br>
+<code>(int)self.stride,//步长</code><br>
+<code>NULL + offset);//偏移量 NULL+offset</code></p>
+</blockquote>
+<p><strong>绘制</strong></p>
+<blockquote>
+<p>//绘制<br>
+/*<br>
+glDrawArrays (GLenum mode, GLint first, GLsizei count);提供绘制功能。当采用顶点数组方式绘制图形时，使用该函数。该函数根据顶点数组中的坐标数据和指定的模式，进行绘制。<br>
+参数列表:<br>
+mode，绘制方式，OpenGL2.0以后提供以下参数：GL_POINTS、GL_LINES、GL_LINE_LOOP、GL_LINE_STRIP、GL_TRIANGLES、GL_TRIANGLE_STRIP、GL_TRIANGLE_FAN。<br>
+first，从数组缓存中的哪一位开始绘制，一般为0。<br>
+count，数组中顶点的数量。<br>
+*/<br>
+<code>glDrawArrays(mode, first, count);</code></p>
+</blockquote>
+]]></content>
+    </entry>
+    <entry>
         <title type="html"><![CDATA[默然相爱寂静欢喜]]></title>
-        <id>https://smartxiaosiyu.github.io/post/lalal/</id>
-        <link href="https://smartxiaosiyu.github.io/post/lalal/">
+        <id>http://localhost:4000/post/lalal/</id>
+        <link href="http://localhost:4000/post/lalal/">
         </link>
         <updated>2021-08-31T12:54:10.000Z</updated>
         <content type="html"><![CDATA[<p><code>齐保然最爱肖丝雨！</code></p>
