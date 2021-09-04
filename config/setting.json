@@ -1,0 +1,27 @@
+{
+  "config": {
+    "branch": "master",
+    "domain": "https://smartxiaosiyu.github.io",
+    "email": "942334790@qq.com",
+    "platform": "github",
+    "privateKey": "",
+    "repository": "smartxiaosiyu.github.io",
+    "token": "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",
+    "username": "smartxiaosiyu"
+  },
+  "comment": {
+    "commentPlatform": "gitalk",
+    "disqusSetting": {
+      "api": "",
+      "apikey": "",
+      "shortname": ""
+    },
+    "gitalkSetting": {
+      "clientId": "",
+      "clientSecret": "",
+      "owner": "",
+      "repository": ""
+    },
+    "showComment": false
+  }
+}

@@ -1,0 +1,144 @@
+{
+  "posts": [
+    {
+      "content": "### 1.获取着色器program\n +  1.编译顶点、片元着色器\n     + 1.编译shader代码\n        - 1.获取shader 路径\n    `NSString *shaderPath = [[NSBundle mainBundle] pathForResource:name ofType:shaderType == GL_VERTEX_SHADER ? @\"vsh\" : @\"fsh\"];`\n    `NSError *error;`\n    `NSString *shaderString = [NSString stringWithContentsOfFile:shaderPath encoding:NSUTF8StringEncoding error:&error];`\n        - 2. 创建shader->根据shaderType\n    `GLuint shader = glCreateShader(shaderType)`\n        - 3.获取shader source\n    `glShaderSource(shader, 1, &shaderStringUTF8, &shaderStringLength);`\n        - 4.编译shader\n    `glCompileShader(shader);`\n         - 5.返回shader\n    ` return shader;`\n\n    + 2.将顶点/片元附着到program\n    `GLuint program = glCreateProgram();`\n    `glAttachShader(program, vertexShader);`\n    `glAttachShader(program, fragmentShader);`\n    + 3.linkProgram\n    `glLinkProgram(program);`\n    + 4.返回program\n    `return program;`\n+ 2.use Program\n   ` glUseProgram(program);`\n+ 3.获取Position,Texture,TextureCoords 的索引位置\n    `GLuint positionSlot = glGetAttribLocation(program, \"Position\");`\n    `GLuint textureSlot = glGetUniformLocation(program, \"Texture\");`\n    `GLuint textureCoordsSlot = glGetAttribLocation(program, \"TextureCoords\");`纹理坐标\n+ 4.激活纹理,绑定纹理ID\n    `glActiveTexture(GL_TEXTURE0);`\n    `glBindTexture(GL_TEXTURE_2D, self.textureID);`\n+ 5.将纹理id传入\n  `glUniform1i(textureSlot, 0);`\n+ 6.打开positionSlot 属性并且传递数据到positionSlot中(顶点坐标)\n    `glEnableVertexAttribArray(positionSlot);`\n    `glVertexAttribPointer(positionSlot, 3, GL_FLOAT, GL_FALSE, sizeof(SenceVertex), NULL + offsetof(SenceVertex, positionCoord));`\n+ 7.保存program,界面销毁则释放\n    `self.program = program;`",
+      "data": {
+        "title": "OpenGL ES 初始化着色器程序",
+        "date": "2021-09-04 11:45:43",
+        "tags": [
+          "OpenGL"
+        ],
+        "published": true,
+        "hideInList": false,
+        "feature": null,
+        "isTop": false
+      },
+      "isEmpty": false,
+      "excerpt": "",
+      "abstract": "",
+      "fileName": "opengl-es-bian-yi-program"
+    },
+    {
+      "content": " ### 用CPU解压图片\n + 1、将 UIImage 转换为 CGImageRef\n    `CGImageRef cgImageRef = [image CGImage];`\n   //判断图片是否获取成功\n   ` if (!cgImageRef) {`\n       ` NSLog(@\"Failed to load image\");`\n       ` exit(1);`\n   ` }`\n + 2、读取图片的大小，宽和高\n    `GLuint width = (GLuint)CGImageGetWidth(cgImageRef);`\n   ` GLuint height = (GLuint)CGImageGetHeight(cgImageRef);`\n    //获取图片的rect\n    `CGRect rect = CGRectMake(0, 0, width, height);`\n    //获取图片的颜色空间\n   ` CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();`\n+ 3、获取图片字节数 宽*高*4（RGBA）\n   ` void *imageData = malloc(width * height * 4);`\n+ 4、创建上下文\n    /*\n     参数1：data,指向要渲染的绘制图像的内存地址\n     参数2：width,bitmap的宽度，单位为像素\n     参数3：height,bitmap的高度，单位为像素\n     参数4：bitPerComponent,内存中像素的每个组件的位数，比如32位RGBA，就设置为8\n     参数5：bytesPerRow,bitmap的没一行的内存所占的比特数\n     参数6：colorSpace,bitmap上使用的颜色空间  kCGImageAlphaPremultipliedLast：RGBA\n     */\n    `CGContextRef context = CGBitmapContextCreate(imageData, width, height, 8, width * 4, colorSpace, kCGImageAlphaPremultipliedLast | kCGBitmapByteOrder32Big);`\n    \n    //将图片翻转过来(图片默认是倒置的)\n    `CGContextTranslateCTM(context, 0, height);`\n    `CGContextScaleCTM(context, 1.0f, -1.0f);`\n    `CGColorSpaceRelease(colorSpace);`\n   ` CGContextClearRect(context, rect);`\n    \n    **//对图片进行重新绘制，得到一张新的解压缩后的位图**\n   ` CGContextDrawImage(context, rect, cgImageRef);`\n\n ### 设置图片纹理属性\n  + 5.、获取纹理ID\n   ` GLuint textureID;`创建一个纹理\n    `glGenTextures(1, &textureID);`获取纹理id\n    `glBindTexture(GL_TEXTURE_2D, textureID);`绑定纹理\n + 6、载入纹理2D数据\n    /*\n     参数1：纹理模式，GL_TEXTURE_1D、GL_TEXTURE_2D、GL_TEXTURE_3D\n     参数2：加载的层次，一般设置为0\n     参数3：纹理的颜色值GL_RGBA\n     参数4：宽\n     参数5：高\n     参数6：border，边界宽度\n     参数7：format\n     参数8：type\n     参数9：纹理数据\n     */\n    `glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, imageData);`\n+ 7、设置纹理属性\n    `glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);`\n`glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);`\n    `glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);`\n   ` glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);`\n+ 8、绑定纹理\n    /*\n     参数1：纹理维度\n     参数2：纹理ID,因为只有一个纹理，给0就可以了。\n     */\n    `glBindTexture(GL_TEXTURE_2D, 0);`\n    \n+ 9、释放context,imageData\n    `CGContextRelease(context);`\n    `free(imageData);`\n    \n + 10、返回纹理ID\n    `return textureID;`\n\n",
+      "data": {
+        "title": "OpenGl ES 将图片解压缩成位图 载入到纹理去",
+        "date": "2021-09-03 17:06:20",
+        "tags": [
+          "OpenGL"
+        ],
+        "published": true,
+        "hideInList": false,
+        "feature": null,
+        "isTop": false
+      },
+      "isEmpty": false,
+      "excerpt": "",
+      "abstract": "",
+      "fileName": "opengl-es-jiang-tu-pian-jie-ya-suo-cheng-wei-tu-zai-ru-dao-wen-li-qu"
+    },
+    {
+      "content": "\n## 原始图片渲染到屏幕上去\n + 1.创建上下文\n    `self.context = [[EAGLContext alloc] initWithAPI:kEAGLRenderingAPIOpenGLES2];\n    [EAGLContext setCurrentContext:self.context];`\n + 2.开辟顶点数组内存空间\n   >typedef struct {\n    GLKVector3 positionCoord; // (X, Y, Z)\n    GLKVector2 textureCoord; // (U, V)\n} SenceVertex;\n    `self.vertices = malloc(sizeof(SenceVertex) * 4);`\n + 3.初始化顶点(0,1,2,3)的顶点坐标以及纹理坐标\n  `self.vertices[0] = (SenceVertex){{-1, 1, 0}, {0, 1}};`\n    `self.vertices[1] = (SenceVertex){{-1, -1, 0}, {0, 0}};`\n    `self.vertices[2] = (SenceVertex){{1, 1, 0}, {1, 1}};`\n    `self.vertices[3] = (SenceVertex){{1, -1, 0}, {1, 0}};`\n + 4.创建图层\n    `CAEAGLLayer *layer = [[CAEAGLLayer alloc] init];`\n + 5.绑定渲染缓存区\n   + 渲染缓存区、帧缓存区\n        >1.渲染缓存区,帧缓存区对象\n    ` GLuint renderBuffer;`\n    `GLuint frameBuffer;`\n        \n        >2.获取帧渲染缓存区名称,绑定渲染缓存区以及将渲染缓存区与layer建立连接\n        `glGenRenderbuffers(1, &renderBuffer);`\n        `glBindRenderbuffer(GL_RENDERBUFFER, renderBuffer);`\n    ` [self.context renderbufferStorage:GL_RENDERBUFFER fromDrawable:layer];`\n        \n        >3.获取帧缓存区名称,绑定帧缓存区以及将渲染缓存区附着到帧缓存区上\n        `glGenFramebuffers(1, &frameBuffer);`\n        `glBindFramebuffer(GL_FRAMEBUFFER, frameBuffer);`\n        `glFramebufferRenderbuffer(GL_FRAMEBUFFER,`\n                                ` GL_COLOR_ATTACHMENT0,`\n                                ` GL_RENDERBUFFER,`\n                                `renderBuffer);`\n + 6.读取图片，把图片载入到纹理中去\n    >将图片解压缩成位图 载入到纹理去\n + 7.设置视口\n    `glViewport(0, 0, self.drawableWidth, self.drawableHeight);`\n + 8.设置顶点缓存区\n   >将我们的顶点数据拷贝到缓存中去\n   ```\n   GLuint vertexBuffer;\n    glGenBuffers(1, &vertexBuffer);\n    glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);\n    GLsizeiptr bufferSizeBytes = sizeof(SenceVertex) * 4;\n    glBufferData(GL_ARRAY_BUFFER, bufferSizeBytes, self.vertices, GL_STATIC_DRAW);\n   ```\n + 9.设置默认着色器\n\n\n### 片元着色器代码(关于分屏的着色器代码)\n``` \nprecision highp float;\nuniform sampler2D Texture;\nvarying highp vec2 TextureCoordsVarying;\n\nvoid main() {\n    vec2 uv = TextureCoordsVarying.xy;//纹理坐标\n    float y;\n    if (uv.y >= 0.0 && uv.y <= 0.5) {\n        y = uv.y + 0.25;\n    } else {\n        y = uv.y - 0.25;\n    }\n    gl_FragColor = texture2D(Texture, vec2(uv.x, y));//取纹素\n} \n```\n\n### 渲染\n```\n-(void)render{\n    \n    // 清除画布\n    glClear(GL_COLOR_BUFFER_BIT);\n    glClearColor(1, 1, 1, 1);\n    \n    //使用program\n    glUseProgram(self.program);\n    //绑定buffer\n    glBindBuffer(GL_ARRAY_BUFFER, self.vertexBuffer);\n    \n    // 重绘\n    glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);\n    //渲染到屏幕上\n    [self.context presentRenderbuffer:GL_RENDERBUFFER];\n    \n}\n```\n",
+      "data": {
+        "title": "OpenGL ES 分屏滤镜",
+        "date": "2021-09-03 14:36:29",
+        "tags": [
+          "OpenGL"
+        ],
+        "published": true,
+        "hideInList": false,
+        "feature": null,
+        "isTop": false
+      },
+      "isEmpty": false,
+      "excerpt": "",
+      "abstract": "",
+      "fileName": "opengl-es-fen-ping-lu-jing"
+    },
+    {
+      "content": "### Block的数据结构\n![](https://smartxiaosiyu.github.io/post-images/1630582433987.png)\n> +  block本质上也是一个OC对象，它内部也有个isa指针\n> + block是封装了函数调用以及函数调用环境的OC对象\n\n### Block的变量捕获\n\n为了保证block内部能够正常访问外部的变量，block有个变量捕获机制\n\n|  变量类型   | 是否捕获到block内部  | 访问方式|\n|  :----:  | :----:  | :----:  |\n| 局部变量：auto  离开作用域就会销毁 | ⭕️ |值传递 |\n| 局部变量：static  | ⭕️ |指针传递（地址传递） |\n| 全局变量  | ❌ |直接访问 |\n\n`当问会不会捕获，只要分析清楚是局部变量还是全局变量 局部变量就会捕获 全局变量不用捕获`\n`OC里所有方法 前面两个参数都是调用者本身`*self* `调用者本身的函数名`*_cmd*\n`如果block访问属性 （name），其实就是访问 self.name，self是局部变量，所以会捕获`\n\n\n### Block类型\nblock有3种类型，可以通过调用class方法或者isa指针查看具体类型，最终都是继承自NSBlock类型\n> + GlobalBlock\n> + StackBlock\n> + MallocBlock\n![](https://smartxiaosiyu.github.io/post-images/1630583404563.png)\ntext 代码段 内存地址比较小\ndata段 存储着全局变量\n堆段 一般放alloc出来的内存 动态分配内存 需要自己申请、清理内存（管理内存）\n栈段 存放局部变量 系统会自动分配内存 函数调用完毕 栈里的数据可能是垃圾数据 内存地址比较大\n\n|  block类型   | 环境|\n|  :----:  | :----:  | \n| GlobalBlock | 不访问auto变量 |\n| StackBlock | 访问了auto变量 |\n| MallocBlock  | stackBlock调用copy |\n \n![](https://smartxiaosiyu.github.io/post-images/1630584618950.png)\n> 如上图所示 由于访问了auto变量 所以block是一个stack类型 test函数调用完毕 栈内存里的数据可能就被销毁 变成垃圾数据 所以在访问 block里的age变量 获取不到真正的值 只需要copy block  就是MallocBlock 存放到堆上 就可以正确使用\n\n每一种类型的block调用copy后的结果如下所示\n![](https://smartxiaosiyu.github.io/post-images/1630584991343.png)",
+      "data": {
+        "title": "iOS Block",
+        "date": "2021-09-02 19:09:23",
+        "tags": [
+          "iOS"
+        ],
+        "published": true,
+        "hideInList": false,
+        "feature": null,
+        "isTop": false
+      },
+      "isEmpty": false,
+      "excerpt": "",
+      "abstract": "",
+      "fileName": "ios-block"
+    },
+    {
+      "content": "**VBO**\n>顶点缓冲对象VBO是在显卡存储空间中开辟出的一块内存缓存区，用于存储顶点的各类属性信息，如顶点坐标，顶点法向量，顶点颜色数据等。 在渲染时，可以直接从VBO中取出顶点的各类属性数据，由于VBO在显存而不是在内存中，不需要从CPU传输数据，处理效率更高。\n\n**创建一个顶点属性数组缓冲区**\n>//创建缓存对象并返回缓存对象的标识符\n`1.glGenBuffers(1, &name) `\n\n>//将缓存对象对应到相应的缓存上\n`2.glBindBuffer(GL_ARRAY_BUFFER,self.name); `\n\n>//将数据拷贝到缓存对象\n`3.glBufferData(`\n   ` GL_ARRAY_BUFFER,  // Initialize buffer contents`\n     `bufferSizeBytes, // Number of bytes to copy`\n   ` dataPtr,          // Address of bytes to copy`\n     `usage);           // Hint: cache in GPU memory`\n\n**准备顶点绘制**\n>//将缓存对象对应到相应的缓存上\n`1.glBindBuffer(GL_ARRAY_BUFFER,self.name); `\n\n>//启用指定属性  1.出于性能考虑，所有顶点着色器的属性 （Attribute）变量都是关闭的，意味着数据在着色器端是不可见的，哪怕数据已经上传到GPU，由glEnableVertexAttribArray启用指定属性，才可在顶点着色器中访问逐顶点的属性数据. 2.VBO只是建立CPU和GPU之间的逻辑连接，从而实现了CPU数据上传至GPU。但是，数据在GPU端是否可见，即，着色器能否读取到数据，由是否启用了对应的属性决定，这就是glEnableVertexAttribArray的功能，允许顶点着色器读取GPU（服务器端）数据。\n`2.glEnableVertexAttribArray(属性); `\n\n>//顶点数据传入GPU之后，还需要通知OpenGL如何解释这些顶点数据，这个工作由函数glVertexAttribPointer完成\n`3.glVertexAttribPointer(`\n                          `index,//参数指定顶点属性位置`\n                          `count,//指定顶点属性大小`\n                          `GL_FLOAT,//指定数据类型`\n                          `GL_FALSE,//数据被标准化`\n                          `(int)self.stride,//步长`\n                          `NULL + offset);//偏移量 NULL+offset`\n\n\n**绘制**\n>//绘制\n/*\n     glDrawArrays (GLenum mode, GLint first, GLsizei count);提供绘制功能。当采用顶点数组方式绘制图形时，使用该函数。该函数根据顶点数组中的坐标数据和指定的模式，进行绘制。\n     参数列表:\n     mode，绘制方式，OpenGL2.0以后提供以下参数：GL_POINTS、GL_LINES、GL_LINE_LOOP、GL_LINE_STRIP、GL_TRIANGLES、GL_TRIANGLE_STRIP、GL_TRIANGLE_FAN。\n     first，从数组缓存中的哪一位开始绘制，一般为0。\n     count，数组中顶点的数量。\n     */\n`glDrawArrays(mode, first, count);`\n",
+      "data": {
+        "title": "OpenGL ES 封装顶点数据和绘制代码",
+        "date": "2021-09-01 15:00:10",
+        "tags": [
+          "OpenGL"
+        ],
+        "published": true,
+        "hideInList": false,
+        "feature": null,
+        "isTop": false
+      },
+      "isEmpty": false,
+      "excerpt": "",
+      "abstract": "",
+      "fileName": "opengl-es-feng-zhuang-ding-dian-shu-ju-he-hui-zhi-dai-ma"
+    },
+    {
+      "content": "```齐保然最爱肖丝雨！```",
+      "data": {
+        "title": "默然相爱寂静欢喜",
+        "date": "2021-08-31 20:54:10",
+        "tags": [],
+        "published": true,
+        "hideInList": false,
+        "feature": null,
+        "isTop": false
+      },
+      "isEmpty": false,
+      "excerpt": "",
+      "abstract": "",
+      "fileName": "lalal"
+    }
+  ],
+  "tags": [
+    {
+      "name": "iOS",
+      "slug": "ELGGUBv5b",
+      "used": true
+    },
+    {
+      "name": "OpenGL",
+      "slug": "YIh5C4kIq",
+      "used": true
+    }
+  ],
+  "menus": [
+    {
+      "link": "/",
+      "name": "首页",
+      "openType": "Internal"
+    },
+    {
+      "link": "/archives",
+      "name": "归档",
+      "openType": "Internal"
+    },
+    {
+      "link": "/tags",
+      "name": "标签",
+      "openType": "Internal"
+    },
+    {
+      "link": "/post/about",
+      "name": "关于",
+      "openType": "Internal"
+    }
+  ]
+}
