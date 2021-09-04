@@ -1,23 +1,299 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
-    <id>http://localhost:4000</id>
+    <id>https://smartxiaosiyu.github.io</id>
     <title>SmartXiaosiyu</title>
-    <updated>2021-09-02T12:52:28.605Z</updated>
+    <updated>2021-09-04T09:20:39.195Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
-    <link rel="alternate" href="http://localhost:4000"/>
-    <link rel="self" href="http://localhost:4000/atom.xml"/>
+    <link rel="alternate" href="https://smartxiaosiyu.github.io"/>
+    <link rel="self" href="https://smartxiaosiyu.github.io/atom.xml"/>
     <subtitle>BugMaker</subtitle>
-    <logo>http://localhost:4000/images/avatar.png</logo>
-    <icon>http://localhost:4000/favicon.ico</icon>
+    <logo>https://smartxiaosiyu.github.io/images/avatar.png</logo>
+    <icon>https://smartxiaosiyu.github.io/favicon.ico</icon>
     <rights>All rights reserved 2021, SmartXiaosiyu</rights>
     <entry>
+        <title type="html"><![CDATA[OpenGL ES 初始化着色器程序]]></title>
+        <id>https://smartxiaosiyu.github.io/post/opengl-es-bian-yi-program/</id>
+        <link href="https://smartxiaosiyu.github.io/post/opengl-es-bian-yi-program/">
+        </link>
+        <updated>2021-09-04T03:45:43.000Z</updated>
+        <content type="html"><![CDATA[<h3 id="1获取着色器program">1.获取着色器program</h3>
+<ul>
+<li>1.编译顶点、片元着色器
+<ul>
+<li>
+<p>1.编译shader代码</p>
+<ul>
+<li>1.获取shader 路径<br>
+<code>NSString *shaderPath = [[NSBundle mainBundle] pathForResource:name ofType:shaderType == GL_VERTEX_SHADER ? @&quot;vsh&quot; : @&quot;fsh&quot;];</code><br>
+<code>NSError *error;</code><br>
+<code>NSString *shaderString = [NSString stringWithContentsOfFile:shaderPath encoding:NSUTF8StringEncoding error:&amp;error];</code></li>
+<li>
+<ol start="2">
+<li>创建shader-&gt;根据shaderType<br>
+<code>GLuint shader = glCreateShader(shaderType)</code></li>
+</ol>
+</li>
+<li>3.获取shader source<br>
+<code>glShaderSource(shader, 1, &amp;shaderStringUTF8, &amp;shaderStringLength);</code></li>
+<li>4.编译shader<br>
+<code>glCompileShader(shader);</code></li>
+<li>5.返回shader<br>
+<code>return shader;</code></li>
+</ul>
+</li>
+<li>
+<p>2.将顶点/片元附着到program<br>
+<code>GLuint program = glCreateProgram();</code><br>
+<code>glAttachShader(program, vertexShader);</code><br>
+<code>glAttachShader(program, fragmentShader);</code></p>
+</li>
+<li>
+<p>3.linkProgram<br>
+<code>glLinkProgram(program);</code></p>
+</li>
+<li>
+<p>4.返回program<br>
+<code>return program;</code></p>
+</li>
+</ul>
+</li>
+<li>2.use Program<br>
+<code>glUseProgram(program);</code></li>
+<li>3.获取Position,Texture,TextureCoords 的索引位置<br>
+<code>GLuint positionSlot = glGetAttribLocation(program, &quot;Position&quot;);</code><br>
+<code>GLuint textureSlot = glGetUniformLocation(program, &quot;Texture&quot;);</code><br>
+<code>GLuint textureCoordsSlot = glGetAttribLocation(program, &quot;TextureCoords&quot;);</code>纹理坐标</li>
+<li>4.激活纹理,绑定纹理ID<br>
+<code>glActiveTexture(GL_TEXTURE0);</code><br>
+<code>glBindTexture(GL_TEXTURE_2D, self.textureID);</code></li>
+<li>5.将纹理id传入<br>
+<code>glUniform1i(textureSlot, 0);</code></li>
+<li>6.打开positionSlot 属性并且传递数据到positionSlot中(顶点坐标)<br>
+<code>glEnableVertexAttribArray(positionSlot);</code><br>
+<code>glVertexAttribPointer(positionSlot, 3, GL_FLOAT, GL_FALSE, sizeof(SenceVertex), NULL + offsetof(SenceVertex, positionCoord));</code></li>
+<li>7.保存program,界面销毁则释放<br>
+<code>self.program = program;</code></li>
+</ul>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[OpenGl ES 将图片解压缩成位图 载入到纹理去]]></title>
+        <id>https://smartxiaosiyu.github.io/post/opengl-es-jiang-tu-pian-jie-ya-suo-cheng-wei-tu-zai-ru-dao-wen-li-qu/</id>
+        <link href="https://smartxiaosiyu.github.io/post/opengl-es-jiang-tu-pian-jie-ya-suo-cheng-wei-tu-zai-ru-dao-wen-li-qu/">
+        </link>
+        <updated>2021-09-03T09:06:20.000Z</updated>
+        <content type="html"><![CDATA[<h3 id="用cpu解压图片">用CPU解压图片</h3>
+<ul>
+<li>
+<p>1、将 UIImage 转换为 CGImageRef<br>
+<code>CGImageRef cgImageRef = [image CGImage];</code><br>
+//判断图片是否获取成功<br>
+<code>if (!cgImageRef) {</code><br>
+<code>NSLog(@&quot;Failed to load image&quot;);</code><br>
+<code>exit(1);</code><br>
+<code>}</code></p>
+</li>
+<li>
+<p>2、读取图片的大小，宽和高<br>
+<code>GLuint width = (GLuint)CGImageGetWidth(cgImageRef);</code><br>
+<code>GLuint height = (GLuint)CGImageGetHeight(cgImageRef);</code><br>
+//获取图片的rect<br>
+<code>CGRect rect = CGRectMake(0, 0, width, height);</code><br>
+//获取图片的颜色空间<br>
+<code>CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();</code></p>
+</li>
+<li>
+<p>3、获取图片字节数 宽<em>高</em>4（RGBA）<br>
+<code>void *imageData = malloc(width * height * 4);</code></p>
+</li>
+<li>
+<p>4、创建上下文<br>
+/*<br>
+参数1：data,指向要渲染的绘制图像的内存地址<br>
+参数2：width,bitmap的宽度，单位为像素<br>
+参数3：height,bitmap的高度，单位为像素<br>
+参数4：bitPerComponent,内存中像素的每个组件的位数，比如32位RGBA，就设置为8<br>
+参数5：bytesPerRow,bitmap的没一行的内存所占的比特数<br>
+参数6：colorSpace,bitmap上使用的颜色空间  kCGImageAlphaPremultipliedLast：RGBA<br>
+*/<br>
+<code>CGContextRef context = CGBitmapContextCreate(imageData, width, height, 8, width * 4, colorSpace, kCGImageAlphaPremultipliedLast | kCGBitmapByteOrder32Big);</code></p>
+<p>//将图片翻转过来(图片默认是倒置的)<br>
+<code>CGContextTranslateCTM(context, 0, height);</code><br>
+<code>CGContextScaleCTM(context, 1.0f, -1.0f);</code><br>
+<code>CGColorSpaceRelease(colorSpace);</code><br>
+<code>CGContextClearRect(context, rect);</code></p>
+<p><strong>//对图片进行重新绘制，得到一张新的解压缩后的位图</strong><br>
+<code>CGContextDrawImage(context, rect, cgImageRef);</code></p>
+</li>
+</ul>
+<h3 id="设置图片纹理属性">设置图片纹理属性</h3>
+<ul>
+<li>
+<p>5.、获取纹理ID<br>
+<code>GLuint textureID;</code>创建一个纹理<br>
+<code>glGenTextures(1, &amp;textureID);</code>获取纹理id<br>
+<code>glBindTexture(GL_TEXTURE_2D, textureID);</code>绑定纹理</p>
+</li>
+<li>
+<p>6、载入纹理2D数据<br>
+/*<br>
+参数1：纹理模式，GL_TEXTURE_1D、GL_TEXTURE_2D、GL_TEXTURE_3D<br>
+参数2：加载的层次，一般设置为0<br>
+参数3：纹理的颜色值GL_RGBA<br>
+参数4：宽<br>
+参数5：高<br>
+参数6：border，边界宽度<br>
+参数7：format<br>
+参数8：type<br>
+参数9：纹理数据<br>
+*/<br>
+<code>glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, imageData);</code></p>
+</li>
+<li>
+<p>7、设置纹理属性<br>
+<code>glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);</code><br>
+<code>glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);</code><br>
+<code>glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);</code><br>
+<code>glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);</code></p>
+</li>
+<li>
+<p>8、绑定纹理<br>
+/*<br>
+参数1：纹理维度<br>
+参数2：纹理ID,因为只有一个纹理，给0就可以了。<br>
+*/<br>
+<code>glBindTexture(GL_TEXTURE_2D, 0);</code></p>
+</li>
+<li>
+<p>9、释放context,imageData<br>
+<code>CGContextRelease(context);</code><br>
+<code>free(imageData);</code></p>
+</li>
+<li>
+<p>10、返回纹理ID<br>
+<code>return textureID;</code></p>
+</li>
+</ul>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[OpenGL ES 分屏滤镜]]></title>
+        <id>https://smartxiaosiyu.github.io/post/opengl-es-fen-ping-lu-jing/</id>
+        <link href="https://smartxiaosiyu.github.io/post/opengl-es-fen-ping-lu-jing/">
+        </link>
+        <updated>2021-09-03T06:36:29.000Z</updated>
+        <content type="html"><![CDATA[<h2 id="原始图片渲染到屏幕上去">原始图片渲染到屏幕上去</h2>
+<ul>
+<li>1.创建上下文<br>
+<code>self.context = [[EAGLContext alloc] initWithAPI:kEAGLRenderingAPIOpenGLES2]; [EAGLContext setCurrentContext:self.context];</code></li>
+<li>2.开辟顶点数组内存空间
+<blockquote>
+<p>typedef struct {<br>
+GLKVector3 positionCoord; // (X, Y, Z)<br>
+GLKVector2 textureCoord; // (U, V)<br>
+} SenceVertex;<br>
+<code>self.vertices = malloc(sizeof(SenceVertex) * 4);</code></p>
+</blockquote>
+</li>
+<li>3.初始化顶点(0,1,2,3)的顶点坐标以及纹理坐标<br>
+<code>self.vertices[0] = (SenceVertex){{-1, 1, 0}, {0, 1}};</code><br>
+<code>self.vertices[1] = (SenceVertex){{-1, -1, 0}, {0, 0}};</code><br>
+<code>self.vertices[2] = (SenceVertex){{1, 1, 0}, {1, 1}};</code><br>
+<code>self.vertices[3] = (SenceVertex){{1, -1, 0}, {1, 0}};</code></li>
+<li>4.创建图层<br>
+<code>CAEAGLLayer *layer = [[CAEAGLLayer alloc] init];</code></li>
+<li>5.绑定渲染缓存区
+<ul>
+<li>
+<p>渲染缓存区、帧缓存区</p>
+<blockquote>
+<p>1.渲染缓存区,帧缓存区对象<br>
+<code>GLuint renderBuffer;</code><br>
+<code>GLuint frameBuffer;</code></p>
+</blockquote>
+<blockquote>
+<p>2.获取帧渲染缓存区名称,绑定渲染缓存区以及将渲染缓存区与layer建立连接<br>
+<code>glGenRenderbuffers(1, &amp;renderBuffer);</code><br>
+<code>glBindRenderbuffer(GL_RENDERBUFFER, renderBuffer);</code><br>
+<code>[self.context renderbufferStorage:GL_RENDERBUFFER fromDrawable:layer];</code></p>
+</blockquote>
+<blockquote>
+<p>3.获取帧缓存区名称,绑定帧缓存区以及将渲染缓存区附着到帧缓存区上<br>
+<code>glGenFramebuffers(1, &amp;frameBuffer);</code><br>
+<code>glBindFramebuffer(GL_FRAMEBUFFER, frameBuffer);</code><br>
+<code>glFramebufferRenderbuffer(GL_FRAMEBUFFER,</code><br>
+<code>GL_COLOR_ATTACHMENT0,</code><br>
+<code>GL_RENDERBUFFER,</code><br>
+<code>renderBuffer);</code></p>
+</blockquote>
+</li>
+</ul>
+</li>
+<li>6.读取图片，把图片载入到纹理中去
+<blockquote>
+<p>将图片解压缩成位图 载入到纹理去</p>
+</blockquote>
+</li>
+<li>7.设置视口<br>
+<code>glViewport(0, 0, self.drawableWidth, self.drawableHeight);</code></li>
+<li>8.设置顶点缓存区
+<blockquote>
+<p>将我们的顶点数据拷贝到缓存中去</p>
+</blockquote>
+<pre><code>GLuint vertexBuffer;
+ glGenBuffers(1, &amp;vertexBuffer);
+ glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
+ GLsizeiptr bufferSizeBytes = sizeof(SenceVertex) * 4;
+ glBufferData(GL_ARRAY_BUFFER, bufferSizeBytes, self.vertices, GL_STATIC_DRAW);
+</code></pre>
+</li>
+<li>9.设置默认着色器</li>
+</ul>
+<h3 id="片元着色器代码关于分屏的着色器代码">片元着色器代码(关于分屏的着色器代码)</h3>
+<pre><code>precision highp float;
+uniform sampler2D Texture;
+varying highp vec2 TextureCoordsVarying;
+
+void main() {
+    vec2 uv = TextureCoordsVarying.xy;//纹理坐标
+    float y;
+    if (uv.y &gt;= 0.0 &amp;&amp; uv.y &lt;= 0.5) {
+        y = uv.y + 0.25;
+    } else {
+        y = uv.y - 0.25;
+    }
+    gl_FragColor = texture2D(Texture, vec2(uv.x, y));//取纹素
+} 
+</code></pre>
+<h3 id="渲染">渲染</h3>
+<pre><code>-(void)render{
+    
+    // 清除画布
+    glClear(GL_COLOR_BUFFER_BIT);
+    glClearColor(1, 1, 1, 1);
+    
+    //使用program
+    glUseProgram(self.program);
+    //绑定buffer
+    glBindBuffer(GL_ARRAY_BUFFER, self.vertexBuffer);
+    
+    // 重绘
+    glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+    //渲染到屏幕上
+    [self.context presentRenderbuffer:GL_RENDERBUFFER];
+    
+}
+</code></pre>
+]]></content>
+    </entry>
+    <entry>
         <title type="html"><![CDATA[iOS Block]]></title>
-        <id>http://localhost:4000/post/ios-block/</id>
-        <link href="http://localhost:4000/post/ios-block/">
+        <id>https://smartxiaosiyu.github.io/post/ios-block/</id>
+        <link href="https://smartxiaosiyu.github.io/post/ios-block/">
         </link>
         <updated>2021-09-02T11:09:23.000Z</updated>
         <content type="html"><![CDATA[<h3 id="block的数据结构">Block的数据结构</h3>
-<figure data-type="image" tabindex="1"><img src="http://localhost:4000/post-images/1630582433987.png" alt="" loading="lazy"></figure>
+<figure data-type="image" tabindex="1"><img src="https://smartxiaosiyu.github.io/post-images/1630582433987.png" alt="" loading="lazy"></figure>
 <blockquote>
 <ul>
 <li>block本质上也是一个OC对象，它内部也有个isa指针</li>
@@ -62,7 +338,7 @@
 <li>GlobalBlock</li>
 <li>StackBlock</li>
 <li>MallocBlock<br>
-<img src="http://localhost:4000/post-images/1630583404563.png" alt="" loading="lazy"><br>
+<img src="https://smartxiaosiyu.github.io/post-images/1630583404563.png" alt="" loading="lazy"><br>
 text 代码段 内存地址比较小<br>
 data段 存储着全局变量<br>
 堆段 一般放alloc出来的内存 动态分配内存 需要自己申请、清理内存（管理内存）<br>
@@ -91,18 +367,18 @@ data段 存储着全局变量<br>
 </tr>
 </tbody>
 </table>
-<figure data-type="image" tabindex="2"><img src="http://localhost:4000/post-images/1630584618950.png" alt="" loading="lazy"></figure>
+<figure data-type="image" tabindex="2"><img src="https://smartxiaosiyu.github.io/post-images/1630584618950.png" alt="" loading="lazy"></figure>
 <blockquote>
 <p>如上图所示 由于访问了auto变量 所以block是一个stack类型 test函数调用完毕 栈内存里的数据可能就被销毁 变成垃圾数据 所以在访问 block里的age变量 获取不到真正的值 只需要copy block  就是MallocBlock 存放到堆上 就可以正确使用</p>
 </blockquote>
 <p>每一种类型的block调用copy后的结果如下所示<br>
-<img src="http://localhost:4000/post-images/1630584991343.png" alt="" loading="lazy"></p>
+<img src="https://smartxiaosiyu.github.io/post-images/1630584991343.png" alt="" loading="lazy"></p>
 ]]></content>
     </entry>
     <entry>
         <title type="html"><![CDATA[OpenGL ES 封装顶点数据和绘制代码]]></title>
-        <id>http://localhost:4000/post/opengl-es-feng-zhuang-ding-dian-shu-ju-he-hui-zhi-dai-ma/</id>
-        <link href="http://localhost:4000/post/opengl-es-feng-zhuang-ding-dian-shu-ju-he-hui-zhi-dai-ma/">
+        <id>https://smartxiaosiyu.github.io/post/opengl-es-feng-zhuang-ding-dian-shu-ju-he-hui-zhi-dai-ma/</id>
+        <link href="https://smartxiaosiyu.github.io/post/opengl-es-feng-zhuang-ding-dian-shu-ju-he-hui-zhi-dai-ma/">
         </link>
         <updated>2021-09-01T07:00:10.000Z</updated>
         <content type="html"><![CDATA[<p><strong>VBO</strong></p>
@@ -161,8 +437,8 @@ count，数组中顶点的数量。<br>
     </entry>
     <entry>
         <title type="html"><![CDATA[默然相爱寂静欢喜]]></title>
-        <id>http://localhost:4000/post/lalal/</id>
-        <link href="http://localhost:4000/post/lalal/">
+        <id>https://smartxiaosiyu.github.io/post/lalal/</id>
+        <link href="https://smartxiaosiyu.github.io/post/lalal/">
         </link>
         <updated>2021-08-31T12:54:10.000Z</updated>
         <content type="html"><![CDATA[<p><code>齐保然最爱肖丝雨！</code></p>

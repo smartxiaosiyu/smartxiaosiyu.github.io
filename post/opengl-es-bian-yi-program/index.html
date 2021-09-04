@@ -1,0 +1,245 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>OpenGL ES 初始化着色器程序 | SmartXiaosiyu</title>
+<link rel="shortcut icon" href="https://smartxiaosiyu.github.io/favicon.ico?v=1630747208985">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
+<link rel="stylesheet" href="https://smartxiaosiyu.github.io/styles/main.css">
+<link rel="alternate" type="application/atom+xml" title="OpenGL ES 初始化着色器程序 | SmartXiaosiyu - Atom Feed" href="https://smartxiaosiyu.github.io/atom.xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
+
+
+
+    <meta name="description" content="1.获取着色器program
+
+1.编译顶点、片元着色器
+
+
+1.编译shader代码
+
+1.获取shader 路径
+NSString *shaderPath = [[NSBundle mainBundle] pathForResource..." />
+    <meta name="keywords" content="OpenGL" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+    <script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+  </head>
+  <body>
+    <div class="main">
+      <div class="main-content">
+        <div class="site-header">
+  <a href="https://smartxiaosiyu.github.io">
+  <img class="avatar" src="https://smartxiaosiyu.github.io/images/avatar.png?v=1630747208985" alt="">
+  </a>
+  <h1 class="site-title">
+    SmartXiaosiyu
+  </h1>
+  <p class="site-description">
+    BugMaker
+  </p>
+  <div class="menu-container">
+    
+      
+        <a href="/" class="menu">
+          首页
+        </a>
+      
+    
+      
+        <a href="/archives" class="menu">
+          归档
+        </a>
+      
+    
+      
+        <a href="/tags" class="menu">
+          标签
+        </a>
+      
+    
+      
+        <a href="/post/about" class="menu">
+          关于
+        </a>
+      
+    
+  </div>
+  <div class="social-container">
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+</div>
+
+        <div class="post-detail">
+          <article class="post">
+            <h2 class="post-title">
+              OpenGL ES 初始化着色器程序
+            </h2>
+            <div class="post-info">
+              <span>
+                2021-09-04
+              </span>
+              <span>
+                2 min read
+              </span>
+              
+                <a href="https://smartxiaosiyu.github.io/tag/YIh5C4kIq/" class="post-tag">
+                  # OpenGL
+                </a>
+              
+            </div>
+            
+            <div class="post-content-wrapper">
+              <div class="post-content">
+                <h3 id="1获取着色器program">1.获取着色器program</h3>
+<ul>
+<li>1.编译顶点、片元着色器
+<ul>
+<li>
+<p>1.编译shader代码</p>
+<ul>
+<li>1.获取shader 路径<br>
+<code>NSString *shaderPath = [[NSBundle mainBundle] pathForResource:name ofType:shaderType == GL_VERTEX_SHADER ? @&quot;vsh&quot; : @&quot;fsh&quot;];</code><br>
+<code>NSError *error;</code><br>
+<code>NSString *shaderString = [NSString stringWithContentsOfFile:shaderPath encoding:NSUTF8StringEncoding error:&amp;error];</code></li>
+<li>
+<ol start="2">
+<li>创建shader-&gt;根据shaderType<br>
+<code>GLuint shader = glCreateShader(shaderType)</code></li>
+</ol>
+</li>
+<li>3.获取shader source<br>
+<code>glShaderSource(shader, 1, &amp;shaderStringUTF8, &amp;shaderStringLength);</code></li>
+<li>4.编译shader<br>
+<code>glCompileShader(shader);</code></li>
+<li>5.返回shader<br>
+<code>return shader;</code></li>
+</ul>
+</li>
+<li>
+<p>2.将顶点/片元附着到program<br>
+<code>GLuint program = glCreateProgram();</code><br>
+<code>glAttachShader(program, vertexShader);</code><br>
+<code>glAttachShader(program, fragmentShader);</code></p>
+</li>
+<li>
+<p>3.linkProgram<br>
+<code>glLinkProgram(program);</code></p>
+</li>
+<li>
+<p>4.返回program<br>
+<code>return program;</code></p>
+</li>
+</ul>
+</li>
+<li>2.use Program<br>
+<code>glUseProgram(program);</code></li>
+<li>3.获取Position,Texture,TextureCoords 的索引位置<br>
+<code>GLuint positionSlot = glGetAttribLocation(program, &quot;Position&quot;);</code><br>
+<code>GLuint textureSlot = glGetUniformLocation(program, &quot;Texture&quot;);</code><br>
+<code>GLuint textureCoordsSlot = glGetAttribLocation(program, &quot;TextureCoords&quot;);</code>纹理坐标</li>
+<li>4.激活纹理,绑定纹理ID<br>
+<code>glActiveTexture(GL_TEXTURE0);</code><br>
+<code>glBindTexture(GL_TEXTURE_2D, self.textureID);</code></li>
+<li>5.将纹理id传入<br>
+<code>glUniform1i(textureSlot, 0);</code></li>
+<li>6.打开positionSlot 属性并且传递数据到positionSlot中(顶点坐标)<br>
+<code>glEnableVertexAttribArray(positionSlot);</code><br>
+<code>glVertexAttribPointer(positionSlot, 3, GL_FLOAT, GL_FALSE, sizeof(SenceVertex), NULL + offsetof(SenceVertex, positionCoord));</code></li>
+<li>7.保存program,界面销毁则释放<br>
+<code>self.program = program;</code></li>
+</ul>
+
+              </div>
+              <div class="toc-container">
+                <ul class="markdownIt-TOC">
+<li>
+<ul>
+<li>
+<ul>
+<li><a href="#1%E8%8E%B7%E5%8F%96%E7%9D%80%E8%89%B2%E5%99%A8program">1.获取着色器program</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+              </div>
+            </div>
+          </article>
+        </div>
+
+        
+          <div class="next-post">
+            <div class="next">下一篇</div>
+            <a href="https://smartxiaosiyu.github.io/post/opengl-es-jiang-tu-pian-jie-ya-suo-cheng-wei-tu-zai-ru-dao-wen-li-qu/">
+              <h3 class="post-title">
+                OpenGl ES 将图片解压缩成位图 载入到纹理去
+              </h3>
+            </a>
+          </div>
+        
+
+        
+
+        <div class="site-footer">
+  Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a>
+  <a class="rss" href="https://smartxiaosiyu.github.io/atom.xml" target="_blank">
+    <i class="ri-rss-line"></i> RSS
+  </a>
+</div>
+
+      </div>
+    </div>
+
+    <script>
+      hljs.initHighlightingOnLoad()
+
+      let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
+
+      // This should probably be throttled.
+      // Especially because it triggers during smooth scrolling.
+      // https://lodash.com/docs/4.17.10#throttle
+      // You could do like...
+      // window.addEventListener("scroll", () => {
+      //    _.throttle(doThatStuff, 100);
+      // });
+      // Only not doing it here to keep this Pen dependency-free.
+
+      window.addEventListener("scroll", event => {
+        let fromTop = window.scrollY;
+
+        mainNavLinks.forEach((link, index) => {
+          let section = document.getElementById(decodeURI(link.hash).substring(1));
+          let nextSection = null
+          if (mainNavLinks[index + 1]) {
+            nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
+          }
+          if (section.offsetTop <= fromTop) {
+            if (nextSection) {
+              if (nextSection.offsetTop > fromTop) {
+                link.classList.add("current");
+              } else {
+                link.classList.remove("current");    
+              }
+            } else {
+              link.classList.add("current");
+            }
+          } else {
+            link.classList.remove("current");
+          }
+        });
+      });
+
+    </script>
+  </body>
+</html>

@@ -1,0 +1,279 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>OpenGl ES 将图片解压缩成位图 载入到纹理去 | SmartXiaosiyu</title>
+<link rel="shortcut icon" href="https://smartxiaosiyu.github.io/favicon.ico?v=1630747208985">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
+<link rel="stylesheet" href="https://smartxiaosiyu.github.io/styles/main.css">
+<link rel="alternate" type="application/atom+xml" title="OpenGl ES 将图片解压缩成位图 载入到纹理去 | SmartXiaosiyu - Atom Feed" href="https://smartxiaosiyu.github.io/atom.xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
+
+
+
+    <meta name="description" content="用CPU解压图片
+
+
+1、将 UIImage 转换为 CGImageRef
+CGImageRef cgImageRef = [image CGImage];
+//判断图片是否获取成功
+if (!cgImageRef) {
+NSLog(@&q..." />
+    <meta name="keywords" content="OpenGL" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+    <script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+  </head>
+  <body>
+    <div class="main">
+      <div class="main-content">
+        <div class="site-header">
+  <a href="https://smartxiaosiyu.github.io">
+  <img class="avatar" src="https://smartxiaosiyu.github.io/images/avatar.png?v=1630747208985" alt="">
+  </a>
+  <h1 class="site-title">
+    SmartXiaosiyu
+  </h1>
+  <p class="site-description">
+    BugMaker
+  </p>
+  <div class="menu-container">
+    
+      
+        <a href="/" class="menu">
+          首页
+        </a>
+      
+    
+      
+        <a href="/archives" class="menu">
+          归档
+        </a>
+      
+    
+      
+        <a href="/tags" class="menu">
+          标签
+        </a>
+      
+    
+      
+        <a href="/post/about" class="menu">
+          关于
+        </a>
+      
+    
+  </div>
+  <div class="social-container">
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+</div>
+
+        <div class="post-detail">
+          <article class="post">
+            <h2 class="post-title">
+              OpenGl ES 将图片解压缩成位图 载入到纹理去
+            </h2>
+            <div class="post-info">
+              <span>
+                2021-09-03
+              </span>
+              <span>
+                3 min read
+              </span>
+              
+                <a href="https://smartxiaosiyu.github.io/tag/YIh5C4kIq/" class="post-tag">
+                  # OpenGL
+                </a>
+              
+            </div>
+            
+            <div class="post-content-wrapper">
+              <div class="post-content">
+                <h3 id="用cpu解压图片">用CPU解压图片</h3>
+<ul>
+<li>
+<p>1、将 UIImage 转换为 CGImageRef<br>
+<code>CGImageRef cgImageRef = [image CGImage];</code><br>
+//判断图片是否获取成功<br>
+<code>if (!cgImageRef) {</code><br>
+<code>NSLog(@&quot;Failed to load image&quot;);</code><br>
+<code>exit(1);</code><br>
+<code>}</code></p>
+</li>
+<li>
+<p>2、读取图片的大小，宽和高<br>
+<code>GLuint width = (GLuint)CGImageGetWidth(cgImageRef);</code><br>
+<code>GLuint height = (GLuint)CGImageGetHeight(cgImageRef);</code><br>
+//获取图片的rect<br>
+<code>CGRect rect = CGRectMake(0, 0, width, height);</code><br>
+//获取图片的颜色空间<br>
+<code>CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();</code></p>
+</li>
+<li>
+<p>3、获取图片字节数 宽<em>高</em>4（RGBA）<br>
+<code>void *imageData = malloc(width * height * 4);</code></p>
+</li>
+<li>
+<p>4、创建上下文<br>
+/*<br>
+参数1：data,指向要渲染的绘制图像的内存地址<br>
+参数2：width,bitmap的宽度，单位为像素<br>
+参数3：height,bitmap的高度，单位为像素<br>
+参数4：bitPerComponent,内存中像素的每个组件的位数，比如32位RGBA，就设置为8<br>
+参数5：bytesPerRow,bitmap的没一行的内存所占的比特数<br>
+参数6：colorSpace,bitmap上使用的颜色空间  kCGImageAlphaPremultipliedLast：RGBA<br>
+*/<br>
+<code>CGContextRef context = CGBitmapContextCreate(imageData, width, height, 8, width * 4, colorSpace, kCGImageAlphaPremultipliedLast | kCGBitmapByteOrder32Big);</code></p>
+<p>//将图片翻转过来(图片默认是倒置的)<br>
+<code>CGContextTranslateCTM(context, 0, height);</code><br>
+<code>CGContextScaleCTM(context, 1.0f, -1.0f);</code><br>
+<code>CGColorSpaceRelease(colorSpace);</code><br>
+<code>CGContextClearRect(context, rect);</code></p>
+<p><strong>//对图片进行重新绘制，得到一张新的解压缩后的位图</strong><br>
+<code>CGContextDrawImage(context, rect, cgImageRef);</code></p>
+</li>
+</ul>
+<h3 id="设置图片纹理属性">设置图片纹理属性</h3>
+<ul>
+<li>
+<p>5.、获取纹理ID<br>
+<code>GLuint textureID;</code>创建一个纹理<br>
+<code>glGenTextures(1, &amp;textureID);</code>获取纹理id<br>
+<code>glBindTexture(GL_TEXTURE_2D, textureID);</code>绑定纹理</p>
+</li>
+<li>
+<p>6、载入纹理2D数据<br>
+/*<br>
+参数1：纹理模式，GL_TEXTURE_1D、GL_TEXTURE_2D、GL_TEXTURE_3D<br>
+参数2：加载的层次，一般设置为0<br>
+参数3：纹理的颜色值GL_RGBA<br>
+参数4：宽<br>
+参数5：高<br>
+参数6：border，边界宽度<br>
+参数7：format<br>
+参数8：type<br>
+参数9：纹理数据<br>
+*/<br>
+<code>glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, imageData);</code></p>
+</li>
+<li>
+<p>7、设置纹理属性<br>
+<code>glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);</code><br>
+<code>glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);</code><br>
+<code>glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);</code><br>
+<code>glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);</code></p>
+</li>
+<li>
+<p>8、绑定纹理<br>
+/*<br>
+参数1：纹理维度<br>
+参数2：纹理ID,因为只有一个纹理，给0就可以了。<br>
+*/<br>
+<code>glBindTexture(GL_TEXTURE_2D, 0);</code></p>
+</li>
+<li>
+<p>9、释放context,imageData<br>
+<code>CGContextRelease(context);</code><br>
+<code>free(imageData);</code></p>
+</li>
+<li>
+<p>10、返回纹理ID<br>
+<code>return textureID;</code></p>
+</li>
+</ul>
+
+              </div>
+              <div class="toc-container">
+                <ul class="markdownIt-TOC">
+<li>
+<ul>
+<li>
+<ul>
+<li><a href="#%E7%94%A8cpu%E8%A7%A3%E5%8E%8B%E5%9B%BE%E7%89%87">用CPU解压图片</a></li>
+<li><a href="#%E8%AE%BE%E7%BD%AE%E5%9B%BE%E7%89%87%E7%BA%B9%E7%90%86%E5%B1%9E%E6%80%A7">设置图片纹理属性</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+              </div>
+            </div>
+          </article>
+        </div>
+
+        
+          <div class="next-post">
+            <div class="next">下一篇</div>
+            <a href="https://smartxiaosiyu.github.io/post/opengl-es-fen-ping-lu-jing/">
+              <h3 class="post-title">
+                OpenGL ES 分屏滤镜
+              </h3>
+            </a>
+          </div>
+        
+
+        
+
+        <div class="site-footer">
+  Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a>
+  <a class="rss" href="https://smartxiaosiyu.github.io/atom.xml" target="_blank">
+    <i class="ri-rss-line"></i> RSS
+  </a>
+</div>
+
+      </div>
+    </div>
+
+    <script>
+      hljs.initHighlightingOnLoad()
+
+      let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
+
+      // This should probably be throttled.
+      // Especially because it triggers during smooth scrolling.
+      // https://lodash.com/docs/4.17.10#throttle
+      // You could do like...
+      // window.addEventListener("scroll", () => {
+      //    _.throttle(doThatStuff, 100);
+      // });
+      // Only not doing it here to keep this Pen dependency-free.
+
+      window.addEventListener("scroll", event => {
+        let fromTop = window.scrollY;
+
+        mainNavLinks.forEach((link, index) => {
+          let section = document.getElementById(decodeURI(link.hash).substring(1));
+          let nextSection = null
+          if (mainNavLinks[index + 1]) {
+            nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
+          }
+          if (section.offsetTop <= fromTop) {
+            if (nextSection) {
+              if (nextSection.offsetTop > fromTop) {
+                link.classList.add("current");
+              } else {
+                link.classList.remove("current");    
+              }
+            } else {
+              link.classList.add("current");
+            }
+          } else {
+            link.classList.remove("current");
+          }
+        });
+      });
+
+    </script>
+  </body>
+</html>

@@ -1,0 +1,285 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>OpenGL ES 分屏滤镜 | SmartXiaosiyu</title>
+<link rel="shortcut icon" href="https://smartxiaosiyu.github.io/favicon.ico?v=1630747208985">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
+<link rel="stylesheet" href="https://smartxiaosiyu.github.io/styles/main.css">
+<link rel="alternate" type="application/atom+xml" title="OpenGL ES 分屏滤镜 | SmartXiaosiyu - Atom Feed" href="https://smartxiaosiyu.github.io/atom.xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
+
+
+
+    <meta name="description" content="原始图片渲染到屏幕上去
+
+1.创建上下文
+self.context = [[EAGLContext alloc] initWithAPI:kEAGLRenderingAPIOpenGLES2]; [EAGLContext setCurren..." />
+    <meta name="keywords" content="OpenGL" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+    <script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+  </head>
+  <body>
+    <div class="main">
+      <div class="main-content">
+        <div class="site-header">
+  <a href="https://smartxiaosiyu.github.io">
+  <img class="avatar" src="https://smartxiaosiyu.github.io/images/avatar.png?v=1630747208985" alt="">
+  </a>
+  <h1 class="site-title">
+    SmartXiaosiyu
+  </h1>
+  <p class="site-description">
+    BugMaker
+  </p>
+  <div class="menu-container">
+    
+      
+        <a href="/" class="menu">
+          首页
+        </a>
+      
+    
+      
+        <a href="/archives" class="menu">
+          归档
+        </a>
+      
+    
+      
+        <a href="/tags" class="menu">
+          标签
+        </a>
+      
+    
+      
+        <a href="/post/about" class="menu">
+          关于
+        </a>
+      
+    
+  </div>
+  <div class="social-container">
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+</div>
+
+        <div class="post-detail">
+          <article class="post">
+            <h2 class="post-title">
+              OpenGL ES 分屏滤镜
+            </h2>
+            <div class="post-info">
+              <span>
+                2021-09-03
+              </span>
+              <span>
+                3 min read
+              </span>
+              
+                <a href="https://smartxiaosiyu.github.io/tag/YIh5C4kIq/" class="post-tag">
+                  # OpenGL
+                </a>
+              
+            </div>
+            
+            <div class="post-content-wrapper">
+              <div class="post-content">
+                <h2 id="原始图片渲染到屏幕上去">原始图片渲染到屏幕上去</h2>
+<ul>
+<li>1.创建上下文<br>
+<code>self.context = [[EAGLContext alloc] initWithAPI:kEAGLRenderingAPIOpenGLES2]; [EAGLContext setCurrentContext:self.context];</code></li>
+<li>2.开辟顶点数组内存空间
+<blockquote>
+<p>typedef struct {<br>
+GLKVector3 positionCoord; // (X, Y, Z)<br>
+GLKVector2 textureCoord; // (U, V)<br>
+} SenceVertex;<br>
+<code>self.vertices = malloc(sizeof(SenceVertex) * 4);</code></p>
+</blockquote>
+</li>
+<li>3.初始化顶点(0,1,2,3)的顶点坐标以及纹理坐标<br>
+<code>self.vertices[0] = (SenceVertex){{-1, 1, 0}, {0, 1}};</code><br>
+<code>self.vertices[1] = (SenceVertex){{-1, -1, 0}, {0, 0}};</code><br>
+<code>self.vertices[2] = (SenceVertex){{1, 1, 0}, {1, 1}};</code><br>
+<code>self.vertices[3] = (SenceVertex){{1, -1, 0}, {1, 0}};</code></li>
+<li>4.创建图层<br>
+<code>CAEAGLLayer *layer = [[CAEAGLLayer alloc] init];</code></li>
+<li>5.绑定渲染缓存区
+<ul>
+<li>
+<p>渲染缓存区、帧缓存区</p>
+<blockquote>
+<p>1.渲染缓存区,帧缓存区对象<br>
+<code>GLuint renderBuffer;</code><br>
+<code>GLuint frameBuffer;</code></p>
+</blockquote>
+<blockquote>
+<p>2.获取帧渲染缓存区名称,绑定渲染缓存区以及将渲染缓存区与layer建立连接<br>
+<code>glGenRenderbuffers(1, &amp;renderBuffer);</code><br>
+<code>glBindRenderbuffer(GL_RENDERBUFFER, renderBuffer);</code><br>
+<code>[self.context renderbufferStorage:GL_RENDERBUFFER fromDrawable:layer];</code></p>
+</blockquote>
+<blockquote>
+<p>3.获取帧缓存区名称,绑定帧缓存区以及将渲染缓存区附着到帧缓存区上<br>
+<code>glGenFramebuffers(1, &amp;frameBuffer);</code><br>
+<code>glBindFramebuffer(GL_FRAMEBUFFER, frameBuffer);</code><br>
+<code>glFramebufferRenderbuffer(GL_FRAMEBUFFER,</code><br>
+<code>GL_COLOR_ATTACHMENT0,</code><br>
+<code>GL_RENDERBUFFER,</code><br>
+<code>renderBuffer);</code></p>
+</blockquote>
+</li>
+</ul>
+</li>
+<li>6.读取图片，把图片载入到纹理中去
+<blockquote>
+<p>将图片解压缩成位图 载入到纹理去</p>
+</blockquote>
+</li>
+<li>7.设置视口<br>
+<code>glViewport(0, 0, self.drawableWidth, self.drawableHeight);</code></li>
+<li>8.设置顶点缓存区
+<blockquote>
+<p>将我们的顶点数据拷贝到缓存中去</p>
+</blockquote>
+<pre><code>GLuint vertexBuffer;
+ glGenBuffers(1, &amp;vertexBuffer);
+ glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
+ GLsizeiptr bufferSizeBytes = sizeof(SenceVertex) * 4;
+ glBufferData(GL_ARRAY_BUFFER, bufferSizeBytes, self.vertices, GL_STATIC_DRAW);
+</code></pre>
+</li>
+<li>9.设置默认着色器</li>
+</ul>
+<h3 id="片元着色器代码关于分屏的着色器代码">片元着色器代码(关于分屏的着色器代码)</h3>
+<pre><code>precision highp float;
+uniform sampler2D Texture;
+varying highp vec2 TextureCoordsVarying;
+
+void main() {
+    vec2 uv = TextureCoordsVarying.xy;//纹理坐标
+    float y;
+    if (uv.y &gt;= 0.0 &amp;&amp; uv.y &lt;= 0.5) {
+        y = uv.y + 0.25;
+    } else {
+        y = uv.y - 0.25;
+    }
+    gl_FragColor = texture2D(Texture, vec2(uv.x, y));//取纹素
+} 
+</code></pre>
+<h3 id="渲染">渲染</h3>
+<pre><code>-(void)render{
+    
+    // 清除画布
+    glClear(GL_COLOR_BUFFER_BIT);
+    glClearColor(1, 1, 1, 1);
+    
+    //使用program
+    glUseProgram(self.program);
+    //绑定buffer
+    glBindBuffer(GL_ARRAY_BUFFER, self.vertexBuffer);
+    
+    // 重绘
+    glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+    //渲染到屏幕上
+    [self.context presentRenderbuffer:GL_RENDERBUFFER];
+    
+}
+</code></pre>
+
+              </div>
+              <div class="toc-container">
+                <ul class="markdownIt-TOC">
+<li>
+<ul>
+<li><a href="#%E5%8E%9F%E5%A7%8B%E5%9B%BE%E7%89%87%E6%B8%B2%E6%9F%93%E5%88%B0%E5%B1%8F%E5%B9%95%E4%B8%8A%E5%8E%BB">原始图片渲染到屏幕上去</a>
+<ul>
+<li><a href="#%E7%89%87%E5%85%83%E7%9D%80%E8%89%B2%E5%99%A8%E4%BB%A3%E7%A0%81%E5%85%B3%E4%BA%8E%E5%88%86%E5%B1%8F%E7%9A%84%E7%9D%80%E8%89%B2%E5%99%A8%E4%BB%A3%E7%A0%81">片元着色器代码(关于分屏的着色器代码)</a></li>
+<li><a href="#%E6%B8%B2%E6%9F%93">渲染</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+              </div>
+            </div>
+          </article>
+        </div>
+
+        
+          <div class="next-post">
+            <div class="next">下一篇</div>
+            <a href="https://smartxiaosiyu.github.io/post/ios-block/">
+              <h3 class="post-title">
+                iOS Block
+              </h3>
+            </a>
+          </div>
+        
+
+        
+
+        <div class="site-footer">
+  Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a>
+  <a class="rss" href="https://smartxiaosiyu.github.io/atom.xml" target="_blank">
+    <i class="ri-rss-line"></i> RSS
+  </a>
+</div>
+
+      </div>
+    </div>
+
+    <script>
+      hljs.initHighlightingOnLoad()
+
+      let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
+
+      // This should probably be throttled.
+      // Especially because it triggers during smooth scrolling.
+      // https://lodash.com/docs/4.17.10#throttle
+      // You could do like...
+      // window.addEventListener("scroll", () => {
+      //    _.throttle(doThatStuff, 100);
+      // });
+      // Only not doing it here to keep this Pen dependency-free.
+
+      window.addEventListener("scroll", event => {
+        let fromTop = window.scrollY;
+
+        mainNavLinks.forEach((link, index) => {
+          let section = document.getElementById(decodeURI(link.hash).substring(1));
+          let nextSection = null
+          if (mainNavLinks[index + 1]) {
+            nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
+          }
+          if (section.offsetTop <= fromTop) {
+            if (nextSection) {
+              if (nextSection.offsetTop > fromTop) {
+                link.classList.add("current");
+              } else {
+                link.classList.remove("current");    
+              }
+            } else {
+              link.classList.add("current");
+            }
+          } else {
+            link.classList.remove("current");
+          }
+        });
+      });
+
+    </script>
+  </body>
+</html>
