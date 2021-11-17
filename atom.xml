@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://smartxiaosiyu.github.io</id>
     <title>SmartXiaosiyu</title>
-    <updated>2021-09-04T09:20:39.195Z</updated>
+    <updated>2021-11-17T06:34:03.820Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://smartxiaosiyu.github.io"/>
     <link rel="self" href="https://smartxiaosiyu.github.io/atom.xml"/>
@@ -11,437 +11,699 @@
     <icon>https://smartxiaosiyu.github.io/favicon.ico</icon>
     <rights>All rights reserved 2021, SmartXiaosiyu</rights>
     <entry>
-        <title type="html"><![CDATA[OpenGL ES 初始化着色器程序]]></title>
-        <id>https://smartxiaosiyu.github.io/post/opengl-es-bian-yi-program/</id>
-        <link href="https://smartxiaosiyu.github.io/post/opengl-es-bian-yi-program/">
+        <title type="html"><![CDATA[iOS 多线程]]></title>
+        <id>https://smartxiaosiyu.github.io/post/ios-duo-xian-cheng/</id>
+        <link href="https://smartxiaosiyu.github.io/post/ios-duo-xian-cheng/">
         </link>
-        <updated>2021-09-04T03:45:43.000Z</updated>
-        <content type="html"><![CDATA[<h3 id="1获取着色器program">1.获取着色器program</h3>
-<ul>
-<li>1.编译顶点、片元着色器
-<ul>
-<li>
-<p>1.编译shader代码</p>
-<ul>
-<li>1.获取shader 路径<br>
-<code>NSString *shaderPath = [[NSBundle mainBundle] pathForResource:name ofType:shaderType == GL_VERTEX_SHADER ? @&quot;vsh&quot; : @&quot;fsh&quot;];</code><br>
-<code>NSError *error;</code><br>
-<code>NSString *shaderString = [NSString stringWithContentsOfFile:shaderPath encoding:NSUTF8StringEncoding error:&amp;error];</code></li>
-<li>
-<ol start="2">
-<li>创建shader-&gt;根据shaderType<br>
-<code>GLuint shader = glCreateShader(shaderType)</code></li>
-</ol>
-</li>
-<li>3.获取shader source<br>
-<code>glShaderSource(shader, 1, &amp;shaderStringUTF8, &amp;shaderStringLength);</code></li>
-<li>4.编译shader<br>
-<code>glCompileShader(shader);</code></li>
-<li>5.返回shader<br>
-<code>return shader;</code></li>
-</ul>
-</li>
-<li>
-<p>2.将顶点/片元附着到program<br>
-<code>GLuint program = glCreateProgram();</code><br>
-<code>glAttachShader(program, vertexShader);</code><br>
-<code>glAttachShader(program, fragmentShader);</code></p>
-</li>
-<li>
-<p>3.linkProgram<br>
-<code>glLinkProgram(program);</code></p>
-</li>
-<li>
-<p>4.返回program<br>
-<code>return program;</code></p>
-</li>
-</ul>
-</li>
-<li>2.use Program<br>
-<code>glUseProgram(program);</code></li>
-<li>3.获取Position,Texture,TextureCoords 的索引位置<br>
-<code>GLuint positionSlot = glGetAttribLocation(program, &quot;Position&quot;);</code><br>
-<code>GLuint textureSlot = glGetUniformLocation(program, &quot;Texture&quot;);</code><br>
-<code>GLuint textureCoordsSlot = glGetAttribLocation(program, &quot;TextureCoords&quot;);</code>纹理坐标</li>
-<li>4.激活纹理,绑定纹理ID<br>
-<code>glActiveTexture(GL_TEXTURE0);</code><br>
-<code>glBindTexture(GL_TEXTURE_2D, self.textureID);</code></li>
-<li>5.将纹理id传入<br>
-<code>glUniform1i(textureSlot, 0);</code></li>
-<li>6.打开positionSlot 属性并且传递数据到positionSlot中(顶点坐标)<br>
-<code>glEnableVertexAttribArray(positionSlot);</code><br>
-<code>glVertexAttribPointer(positionSlot, 3, GL_FLOAT, GL_FALSE, sizeof(SenceVertex), NULL + offsetof(SenceVertex, positionCoord));</code></li>
-<li>7.保存program,界面销毁则释放<br>
-<code>self.program = program;</code></li>
-</ul>
-]]></content>
-    </entry>
-    <entry>
-        <title type="html"><![CDATA[OpenGl ES 将图片解压缩成位图 载入到纹理去]]></title>
-        <id>https://smartxiaosiyu.github.io/post/opengl-es-jiang-tu-pian-jie-ya-suo-cheng-wei-tu-zai-ru-dao-wen-li-qu/</id>
-        <link href="https://smartxiaosiyu.github.io/post/opengl-es-jiang-tu-pian-jie-ya-suo-cheng-wei-tu-zai-ru-dao-wen-li-qu/">
-        </link>
-        <updated>2021-09-03T09:06:20.000Z</updated>
-        <content type="html"><![CDATA[<h3 id="用cpu解压图片">用CPU解压图片</h3>
-<ul>
-<li>
-<p>1、将 UIImage 转换为 CGImageRef<br>
-<code>CGImageRef cgImageRef = [image CGImage];</code><br>
-//判断图片是否获取成功<br>
-<code>if (!cgImageRef) {</code><br>
-<code>NSLog(@&quot;Failed to load image&quot;);</code><br>
-<code>exit(1);</code><br>
-<code>}</code></p>
-</li>
-<li>
-<p>2、读取图片的大小，宽和高<br>
-<code>GLuint width = (GLuint)CGImageGetWidth(cgImageRef);</code><br>
-<code>GLuint height = (GLuint)CGImageGetHeight(cgImageRef);</code><br>
-//获取图片的rect<br>
-<code>CGRect rect = CGRectMake(0, 0, width, height);</code><br>
-//获取图片的颜色空间<br>
-<code>CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();</code></p>
-</li>
-<li>
-<p>3、获取图片字节数 宽<em>高</em>4（RGBA）<br>
-<code>void *imageData = malloc(width * height * 4);</code></p>
-</li>
-<li>
-<p>4、创建上下文<br>
-/*<br>
-参数1：data,指向要渲染的绘制图像的内存地址<br>
-参数2：width,bitmap的宽度，单位为像素<br>
-参数3：height,bitmap的高度，单位为像素<br>
-参数4：bitPerComponent,内存中像素的每个组件的位数，比如32位RGBA，就设置为8<br>
-参数5：bytesPerRow,bitmap的没一行的内存所占的比特数<br>
-参数6：colorSpace,bitmap上使用的颜色空间  kCGImageAlphaPremultipliedLast：RGBA<br>
-*/<br>
-<code>CGContextRef context = CGBitmapContextCreate(imageData, width, height, 8, width * 4, colorSpace, kCGImageAlphaPremultipliedLast | kCGBitmapByteOrder32Big);</code></p>
-<p>//将图片翻转过来(图片默认是倒置的)<br>
-<code>CGContextTranslateCTM(context, 0, height);</code><br>
-<code>CGContextScaleCTM(context, 1.0f, -1.0f);</code><br>
-<code>CGColorSpaceRelease(colorSpace);</code><br>
-<code>CGContextClearRect(context, rect);</code></p>
-<p><strong>//对图片进行重新绘制，得到一张新的解压缩后的位图</strong><br>
-<code>CGContextDrawImage(context, rect, cgImageRef);</code></p>
-</li>
-</ul>
-<h3 id="设置图片纹理属性">设置图片纹理属性</h3>
-<ul>
-<li>
-<p>5.、获取纹理ID<br>
-<code>GLuint textureID;</code>创建一个纹理<br>
-<code>glGenTextures(1, &amp;textureID);</code>获取纹理id<br>
-<code>glBindTexture(GL_TEXTURE_2D, textureID);</code>绑定纹理</p>
-</li>
-<li>
-<p>6、载入纹理2D数据<br>
-/*<br>
-参数1：纹理模式，GL_TEXTURE_1D、GL_TEXTURE_2D、GL_TEXTURE_3D<br>
-参数2：加载的层次，一般设置为0<br>
-参数3：纹理的颜色值GL_RGBA<br>
-参数4：宽<br>
-参数5：高<br>
-参数6：border，边界宽度<br>
-参数7：format<br>
-参数8：type<br>
-参数9：纹理数据<br>
-*/<br>
-<code>glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, imageData);</code></p>
-</li>
-<li>
-<p>7、设置纹理属性<br>
-<code>glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);</code><br>
-<code>glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);</code><br>
-<code>glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);</code><br>
-<code>glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);</code></p>
-</li>
-<li>
-<p>8、绑定纹理<br>
-/*<br>
-参数1：纹理维度<br>
-参数2：纹理ID,因为只有一个纹理，给0就可以了。<br>
-*/<br>
-<code>glBindTexture(GL_TEXTURE_2D, 0);</code></p>
-</li>
-<li>
-<p>9、释放context,imageData<br>
-<code>CGContextRelease(context);</code><br>
-<code>free(imageData);</code></p>
-</li>
-<li>
-<p>10、返回纹理ID<br>
-<code>return textureID;</code></p>
-</li>
-</ul>
-]]></content>
-    </entry>
-    <entry>
-        <title type="html"><![CDATA[OpenGL ES 分屏滤镜]]></title>
-        <id>https://smartxiaosiyu.github.io/post/opengl-es-fen-ping-lu-jing/</id>
-        <link href="https://smartxiaosiyu.github.io/post/opengl-es-fen-ping-lu-jing/">
-        </link>
-        <updated>2021-09-03T06:36:29.000Z</updated>
-        <content type="html"><![CDATA[<h2 id="原始图片渲染到屏幕上去">原始图片渲染到屏幕上去</h2>
-<ul>
-<li>1.创建上下文<br>
-<code>self.context = [[EAGLContext alloc] initWithAPI:kEAGLRenderingAPIOpenGLES2]; [EAGLContext setCurrentContext:self.context];</code></li>
-<li>2.开辟顶点数组内存空间
-<blockquote>
-<p>typedef struct {<br>
-GLKVector3 positionCoord; // (X, Y, Z)<br>
-GLKVector2 textureCoord; // (U, V)<br>
-} SenceVertex;<br>
-<code>self.vertices = malloc(sizeof(SenceVertex) * 4);</code></p>
-</blockquote>
-</li>
-<li>3.初始化顶点(0,1,2,3)的顶点坐标以及纹理坐标<br>
-<code>self.vertices[0] = (SenceVertex){{-1, 1, 0}, {0, 1}};</code><br>
-<code>self.vertices[1] = (SenceVertex){{-1, -1, 0}, {0, 0}};</code><br>
-<code>self.vertices[2] = (SenceVertex){{1, 1, 0}, {1, 1}};</code><br>
-<code>self.vertices[3] = (SenceVertex){{1, -1, 0}, {1, 0}};</code></li>
-<li>4.创建图层<br>
-<code>CAEAGLLayer *layer = [[CAEAGLLayer alloc] init];</code></li>
-<li>5.绑定渲染缓存区
-<ul>
-<li>
-<p>渲染缓存区、帧缓存区</p>
-<blockquote>
-<p>1.渲染缓存区,帧缓存区对象<br>
-<code>GLuint renderBuffer;</code><br>
-<code>GLuint frameBuffer;</code></p>
-</blockquote>
-<blockquote>
-<p>2.获取帧渲染缓存区名称,绑定渲染缓存区以及将渲染缓存区与layer建立连接<br>
-<code>glGenRenderbuffers(1, &amp;renderBuffer);</code><br>
-<code>glBindRenderbuffer(GL_RENDERBUFFER, renderBuffer);</code><br>
-<code>[self.context renderbufferStorage:GL_RENDERBUFFER fromDrawable:layer];</code></p>
-</blockquote>
-<blockquote>
-<p>3.获取帧缓存区名称,绑定帧缓存区以及将渲染缓存区附着到帧缓存区上<br>
-<code>glGenFramebuffers(1, &amp;frameBuffer);</code><br>
-<code>glBindFramebuffer(GL_FRAMEBUFFER, frameBuffer);</code><br>
-<code>glFramebufferRenderbuffer(GL_FRAMEBUFFER,</code><br>
-<code>GL_COLOR_ATTACHMENT0,</code><br>
-<code>GL_RENDERBUFFER,</code><br>
-<code>renderBuffer);</code></p>
-</blockquote>
-</li>
-</ul>
-</li>
-<li>6.读取图片，把图片载入到纹理中去
-<blockquote>
-<p>将图片解压缩成位图 载入到纹理去</p>
-</blockquote>
-</li>
-<li>7.设置视口<br>
-<code>glViewport(0, 0, self.drawableWidth, self.drawableHeight);</code></li>
-<li>8.设置顶点缓存区
-<blockquote>
-<p>将我们的顶点数据拷贝到缓存中去</p>
-</blockquote>
-<pre><code>GLuint vertexBuffer;
- glGenBuffers(1, &amp;vertexBuffer);
- glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
- GLsizeiptr bufferSizeBytes = sizeof(SenceVertex) * 4;
- glBufferData(GL_ARRAY_BUFFER, bufferSizeBytes, self.vertices, GL_STATIC_DRAW);
-</code></pre>
-</li>
-<li>9.设置默认着色器</li>
-</ul>
-<h3 id="片元着色器代码关于分屏的着色器代码">片元着色器代码(关于分屏的着色器代码)</h3>
-<pre><code>precision highp float;
-uniform sampler2D Texture;
-varying highp vec2 TextureCoordsVarying;
+        <updated>2021-10-22T03:46:39.000Z</updated>
+        <content type="html"><![CDATA[<pre><code>// 题目：写出NSLog的打印结果（来自美团 GCD 面试题）
+__block int a = 0;
+while (a &lt; 5) {
+    dispatch_async(dispatch_get_global_queue(0, 0), ^{
+        a++;
+    });
+}
+NSLog(@&quot;输出: %d&quot;, a);
 
-void main() {
-    vec2 uv = TextureCoordsVarying.xy;//纹理坐标
-    float y;
-    if (uv.y &gt;= 0.0 &amp;&amp; uv.y &lt;= 0.5) {
-        y = uv.y + 0.25;
-    } else {
-        y = uv.y - 0.25;
-    }
-    gl_FragColor = texture2D(Texture, vec2(uv.x, y));//取纹素
-} 
+// 答案：
+// 输出结果为：a &gt;= 5
+// 原因：while循环内部执行并发耗时任务，ARC环境下，一旦Block赋值就会触发copy，__block就会copy到堆上，所以当执行a++时，Block外部也能访问到改变后的值；当a不满足循环条件而跳出时，并发任务可能仍在只执行，此时仍然会改变a的值，鉴于不同机器的CPU和线程差异影响，所以最终输出结果会大于等于5
+// 注意：a的输出值结果是a&gt;=5，但是a的实际结果会远远大于5（NSLog输出完成后，并发耗时任务可能尚未完全结束）
 </code></pre>
-<h3 id="渲染">渲染</h3>
-<pre><code>-(void)render{
-    
-    // 清除画布
-    glClear(GL_COLOR_BUFFER_BIT);
-    glClearColor(1, 1, 1, 1);
-    
-    //使用program
-    glUseProgram(self.program);
-    //绑定buffer
-    glBindBuffer(GL_ARRAY_BUFFER, self.vertexBuffer);
-    
-    // 重绘
-    glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
-    //渲染到屏幕上
-    [self.context presentRenderbuffer:GL_RENDERBUFFER];
-    
+<h3 id="gcdgrand-central-dispatch">GCD（Grand Central Dispatch）</h3>
+<p>Grand Central Dispatch (GCD) 是 Apple 开发的一个多核编程的解决方法，基本概念就是<strong>dispatch queue（调度队列）</strong>，queue 是一个对象，它可以接受任务，并将任务以先到先执行的顺序来执行。dispatch queue 可以是并发的或串行的。GCD 的底层依然是用线程实现，不过我们可以不用关注实现的细节。GCD在后端管理着一个线程池，它不仅决定着你的代码块将在哪个线程被执行，还根据可用的系统资源对这些线程进行管理。这样通过GCD来管理线程，从而解决线程被创建的问题。</p>
+<p>GCD 可用于多核的并行运算<br>
+GCD 会自动利用更多的CPU内核（比如双核、四核）<br>
+GCD 会自动管理线程的生命周期（创建线程、调度任务、销毁线程）<br>
+任务都是以block 的方式提交到对列上，然后 GCD 会自动的创建线程池去执行这些任务</p>
+<h3 id="dispatchqueue">DispatchQueue</h3>
+<p>一个对象，用于在应用程序的主线程或后台线程上串行或并发地管理任务的执行。<br>
+DispatchQueue 是一个类似线程的概念，这里称作对列队列是一个 FIFO(先进先出，后进后出) 数据结构，意味着先提交到队列的任务会先开始执行。DispatchQueue 背后是一个由系统管理的线程池。</p>
+<pre><code>同步和异步的区别
+    同步（`sync`）：只能在当前线程中执行任务，不具备开启新线程的能力
+    异步 (`async`)：可以在新的线程中执行任务，具备开启新线程的能力
+</code></pre>
+<h3 id="dispatchqos-quality-of-service-服务质量">DispatchQoS (quality of service) 服务质量</h3>
+<p>适用于任务的服务质量或执行优先级。</p>
+<p>优先级由最低的 background 到最高的 userInteractive 共五个，还有一个为定义的 unspecified.</p>
+<ul>
+<li>background：最低优先级，等同于 DISPATCH_QUEUE_PRIORITY_BACKGROUND. 用户不可见，比如：在后台存储大量数据</li>
+<li>utility：优先级等同于 DISPATCH_QUEUE_PRIORITY_LOW，可以执行很长时间，再通知用户结果。比如：下载一个大文件，网络，计算</li>
+<li>default：默认优先级,优先级等同于 DISPATCH_QUEUE_PRIORITY_DEFAULT，建议大多数情况下使用默认优先级</li>
+<li>userInitiated：优先级等同于 DISPATCH_QUEUE_PRIORITY_HIGH,需要立刻的结果</li>
+<li>userInteractive：用户交互相关，为了好的用户体验，任务需要立马执行。使用该优先级用于 UI 更新，事件处理和小工作量任务，在主线程执行<br>
+Qos指定了列队工作的优先级，系统会根据优先级来调度工作，越高的优先级能够越快被执行，但是也会消耗功能，所以准确的指定优先级能够保证app有效的使用资源。+</li>
+</ul>
+<h3 id="dispatchworkitem">DispatchWorkItem</h3>
+<p>想要执行的工作以某种方式进行封装，使您可以附加完成句柄或执行依赖项。通俗的说就是 DispatchWorkItem 把任务封装成一个对象。</p>
+<pre><code>let item = DispatchWorkItem {
+        // 任务
+    }
+    DispatchQueue.global().async(execute: item)
+</code></pre>
+<h3 id="dispatchgroup">DispatchGroup</h3>
+<pre><code>func enterLeaveGroup() {
+        let group = DispatchGroup()
+        let queue = DispatchQueue.global()
+       
+        // 把该任务添加到组队列中执行
+        group.enter()
+        queue.async(group: group, qos: .default, flags: []) {
+            // 增加耗时
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1, execute: {
+                 for _ in 0...4 {
+                     print(&quot;(Thread.current) 耗时任务一&quot;)
+                 }
+                // 执行完之后从组队列中移除
+                group.leave()
+            })
+           
+        }
+       
+        // 把该任务添加到组队列中执行
+        group.enter()
+        queue.async(group: group, qos: .default, flags: []) {
+            for _ in 0...4 {
+                print(&quot;(Thread.current) 耗时任务二&quot;)
+            }
+            // 执行完之后从组队列中移除
+            group.leave()
+        }
+       
+        // 当上面所有的任务执行完之后通知
+        group.notify(queue: queue) {
+            print(&quot;(Thread.current) 所有的任务执行完了&quot;)
+        }
+    }
+   
+    /* 输出结果
+&lt;NSThread: 0x6000013dd980&gt;{number = 6, name = (null)} 耗时任务二
+&lt;NSThread: 0x6000013dd980&gt;{number = 6, name = (null)} 耗时任务二
+&lt;NSThread: 0x6000013dd980&gt;{number = 6, name = (null)} 耗时任务二
+&lt;NSThread: 0x6000013dd980&gt;{number = 6, name = (null)} 耗时任务二
+&lt;NSThread: 0x6000013dd980&gt;{number = 6, name = (null)} 耗时任务二
+&lt;NSThread: 0x6000013862c0&gt;{number = 1, name = main} 耗时任务一
+&lt;NSThread: 0x6000013862c0&gt;{number = 1, name = main} 耗时任务一
+&lt;NSThread: 0x6000013862c0&gt;{number = 1, name = main} 耗时任务一
+&lt;NSThread: 0x6000013862c0&gt;{number = 1, name = main} 耗时任务一
+&lt;NSThread: 0x6000013862c0&gt;{number = 1, name = main} 耗时任务一
+&lt;NSThread: 0x6000013ea2c0&gt;{number = 7, name = (null)} 所有的任务执行完了
+    */
+</code></pre>
+<h3 id="suspend-resume">Suspend / Resume</h3>
+<p>Suspend 可以挂起一个线程，即暂停线程，但是仍然占用资源，只是不执行</p>
+<p>Resume 恢复线程，即继续执行挂起的线程。</p>
+<h3 id="gcd与nsopration的区别">GCD与NSOpration的区别</h3>
+<p>设置依赖关系<br>
+设置监听进度<br>
+设置优先级<br>
+还能继承<br>
+可以取消准备执行的任务<br>
+比GCD会带来一点额外的系统开销<br>
+比GCD更简单易用、代码可读性也更高</p>
+<h3 id="nsoperation">NSOperation</h3>
+<p>NSOperation是一个和任务相关的抽象类，不具备封装操作的能力，必须使用其子类。</p>
+<p>NSOperation⼦类的方式有3种：</p>
+<p>系统实现的具体子类：NSInvocationOperation<br>
+系统实现的具体子类：NSBlockOperation<br>
+自定义子类，实现内部相应的⽅法。该类是线程安全的，不必管理线程生命周期和同步等问题。</p>
+<p>开启操作有二种方式，一是通过start方法直接启动操作，该操作默认同步执行，二是将操作添加到NSOperationQueue中，然后由系统从队列中获取操作然后添加到一个新线程中执行，这些操作默认并发执行。</p>
+<p>具体实现<br>
+方式一：直接由NSOperation子类对象启动。 首先将需要执行的操作封装到NSOperation子类对象中，然后该对象调用Start方法。<br>
+方式二：当添加到NSOperationQueue对象中，由该队列对象启动操作。</p>
+<ul>
+<li>1.将需要执行的操作封装到NSOperation子类对象中</li>
+<li>2.将该对象添加到NSOperationQueue中</li>
+<li>3.系统将NSOperation子类对象从NSOperationQueue中取出</li>
+<li>4.将取出的操作放到一个新线程中执行<br>
+使用队列来执行操作，分为2个阶段：第一阶段：添加到线程队列的过程，是上面的步骤1和2。第二阶段：系统自动从队列中取出线程，并且自动放到线程中执行，是上面的步骤3和4。</li>
+</ul>
+<h3 id="nsinvocationoperation子类">NSInvocationOperation子类</h3>
+<p>NSInvocationOperation类是NSOperation的一个具体子类，管理作为调用指定的<strong>单个封装任务执行</strong>的操作。这个类实现了一个<strong>非并发操作</strong>。方法属性无论使用该子类的哪个在初始化的方法，都会在添加一个任务。 和NSBlockOperation子类不同的是，因为没有额外添加任务的方法，<strong>使用NSInvocationOperation创建的对象只会有一个任务。</strong></p>
+<p>创建操作对象的方式<br>
+使用initWithTarget:selector:object:创建sel参数是一个或0个的操作对象<br>
+使用initWithInvocation:方法，添加sel参数是0个或多个操作对象。<br>
+在未添加到队列的情况下，创建操作对象的过程中不会开辟线程，会在当前线程中执行同步操作。创建完成后，直接调用start方法，会启动操作对象来执行，或者添加到NSOperationQueue队列中。</p>
+<p><strong>默认情况</strong>下，调用start方法不会开辟一个新线程去执行操作，而是在当前线程<strong>同步执行</strong>任务。只有将其<strong>放到一个NSOperationQueue中</strong>，才会<strong>异步执行操作</strong>。</p>
+<h3 id="nsblockoperation子类">NSBlockOperation子类</h3>
+<p>NSBlockOperation类是NSOperation的一个具体子类，它管理一个或多个块的并发执行。可以使用此对象一次执行多个块，而不必为每个块创建单独的操作对象。当执行多个块时，只有当所有块都完成执行时，才认为操作本身已经完成。</p>
+<p>添加到操作中的块(block)将以默认优先级分配到适当的工作队列。</p>
+<h3 id="nsblockoperation子类-2">NSBlockOperation子类</h3>
+<p>NSBlockOperation类是NSOperation的一个具体子类，它管理一个或多个块的并发执行。可以使用此对象一次执行多个块，而不必为每个块创建单独的操作对象。当执行多个块时，只有当所有块都完成执行时，才认为操作本身已经完成。</p>
+<p>添加到操作中的块(block)将以默认优先级分配到适当的工作队列。</p>
+<p>创建操作对象的方式<br>
+可以通过blockOperationWithBlock:创建NSBlockOperation对象，在创建的时候也添加一个任务。如果想添加更多的任务，可以使用addExecutionBlock:方法。<br>
+也可以通过init:创建NSBlockOperation对象。但是这种创建方式并不会在创建对象的时候添加任务，同样可以使用addExecutionBlock:方法添加任务。<br>
+对于启动操作和NSInvocationOperation类一样，都可以通过调用start方法和添加NSOperationQueue中来执行操作。</p>
+<h3 id="线程池">线程池</h3>
+<p>线程池同理，正是因为每次创建、销毁线程需要占用太多系统资源，所以我们建这么一个池子来统一管理线程。用的时候从池子里拿，不用了就放回来，也不用你销毁</p>
+<p><strong>线程池的好处</strong><br>
+在多线程的第一篇文章中我们说过，进程会申请资源，拿来给线程用，所以线程是很占用系统资源的，那么我们用线程池来统一管理线程就能够很好的解决这种资源管理问题。</p>
+<p>比如因为不需要创建、销毁线程，每次需要用的时候我就去拿，用完了之后再放回去，所以节省了很多资源开销，可以提高系统的运行速度。</p>
+<p>而统一的管理和调度，可以合理分配内部资源，根据系统的当前情况调整线程的数量。</p>
+<p>那总结来说有以下 3 个好处：</p>
+<p>降低资源消耗：通过重复利用现有的线程来执行任务，避免多次创建和销毁线程。<br>
+提高相应速度：因为省去了创建线程这个步骤，所以在拿到任务时，可以立刻开始执行。<br>
+提供附加功能：线程池的可拓展性使得我们可以自己加入新的功能，比如说定时、延时来执行某些线程。</p>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[iOS AVFoundation 音视频剪辑和预览（合并、混音、插入、裁剪）]]></title>
+        <id>https://smartxiaosiyu.github.io/post/ios-avfoundation-yin-pin-jian-ji-he-yu-lan-he-bing-hun-yin-cha-ru-cai-jian/</id>
+        <link href="https://smartxiaosiyu.github.io/post/ios-avfoundation-yin-pin-jian-ji-he-yu-lan-he-bing-hun-yin-cha-ru-cai-jian/">
+        </link>
+        <updated>2021-09-28T03:47:13.000Z</updated>
+        <content type="html"><![CDATA[<h3 id="音频合并">音频合并</h3>
+<p>https://www.jianshu.com/p/fb063d592a3c</p>
+<p>###音频剪切<br>
+https://juejin.cn/post/6844903781662982158</p>
+<p>###iOS视音频实用Demo<br>
+https://www.twblogs.net/a/5b8ce6c72b7177188336bec1/?lang=zh-cn</p>
+<h3 id="混合音频-修改音量">混合音频 修改音量</h3>
+<p>https://www.shangmayuan.com/a/d6810fb117b24bef846b4ed7.html</p>
+<h3 id="1-音视频资源组装">1、音视频资源组装</h3>
+<p>在 AVFoundation 中，视频和音频数据可以用 AVAsset 表示，AVAsset 里面包含了 AVAssetTrack 数据。</p>
+<p>比如：一个视频文件里面包含了一个视频 track 和两个音频 track。<br>
+图：AVAsset 及其子类结构<br>
+<img src="https://smartxiaosiyu.github.io/post-images/1632813359808.jpeg" alt="" loading="lazy"></p>
+<p>可以使用 AVComposition 对 track 进行裁剪和变速等操作，也可以把多段 track 拼接到 AVComposition 里面，在处理完 track 的拼接和修改后，得到最终的 AVComposition，它是 AVAsset 的子类，也就是说可以把它传递到 AVPlayer、AVAssetImageGenerator、AVExportSession 和 AVAssetReader 里面作为数据源，把 AVComposition 当成是一个视频数据进行处理。</p>
+<h3 id="2-视频画面拼接混音处理">2、视频画面拼接/混音处理</h3>
+<ul>
+<li>AVFoundation 提供了 AVVideoComposition 对象和 AVVideoCompositing 协议用于处理视频的画面帧。<strong>使用 AVMutableComposition 类可以增删 AVAsset 来将单个或者多个 AVAsset 集合到一起，用来合成新视频</strong><br>
+AVFoundation 类 API 中最核心的类是 AVVideoComposition / AVMutableVideoComposition 。</li>
+</ul>
+<p><strong>AVVideoComposition / AVMutableVideoComposition 对两个或多个视频轨道组合在一起的方法给出了一个总体描述</strong>。它由一组时间范围和描述组合行为的介绍内容组成。这些信息出现在组合资源内的任意时间点。</p>
+<p>AVVideoComposition / AVMutableVideoComposition 管理所有视频轨道，可以决定最终视频的尺寸，裁剪需要在这里进行；</p>
+<p><strong>AVMutableCompositionTrack 将多个 AVAsset 集合到一起合成新视频中轨道信息，有音频轨、视频轨等，里面可以插入各种对应的素材（画中画，水印等）；</strong></p>
+<figure data-type="image" tabindex="1"><img src="https://smartxiaosiyu.github.io/post-images/1632813569403.jpeg" alt="" loading="lazy"></figure>
+<ul>
+<li>2.2 AVFoundation 中的音频处理<br>
+AVFoundation 提供了 AVAudioMix 用于处理音频数据。 AVAudioMix 这个类很简单，只有一个 inputParameters 属性，它是一个 AVAudioMixInputParameters 数组。具体的音频处理都在 AVAudioMixInputParameters 里进行配置。AVAudioMixInputParameters 只能绑定单个 AVAssetTrack 的音频数据。</li>
+</ul>
+<p>AVAudioMixInputParameters 内可以设置音量，支持分段设置音量，以及设置两个时间点的音量变化，比如 0 - 1 秒，音量大小从 0 - 1.0 线性递增。</p>
+<p>AVAudioMixInputParameters 内还有个 audioTapProcessor 属性，他是一个 MTAudioProcessingTap 类。这个属性提供了接口用于实时处理音频数据。</p>
+<blockquote>
+<p>AVAsset 所有媒体资源的承载类。可以是音频，视频，图像。<br>
+AVMutableComposition 用于组合AVAsset的音视频轨道。<br>
+AVMutableCompositionTrack 分为视频轨道，音频轨道，它由AVAsset内部解码生成。<br>
+AVMutableVideoComposition 视频编辑指令管理类，它是整个视频编辑里动画指令组合。<br>
+AVMutableVideoCompositionInstruction 视频视图编辑指令，可以用它来设置视频的背景颜色等。它可以包含一组AVVideoCompositionLayerInstruction。<br>
+AVMutableVideoCompositionLayerInstruction 视频层编辑指令，可以用它设置视频的transform,opacity等。</p>
+</blockquote>
+<p>https://zhuanlan.zhihu.com/p/369109995<br>
+https://www.codersrc.com/archives/10539.html</p>
+<h3 id="总结总体流程">总结总体流程</h3>
+<p>AVFoundation 视频剪辑的整体工作流程：<br>
+<img src="https://smartxiaosiyu.github.io/post-images/1632815232101.png" alt="" loading="lazy"></p>
+<p>拆解下步骤：</p>
+<ul>
+<li>1.创建一个或多个 AVAsset。</li>
+<li>2.创建 AVComposition、AVVideoComposition 及 AVAudioMix。其中 AVComposition 指定了音视频轨道的时间对齐，AVVideoComposition 指定了视频轨道在任何给定时间点的几何变换与混合，AVAudioMix 管理音频轨道的混合参数。</li>
+<li>我们可以使用这三个对象来创建 AVPlayerItem，并从中创建一个 AVPlayer 来播放编辑效果。</li>
+<li>我们也可以使用这三个对象来创建 AVAssetExportSession，用来将编辑结果写入文件。</li>
+</ul>
+<h2 id="avcomposition">AVComposition</h2>
+<p><strong>AVComposition</strong> 是一个或多个 AVCompositionTrack <strong>音视频轨道的集合</strong>。其中 <strong>AVCompositionTrack</strong> 又可以<strong>包含来自多个 AVAsset 的 AVAssetTrack</strong>。<br>
+<img src="https://smartxiaosiyu.github.io/post-images/1632815522710.png" alt="" loading="lazy"></p>
+<h2 id="avvideocomposition">AVVideoComposition</h2>
+<p>AVVideoComposition 可以用来指定渲染大小和渲染缩放，以及帧率。此外，还存储了实现 AVVideoCompositionInstructionProtocol 协议的 Instruction（指令）数组，这些 Instruction 存储了混合的参数。有了这些混合参数之后，AVVideoComposition 可以通过一个实现 AVVideoCompositing 协议的 Compositor（混合器） 来混合对应的图像帧。</p>
+<p>整体工作流如下图所示：<br>
+<img src="https://smartxiaosiyu.github.io/post-images/1632815956180.png" alt="" loading="lazy"></p>
+<h2 id="avaudiomix">AVAudioMix</h2>
+<p>使用 AVAudioMix，你可以在 AVComposition 的音频轨道上处理音频。AVAudioMix 包含一组的 AVAudioMixInputParameters，每个 AVAudioMixInputParameters 对应一个音频的 AVCompositionTrack。如下图所示<br>
+<img src="https://smartxiaosiyu.github.io/post-images/1632816124491.png" alt="" loading="lazy"></p>
+<p>https://xie.infoq.cn/article/9735e9fb133b5d294b175b4bd</p>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[GPUImage]]></title>
+        <id>https://smartxiaosiyu.github.io/post/gpuimage/</id>
+        <link href="https://smartxiaosiyu.github.io/post/gpuimage/">
+        </link>
+        <updated>2021-09-27T03:20:23.000Z</updated>
+        <content type="html"><![CDATA[<p>https://www.jianshu.com/p/fb8964955e24</p>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[音视频基础]]></title>
+        <id>https://smartxiaosiyu.github.io/post/yin-shi-pin-ji-chu/</id>
+        <link href="https://smartxiaosiyu.github.io/post/yin-shi-pin-ji-chu/">
+        </link>
+        <updated>2021-09-23T07:51:24.000Z</updated>
+        <content type="html"><![CDATA[<p><strong>解协议</strong>的作用，就是将<strong>流媒体协议的数据</strong>，解析为标准的相应的<strong>封装格式数据</strong>。视音频在网络上传播的时候，常常采用各种流媒体协议，例如HTTP，RTMP，或是MMS等等。这些协议在传输视音频数据的同时，也会传输一些信令数据。这些信令数据包括对播放的控制（播放，暂停，停止），或者对网络状态的描述等。解协议的过程中会<strong>去除掉信令数据而只保留视音频数据</strong>。例如，采用RTMP协议传输的数据，经过解协议操作后，输出FLV格式的数据。</p>
+<p><strong>解封装</strong>的作用，就是将输入的封装格式的数据，分离成为音频流压缩编码数据和视频流压缩编码数据。封装格式种类很多，例如MP4，MKV，RMVB，TS，FLV，AVI等等，它的作用就是将已经压缩编码的视频数据和音频数据按照一定的格式放到一起。例如，FLV格式的数据，经过解封装操作后，输出H.264编码的视频码流和AAC编码的音频码流。</p>
+<p><strong>解码</strong>的作用，就是将视频/音频<strong>压缩编码数据</strong>，<strong>解码</strong>成为<strong>非压缩的视频/音频原始数据</strong>。音频的压缩编码标准包含AAC，MP3，AC-3等等，视频的压缩编码标准则包含H.264，MPEG2，VC-1等等。解码是整个系统中最重要也是最复杂的一个环节。通过解码，压缩编码的视频数据输出成为非压缩的颜色数据，例如YUV420P，RGB等等；压缩编码的音频数据输出成为非压缩的音频抽样数据，例如PCM数据</p>
+<p><strong>视音频同步</strong>的作用，就是根据解封装模块处理过程中获取到的参数信息，同步解码出来的视频和音频数据，并将视频音频数据送至系统的显卡和声卡播放出来。</p>
+<p>**流媒体开发:**网络层(socket或st)负责传输，协议层(rtmp或hls)负责网络打包，封装层(flv、ts)负责编解码数据的封装，编码层(h.264和aac)负责图像，音频压缩。<br>
+帧:每帧代表一幅静止的图像</p>
+<p><strong>GOP</strong>:（Group of Pictures）画面组，一个GOP就是一组连续的画面，每个画面都是一帧，一个GOP就是很多帧的集合<br>
+直播的数据，其实是一组图片，包括I帧、P帧、B帧，当用户第一次观看的时候，会寻找I帧，而播放器会到服务器寻找到最近的I帧反馈给用户。因此，GOP Cache增加了端到端延迟，因为它必须要拿到最近的I帧<br>
+GOP Cache的长度越长，画面质量越好</p>
+<p><strong>视频封装格式</strong>：一种储存视频信息的容器，流式封装可以有TS、FLV等，索引式的封装有MP4,MOV,AVI等，<br>
+主要作用：一个视频文件往往会包含图像和音频，还有一些配置信息(如图像和音频的关联，如何解码它们等)：这些内容需要按照一定的规则组织、封装起来.<br>
+注意：会发现封装格式跟文件格式一样，因为一般视频文件格式的后缀名即采用相应的视频封装格式的名称,所以视频文件格式就是视频封装格式。</p>
+<p><strong>视频压缩编码标准</strong>：对视频进行压缩(视频编码)或者解压缩（视频解码）的编码技术,比如MPEG，H.264,这些视频编码技术是压缩编码视频的<br>
+主要作用:是将视频像素数据压缩成为视频码流，从而降低视频的数据量。如果视频不经过压缩编码的话，体积通常是非常大的，一部电影可能就要上百G的空间。<br>
+注意:最影响视频质量的是其视频编码数据和音频编码数据，跟封装格式没有多大关系<br>
+<strong>MPEG</strong>:一种视频压缩方式，它采用了帧间压缩，仅存储连续帧之间有差别的地方 ，从而达到较大的压缩比<br>
+**H.264/AVC:**一种视频压缩方式,采用事先预测和与MPEG中的P-B帧一样的帧预测方法压缩，它可以根据需要产生适合网络情况传输的视频流,还有更高的压缩比，有更好的图象质量<br>
+注意1:如果是从单个画面清晰度比较，MPEG4有优势；从动作连贯性上的清晰度，H.264有优势<br>
+注意2:由于264的算法更加复杂，程序实现烦琐，运行它需要更多的处理器和内存资源。因此，运行264对系统要求是比较高的。<br>
+注意3:由于264的实现更加灵活，它把一些实现留给了厂商自己去实现，虽然这样给实现带来了很多好处，但是不同产品之间互通成了很大的问题，造成了通过A公司的编码器编出的数据，必须通过A公司的解码器去解这样尴尬的事情</p>
+<p>**H.265/HEVC:**一种视频压缩方式,基于H.264，保留原来的某些技术，同时对一些相关的技术加以改进，以改善码流、编码质量、延时和算法复杂度之间的关系，达到最优化设置。<br>
+H.265 是一种更为高效的编码标准，能够在同等画质效果下将内容的体积压缩得更小，传输时更快更省带宽<br>
+<strong>I帧:</strong>(关键帧)保留一副完整的画面，解码时只需要本帧数据就可以完成（因为包含完整画面）</p>
+<p><strong>P帧</strong>:(差别帧)保留这一帧跟之前帧的差别，解码时需要用之前缓存的画面叠加上本帧定义的差别，生成最终画面。（P帧没有完整画面数据，只有与前一帧的画面差别的数据）</p>
+<p><strong>B帧</strong>:(双向差别帧)保留的是本帧与前后帧的差别，解码B帧，不仅要取得之前的缓存画面，还要解码之后的画面，通过前后画面的与本帧数据的叠加取得最终的画面。B帧压缩率高，但是解码时CPU会比较累<br>
+帧内（Intraframe）压缩:当压缩一帧图像时，仅考虑本帧的数据而不考虑相邻帧之间的冗余信息,帧内一般采用有损压缩算法</p>
+<p>**帧间（Interframe）压缩:**时间压缩（Temporal compression），它通过比较时间轴上不同帧之间的数据进行压缩。帧间压缩一般是无损的</p>
+<p><strong>muxing（合成）</strong>：将视频流、音频流甚至是字幕流封装到一个文件中(容器格式（FLV，TS）)，作为一个信号进行传输。一种视频压缩方式,基于H.264，保留原来的某些技术，同时对一些相关的技术加以改进，以改善码流、编码质量、延时和算法复杂度之间的关系，达到最优化设置。</p>
+<p><strong>流媒体服务器</strong></p>
+<p>*** 5.1常用服务器 ***</p>
+<p>SRS：一款国人开发的优秀开源流媒体服务器系统<br>
+BMS:也是一款流媒体服务器系统，但不开源，是SRS的商业版，比SRS功能更多<br>
+nginx:免费开源web服务器，常用来配置流媒体服务器。</p>
+<ul>
+<li>5.2数据分发 *</li>
+</ul>
+<p><strong>CDN：</strong>(Content Delivery Network)，即内容分发网络,将网站的内容发布到最接近用户的网络”边缘”，使用户可以就近取得所需的内容，解决 Internet网络拥挤的状况，提高用户访问网站的响应速度.<br>
+CDN：代理服务器，相当于一个中介。<br>
+CDN工作原理：比如请求流媒体数据<br>
+1.上传流媒体数据到服务器（源站）<br>
+2.源站存储流媒体数据<br>
+3.客户端播放流媒体，向CDN请求编码后的流媒体数据<br>
+4.CDN的服务器响应请求，若节点上没有该流媒体数据存在，则向源站继续请求流媒体数据；若节点上已经缓存了该视频文件，则跳到第6步。<br>
+5.源站响应CDN的请求，将流媒体分发到相应的CDN节点上<br>
+6.CDN将流媒体数据发送到客户端</p>
+<p>**回源：**当有用户访问某一个URL的时候，如果被解析到的那个CDN节点没有缓存响应的内容，或者是缓存已经到期，就会回源站去获取搜索。如果没有人访问，那么CDN节点不会主动去源站拿.</p>
+<p>**带宽:**在固定的时间可传输的数据总量，<br>
+比如64位、800MHz的前端总线，它的数据传输率就等于64bit×800MHz÷8(Byte)=6.4GB/s</p>
+<p><strong>负载均衡:</strong> 由多台服务器以对称的方式组成一个服务器集合，每台服务器都具有等价的地位，都可以单独对外提供服务而无须其他服务器的辅助.<br>
+通过某种负载分担技术，将外部发送来的请求均匀分配到对称结构中的某一台服务器上，而接收到请求的服务器独立地回应客户的请求。<br>
+均衡负载能够平均分配客户请求到服务器列阵，籍此提供快速获取重要数据，解决大量并发访问服务问题。<br>
+这种群集技术可以用最少的投资获得接近于大型主机的性能。</p>
+<p><strong>QoS（带宽管理</strong>）:限制每一个组群的带宽，让有限的带宽发挥最大的效用</p>
+<p>https://www.cnblogs.com/oc-bowen/p/5895482.html</p>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[FFMpeg ]]></title>
+        <id>https://smartxiaosiyu.github.io/post/ffmpeg/</id>
+        <link href="https://smartxiaosiyu.github.io/post/ffmpeg/">
+        </link>
+        <updated>2021-09-23T07:15:12.000Z</updated>
+        <content type="html"><![CDATA[<blockquote>
+<p>FFmpeg全名是Fast Forward MPEG(Moving Picture Experts Group)是一个集成了各种编解码器的库，可以说是一个全能型的工具，从视频采集、视频编码到视频传输（包括RTP、RTCP、RTMP、RTSP等等协议）都可以直接使用FFMPEG来完成，更重要的一点FFMPEG是跨平台的，Windows、Linux、Aandroid、IOS这些主流系统通吃。因此初期强烈建议直接使用FFMPEG。</p>
+</blockquote>
+<p><strong>ffmpeg是用于转码的应用程序。</strong><br>
+<strong>ffplay是用于播放的应用程序</strong><br>
+<strong>ffprobe是用于查看文件格式的应用程序</strong></p>
+<h3 id="库文件">库文件</h3>
+<p>库文件是计算机上的一类文件，提供给使用者一些开箱即用的变量、函数或类。库文件分为静态库和动态库（dll），静态库和动态库的区别体现在程序的链接阶段：静态库在程序的链接阶段被复制到了程序中；动态库在链接阶段没有被复制到程序中，而是程序在运行时由系统动态加载到内存中供程序调用。使用动态库系统只需载入一次，不同的程序可以得到内存中相同的动态库的副本，因此节省了很多内存，而且使用动态库也便于模块化更新程序。<br>
+在操作系统中，许多应用程序并不是只有一个完整的可执行文件，大多数程序模块被分割成一些相对独立的动态库。当我们执行某一个程序时，相应的动态库文件就会被调用。一个应用程序可使用多个动态库文件，一个动态库文件也可能被不同的应用程序使用，这样的动态库文件被称为共享库文件。</p>
+<p><strong>①DLL文件是怎么产生的</strong></p>
+<p>许多应用程序被分割成一些相对独立的动态链接库，放置于系统中，就产生了DLL文件。</p>
+<p><strong>②DLL文件是什么</strong></p>
+<p>DLL(Dynamic Link Library)文件为动态链接库文件，又称“应用程序拓展”，是软件文件类型。在Windows中，许多应用程序并不是一个完整的可执行文件，它们被分割成一些相对独立的动态链接库，即DLL文件，放置于系统中。当我们执行某一个程序时，相应的DLL文件就会被调用。一个应用程序可使用多个DLL文件，一个DLL文件也可能被不同的应用程序使用，这样的DLL文件被称为共享DLL文件。</p>
+<p><strong>③DLL文件有什么用</strong></p>
+<p>DLL文件中存放的是各类程序的函数(子过程)实现过程，当程序需要调用函数时需要先载入DLL，然后取得函数的地址，最后进行调用。使用DLL文件的好处是程序不需要在运行之初加载所有代码，只有在程序需要某个函数的时候才从DLL中取出。另外，使用DLL文件还可以减小程序的体积。</p>
+<h3 id="ffmpeg-的三种版本">FFmpeg 的三种版本</h3>
+<p>分为3个版本：Static，Shared，Dev。前两个版本可以直接在命令行中使用，他们的区别在于：<br>
+<strong>Static 静态库版本</strong>：ffmpeg.exe，ffplay.exe，ffprobe.exe，每个exe的体积都很大，相关的Dll已经被编译到exe里面去了。作为工具而言此版本就可以满足我们的需求；<br>
+<strong>Shared（动态库版本）</strong>：里面除了3个应用程序：ffmpeg.exe，ffplay.exe，ffprobe.exe之外，还有一些Dll，比如说avcodec-54.dll之类的。Shared里面的exe体积很小，他们在运行的时候，到相应的Dll中调用功能。程序运行过程必须依赖于提供的dll文件；<br>
+<strong>Dev（开发者版本）</strong>：是用于开发的，里面包含了库文件xxx.lib以及头文件xxx.h，这个版本不包含exe文件。dev版本中include文件夹内文件用途</p>
+<blockquote>
+<p>libavcodec：用于各种类型声音/图像编解码；<br>
+libavdevice：用于音视频数据采集和渲染等功能的设备相关;<br>
+libavfilter：包含多媒体处理常用的滤镜功能;<br>
+libavformat：包含多种多媒体容器格式的封装、解封装工具;<br>
+libavutil：包含一些公共的工具函数；<br>
+libpostproc：用于后期效果处理；<br>
+libswresample：用于音频重采样和格式转换等功能;<br>
+libswscale：用于视频场景比例缩放、色彩映射转换；</p>
+</blockquote>
+<h3 id="sdl">SDL</h3>
+<p>SDL库的作用说白了就是封装了复杂的视音频底层操作，简化了视音频处理的难度<br>
+SDL（Simple DirectMedia Layer）是一套开放源代码的跨平台多媒体开发库，使用C语言写成。SDL提供了数种控制图像、声音、输出入的函数，让开发者只要用相同或是相似的代码就可以开发出跨多个平台（Linux、Windows、Mac OS X等）的应用软件。目前SDL多用于开发游戏、模拟器、媒体播放器等多媒体应用领域。</p>
+<p>https://blog.csdn.net/leixiaohua1020/article/details/15811977</p>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[ijkPlayer]]></title>
+        <id>https://smartxiaosiyu.github.io/post/ijkplayer/</id>
+        <link href="https://smartxiaosiyu.github.io/post/ijkplayer/">
+        </link>
+        <updated>2021-09-23T03:50:54.000Z</updated>
+        <content type="html"><![CDATA[<p>https://www.jianshu.com/p/7b2f1df74420<br>
+https://juejin.cn/post/6844903698473156615</p>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[音视频基础知识---协议相关RTSP RTMP HLS]]></title>
+        <id>https://smartxiaosiyu.github.io/post/yin-shi-pin-ji-chu-zhi-shi-xie-yi-xiang-guan-rtsp-rtmp-hls/</id>
+        <link href="https://smartxiaosiyu.github.io/post/yin-shi-pin-ji-chu-zhi-shi-xie-yi-xiang-guan-rtsp-rtmp-hls/">
+        </link>
+        <updated>2021-09-16T03:37:38.000Z</updated>
+        <content type="html"><![CDATA[<h3 id="udp-tcp">UDP、TCP</h3>
+<p>UDP/TCP本质上是一种网络传输协议，负责、并规范了信息的传递<br>
+<img src="https://smartxiaosiyu.github.io/post-images/1631763941223.jpeg" alt="" loading="lazy"></p>
+<h3 id="rtsp">RTSP</h3>
+<p>RTSP，是目前三大流媒体协议之一，英文全称为：Real Time Streaming Protocol，即<strong>实时流传输协议</strong>，它是由Real Networks 和 Netscape2家公司共同创立。<strong>它本身并不传输数据</strong>，传输数据的动作可以让UDP/TCP协议完成，而且RTSP可以选择基于RTP协议传输。</p>
+<ul>
+<li>RTSP对流媒体提供了诸如暂停，快进等控制，它不仅提供了对于视频流的控制还定义了流格式，如TS、 mp4 格式。通常应用于安防视频监控等场景，如公安调查监控进行视频的查看、回放、快进、后退等操作，十分友好。</li>
+<li>最大的特点除了<strong>控制视频操作</strong>外还<strong>具有低延时的特点</strong>，通常可实现毫秒级的延时，但是也存在一些弊端，如该视频流<strong>技术实现复杂</strong>，而且<strong>对浏览器很挑剔</strong>，且flash插件播不了，这也极大的限制了它的发展。</li>
+</ul>
+<h3 id="rtmp">RTMP</h3>
+<p>RTMP，英文全称为：Real Time Messaging Protocol，即<strong>实时消息传输协议</strong>，由Adobe公司创立。RTMP主要<strong>基于TCP协议传输</strong>，主要传输 flv， f4v 格式流，最大的特点是装个插件可以在各大浏览器进行播放，播放门槛相对不高，可在手机上得到充分的应用、推广，因此比较受欢迎，<strong>目前也是视频云服务的主推流协议</strong>。此外RTMP<strong>时延也比较低</strong>，目前常用于手机直播、语音通话等场景。</p>
+<ul>
+<li>这种视频流协议传输的数据主要包含2部分，第一，基本单元为Message（消息），第二，最小单元是Chunk（消息块），发送端会把需要传输的媒体数据封装成消息，然后把消息拆分成消息块，每一个消息具有特定的id号，后面将根据这个id号，将一个个零散的Chunk（消息块）又重新拼接成消息（有点小蝌蚪找妈妈的感觉，拆散又合体）。</li>
+</ul>
+<h3 id="hls">HLS</h3>
+<p>HLS，英文全称为：HTTP Live Streaming，由苹果公司提出，它是<strong>基于Http的流媒体网络传输协议</strong>，主要传输TS格式流，最大的特点是<strong>安卓、苹果都能兼容，通用性强</strong>，而且码流切换流畅，满足不同网络、不同画质的用户播放需要，但是因为该种视频流协议也存在较为致命的<strong>缺陷</strong>，那就是<strong>网络延时太高</strong>。</p>
+<ul>
+<li>本质上HLS视频流传输是将整个视频流分成一个个小切片，可理解为切土豆片，这些小片都是基于HTTP文件来下载——先下载，后观看。</li>
+<li>用户观看视频实际上是下载这些小的视频切片，每次只下载一些，苹果官方建议是请求到3个片之后才开始播放，若是直播，时延将超10秒，所以比较适合于点播。</li>
+<li>因此HLS视频的切片一般建议10s，时间间隔太短就切容易造成碎片化太严重不方便数据存储和处理，太长容易造成时延加重。</li>
+</ul>
+<h3 id="rtsp-rtmp-hls对比总结">RTSP、RTMP、HLS对比总结</h3>
+<figure data-type="image" tabindex="1"><img src="https://smartxiaosiyu.github.io/post-images/1631764453146.jpeg" alt="" loading="lazy"></figure>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[iOS AVAudioFoundation 音频导出]]></title>
+        <id>https://smartxiaosiyu.github.io/post/ios-avaudiofoundation-yin-pin-dao-chu/</id>
+        <link href="https://smartxiaosiyu.github.io/post/ios-avaudiofoundation-yin-pin-dao-chu/">
+        </link>
+        <updated>2021-09-16T03:34:33.000Z</updated>
+        <content type="html"><![CDATA[<h3 id="avassetreader">AVAssetReader</h3>
+<p>当我们要去操作音视频数据资源 asset可以用AVAssetReader， 比如读取 asset 中的音频轨道来展示波形等等<br>
+AVAssetReader 不适用于做实时处理。AVAssetReader 没法用来处理 HLS 之类的实时数据流</p>
+<h4 id="读取-asset">读取 Asset</h4>
+<p>每一个 AVAssetReader 一次只能<strong>与一个 asset 关联</strong>，但是这个 asset 可以<strong>包含多个轨道</strong>。由于这个原因通常我们需要为 AVAssetReader 指定一个 AVAssetReaderOutput 的具体子类来具体操作 asset 的读取</p>
+<h4 id="创建-asset-reader">创建 Asset Reader</h4>
+<p>初始化 AVAssetReader 时需要传入相应读取的 asset</p>
+<pre><code>NSError *outError;
+AVAsset *someAsset = &lt;#AVAsset that you want to read#&gt;;
+AVAssetReader *assetReader = [AVAssetReader assetReaderWithAsset:someAsset error:&amp;outError];
+BOOL success = (assetReader != nil);
+</code></pre>
+<h4 id="创建-asset-reader-outputs">创建 Asset Reader Outputs</h4>
+<p>在完成创建 asset reader 后，创建<strong>至少一个 output 对象</strong>来<strong>接收读取的媒体数据</strong>。当创建 output 对象时，要记得设置 alwaysCopiesSampleData 属性为 NO，这样会获得性能上的提升。</p>
+<p>如果我们想从媒体资源中读取一个或多个轨道，并且可能会转换数据的格式，那么可以使用 AVAssetReaderTrackOutput 类，为每个 AVAssetTrack 轨道使用一个 track output 对象</p>
+<p>下面的示例展示了使用 asset reader 来把一个 audio track 压缩为线性的 PCM</p>
+<pre><code>AVAsset *localAsset = assetReader.asset;
+// Get the audio track to read.
+AVAssetTrack *audioTrack = [[localAsset tracksWithMediaType:AVMediaTypeAudio] objectAtIndex:0];
+// Decompression settings for Linear PCM.
+NSDictionary *decompressionAudioSettings = @{AVFormatIDKey: [NSNumber numberWithUnsignedInt:kAudioFormatLinearPCM]};
+// Create the output with the audio track and decompression settings.
+AVAssetReaderOutput *trackOutput = [AVAssetReaderTrackOutput assetReaderTrackOutputWithTrack:audioTrack outputSettings:decompressionAudioSettings];
+// Add the output to the reader if possible.
+if ([assetReader canAddOutput:trackOutput]) {
+    [assetReader addOutput:trackOutput];
+}
+</code></pre>
+<p>下面的代码展示了如何基于一个 asset 来创建我们的 audio mix output 对象去处理所有的音频轨道，然后压缩这些音频轨道为线性 PCM 数据，并为 output 对象设置 audioMix 属性</p>
+<pre><code>AVAudioMix *audioMix = &lt;#An AVAudioMix that specifies how the audio tracks from the AVAsset are mixed#&gt;;
+// Assumes that assetReader was initialized with an AVComposition object.
+AVComposition *composition = (AVComposition *) assetReader.asset;
+
+// Get the audio tracks to read.
+NSArray *audioTracks = [composition tracksWithMediaType:AVMediaTypeAudio];
+
+// Get the decompression settings for Linear PCM.
+NSDictionary *decompressionAudioSettings = @{AVFormatIDKey: [NSNumber numberWithUnsignedInt:kAudioFormatLinearPCM]};
+
+// Create the audio mix output with the audio tracks and decompression setttings.
+AVAssetReaderOutput *audioMixOutput = [AVAssetReaderAudioMixOutput assetReaderAudioMixOutputWithAudioTracks:audioTracks audioSettings:decompressionAudioSettings];
+
+// Associate the audio mix used to mix the audio tracks being read with the output.
+audioMixOutput.audioMix = audioMix;
+
+// Add the output to the reader if possible.
+if ([assetReader canAddOutput:audioMixOutput]) {
+    [assetReader addOutput:audioMixOutput];
+}
+</code></pre>
+<p>下面的代码展示了，如果读取多个视频轨道的媒体数据并将他们压缩为 ARGB 格式。</p>
+<pre><code>AVVideoComposition *videoComposition = &lt;#An AVVideoComposition that specifies how the video tracks from the AVAsset are composited#&gt;;
+// Assumes assetReader was initialized with an AVComposition.
+AVComposition *composition = (AVComposition *) assetReader.asset;
+
+// Get the video tracks to read.
+NSArray *videoTracks = [composition tracksWithMediaType:AVMediaTypeVideo];
+
+// Decompression settings for ARGB.
+NSDictionary *decompressionVideoSettings = @{(id) kCVPixelBufferPixelFormatTypeKey: [NSNumber numberWithUnsignedInt:kCVPixelFormatType_32ARGB], (id) kCVPixelBufferIOSurfacePropertiesKey: [NSDictionary dictionary]};
+
+// Create the video composition output with the video tracks and decompression setttings.
+AVAssetReaderOutput *videoCompositionOutput = [AVAssetReaderVideoCompositionOutput assetReaderVideoCompositionOutputWithVideoTracks:videoTracks videoSettings:decompressionVideoSettings];
+
+// Associate the video composition used to composite the video tracks being read with the output.
+videoCompositionOutput.videoComposition = videoComposition;
+
+// Add the output to the reader if possible.
+if ([assetReader canAddOutput:videoCompositionOutput]) {
+    [assetReader addOutput:videoCompositionOutput];
+}
+</code></pre>
+<h4 id="读取-asset-的媒体数据">读取 Asset 的媒体数据</h4>
+<p>在 output 对象创建完成后，接着就要开始读取数据了，这时候我们需要调用 asset reader 的 startReading 接口。接着，使用 copyNextSampleBuffer 接口来从各个 output 来获取媒体数据。</p>
+<pre><code>// Start the asset reader up.
+[self.assetReader startReading];
+BOOL done = NO;
+while (!done) {
+    // Copy the next sample buffer from the reader output.
+    CMSampleBufferRef sampleBuffer = [self.assetReaderOutput copyNextSampleBuffer];
+    if (sampleBuffer) {
+        // Do something with sampleBuffer here.
+        CFRelease(sampleBuffer);
+        sampleBuffer = NULL;
+    } else {
+        // Find out why the asset reader output couldn't copy another sample buffer.
+        if (self.assetReader.status == AVAssetReaderStatusFailed) {
+            NSError *failureError = self.assetReader.error;
+            // Handle the error here.
+        } else {
+            // The asset reader output has read all of its samples.
+            done = YES;
+        } 
+    }
 }
 </code></pre>
 ]]></content>
     </entry>
     <entry>
-        <title type="html"><![CDATA[iOS Block]]></title>
-        <id>https://smartxiaosiyu.github.io/post/ios-block/</id>
-        <link href="https://smartxiaosiyu.github.io/post/ios-block/">
+        <title type="html"><![CDATA[日积月累]]></title>
+        <id>https://smartxiaosiyu.github.io/post/ri-ji-yue-lei/</id>
+        <link href="https://smartxiaosiyu.github.io/post/ri-ji-yue-lei/">
         </link>
-        <updated>2021-09-02T11:09:23.000Z</updated>
-        <content type="html"><![CDATA[<h3 id="block的数据结构">Block的数据结构</h3>
-<figure data-type="image" tabindex="1"><img src="https://smartxiaosiyu.github.io/post-images/1630582433987.png" alt="" loading="lazy"></figure>
-<blockquote>
-<ul>
-<li>block本质上也是一个OC对象，它内部也有个isa指针</li>
-<li>block是封装了函数调用以及函数调用环境的OC对象</li>
-</ul>
-</blockquote>
-<h3 id="block的变量捕获">Block的变量捕获</h3>
-<p>为了保证block内部能够正常访问外部的变量，block有个变量捕获机制</p>
-<table>
-<thead>
-<tr>
-<th style="text-align:center">变量类型</th>
-<th style="text-align:center">是否捕获到block内部</th>
-<th style="text-align:center">访问方式</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:center">局部变量：auto  离开作用域就会销毁</td>
-<td style="text-align:center">⭕️</td>
-<td style="text-align:center">值传递</td>
-</tr>
-<tr>
-<td style="text-align:center">局部变量：static</td>
-<td style="text-align:center">⭕️</td>
-<td style="text-align:center">指针传递（地址传递）</td>
-</tr>
-<tr>
-<td style="text-align:center">全局变量</td>
-<td style="text-align:center">❌</td>
-<td style="text-align:center">直接访问</td>
-</tr>
-</tbody>
-</table>
-<p><code>当问会不会捕获，只要分析清楚是局部变量还是全局变量 局部变量就会捕获 全局变量不用捕获</code><br>
-<code>OC里所有方法 前面两个参数都是调用者本身</code><em>self</em> <code>调用者本身的函数名</code><em>_cmd</em><br>
-<code>如果block访问属性 （name），其实就是访问 self.name，self是局部变量，所以会捕获</code></p>
-<h3 id="block类型">Block类型</h3>
-<p>block有3种类型，可以通过调用class方法或者isa指针查看具体类型，最终都是继承自NSBlock类型</p>
-<blockquote>
-<ul>
-<li>GlobalBlock</li>
-<li>StackBlock</li>
-<li>MallocBlock<br>
-<img src="https://smartxiaosiyu.github.io/post-images/1630583404563.png" alt="" loading="lazy"><br>
-text 代码段 内存地址比较小<br>
-data段 存储着全局变量<br>
-堆段 一般放alloc出来的内存 动态分配内存 需要自己申请、清理内存（管理内存）<br>
-栈段 存放局部变量 系统会自动分配内存 函数调用完毕 栈里的数据可能是垃圾数据 内存地址比较大</li>
-</ul>
-</blockquote>
-<table>
-<thead>
-<tr>
-<th style="text-align:center">block类型</th>
-<th style="text-align:center">环境</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:center">GlobalBlock</td>
-<td style="text-align:center">不访问auto变量</td>
-</tr>
-<tr>
-<td style="text-align:center">StackBlock</td>
-<td style="text-align:center">访问了auto变量</td>
-</tr>
-<tr>
-<td style="text-align:center">MallocBlock</td>
-<td style="text-align:center">stackBlock调用copy</td>
-</tr>
-</tbody>
-</table>
-<figure data-type="image" tabindex="2"><img src="https://smartxiaosiyu.github.io/post-images/1630584618950.png" alt="" loading="lazy"></figure>
-<blockquote>
-<p>如上图所示 由于访问了auto变量 所以block是一个stack类型 test函数调用完毕 栈内存里的数据可能就被销毁 变成垃圾数据 所以在访问 block里的age变量 获取不到真正的值 只需要copy block  就是MallocBlock 存放到堆上 就可以正确使用</p>
-</blockquote>
-<p>每一种类型的block调用copy后的结果如下所示<br>
-<img src="https://smartxiaosiyu.github.io/post-images/1630584991343.png" alt="" loading="lazy"></p>
+        <updated>2021-09-14T11:40:03.000Z</updated>
+        <content type="html"><![CDATA[<h3 id="异或">异或</h3>
+<pre><code>0^0=0,0^1=1 0异或任何数＝任何数
+
+1^0=1,1^1=0 1异或任何数－任何数取反
+
+任何数异或自己＝把自己置0
+</code></pre>
+<h3 id="按位与">按位与</h3>
+<pre><code>（1）&amp;可以用来取出特定的位
+1&amp;1 = 1 除此之外都是0
+0011 &amp; 0001 可以取出最后一位 
+掩码  xxMask  一般用来按位与值的 宏定义 1&lt;&lt;0 1&lt;&lt;1
+
+（2）将某一位置为0 将掩码取反&amp;这个二进制 ～掩码 = 掩码取反
+</code></pre>
+<pre><code>加两个感叹号 可以强转成具体的布尔值 !!(5) 
+</code></pre>
+<h3 id="按位或">按位或</h3>
+<pre><code>“或” 有一个1 就是1
+（1）将某一位置为1 将掩码｜这个二进制 00000010
+</code></pre>
+<h3 id="位域">位域</h3>
+<pre><code> struct {
+     char tall : 1:
+     char rich : 1;
+     char handsome : 1;
+ }_tallRichHandsome
+ 代表占一位
+</code></pre>
+<h3 id="lldb调试器">lldb调试器</h3>
+<pre><code>p/x 变量 
+
+打印内存地址 p/x &amp;(变量 )   address 
+
+x address 查看内容
+</code></pre>
+<p><strong>布尔类型 8位</strong></p>
+<pre><code>把1位的值 扩展8位 则其他位会变成1 
+2位的值 扩展8位 则正常 拉伸操作
+</code></pre>
+<h3 id="判断视频方向">判断视频方向</h3>
+<pre><code>static func orientationFromTransform(_ transform: CGAffineTransform)
+    -&gt; (orientation: UIImage.Orientation, isPortrait: Bool) {
+        var assetOrientation = UIImage.Orientation.up
+        var isPortrait = false
+        if transform.a == 0 &amp;&amp; transform.b == 1.0 &amp;&amp; transform.c == -1.0 &amp;&amp; transform.d == 0 {
+            assetOrientation = .right
+            isPortrait = true
+        } else if transform.a == 0 &amp;&amp; transform.b == 1.0 &amp;&amp; transform.c == 1.0 &amp;&amp; transform.d == 0 {
+            assetOrientation = .rightMirrored
+            isPortrait = true
+        } else if transform.a == 0 &amp;&amp; transform.b == -1.0 &amp;&amp; transform.c == 1.0 &amp;&amp; transform.d == 0 {
+            assetOrientation = .left
+            isPortrait = true
+        } else if transform.a == 0 &amp;&amp; transform.b == -1.0 &amp;&amp; transform.c == -1.0 &amp;&amp; transform.d == 0 {
+            assetOrientation = .leftMirrored
+            isPortrait = true
+        } else if transform.a == 1.0 &amp;&amp; transform.b == 0 &amp;&amp; transform.c == 0 &amp;&amp; transform.d == 1.0 {
+            assetOrientation = .up
+        } else if transform.a == -1.0 &amp;&amp; transform.b == 0 &amp;&amp; transform.c == 0 &amp;&amp; transform.d == -1.0 {
+            assetOrientation = .down
+        }
+        return (assetOrientation, isPortrait)
+}
+</code></pre>
+<p>0xFF 无符号 255 有符号-1</p>
+<h3 id="共用体">共用体</h3>
+<p>union {<br>
+char wrb;<br>
+}_wrb</p>
+<p>有些枚举 ｜ ｜ ｜  当枚举值很特殊 是2的整数次幂 则可以使用 + 但是不推荐用</p>
+<h3 id="静态库和动态库">静态库和动态库</h3>
+<p>静态库：链接时候完整的拷贝到可执行文件，多次使用多次拷贝，造成冗余，使包的体积变大<br>
+动态库：链接时不复制，程序的运行时，由系统加载到内存中，供系统调用，省内存，和其他应用共用<br>
+<strong>iOS的静态库？</strong><br>
+.a和.framework 样式<br>
+<strong>OS的动态库？</strong><br>
+.dylib和.framework<br>
+<strong>为什么framework既是静态又是动态？</strong><br>
+系统的framework是动态的，我们自己创建的是静态的。<br>
+<strong>.a 和 .framework 的区别是什么？</strong><br>
+.a 是单纯的二进制文件，.framework是二进制问价+资源文件。<br>
+其中.a 不能直接使用，需要 .h文件配合，而.framework则可以直接使用。<br>
+.framework = .a + .h + sorrceFile(资源文件)</p>
+<h3 id="cmtime">CMTime</h3>
+<p>虽然很多通用的开发环境使用双精度类型无法应用于更多的高级时基媒体的开发中。比如，一个单一舍入错误就会导致丢帧或音频丢失。于是苹果在Core Media框架中定义了CMTime数据类型作为时间的格式</p>
+<pre><code>typedef struct
+   
+     CMTimeValue    value;      
+     CMTimeScale    timescale;  
+     CMTimeFlags    flags;      
+     CMTimeEpoch    epoch;      
+   } CMTime;
+</code></pre>
+<p>CMTime计算<br>
+CMTime t4 =CMTimeAdd(t1, t2); 相加<br>
+CMTime t5 =CMTimeSubtract(t3, t1); 相减</p>
+<p><strong>CMTimeMake(a,b) a当前第几帧, b每秒钟多少帧，当前播放时间a/b。 CMTimeMakeWithSeconds(a,b) a当前时间,b每秒钟多少帧。</strong></p>
+<h3 id="cmtimerange">CMTimeRange</h3>
+<p>Core Media框架还为时间范围提供了一个数据类型，称为CMTimeRange</p>
+<pre><code>typedef struct
+{
+    CMTime          start;      
+    CMTime          duration;   
+} CMTimeRange;
+</code></pre>
+<p>创建如下：</p>
+<pre><code> CMTimeRange timeRange1 = CMTimeRangeMake(t1, t2);
+ CMTimeRange timeRange2 = CMTimeRangeFromTimeToTime(t4, t3);
+</code></pre>
+<h3 id="cmtimerange的交集和并集">CMTimeRange的交集和并集</h3>
+<pre><code>  //0-5s
+   CMTimeRange range1 =CMTimeRangeMake(kCMTimeZero, CMTimeMake(5,1));
+  //2-5s
+   CMTimeRange range2 =CMTimeRangeMake(CMTimeMake(2, 1), CMTimeMake(5,1));
+   //交叉时间范围 2-5s
+   CMTimeRange intersectionRange =CMTimeRangeGetIntersection(range1, range2);
+   CMTimeRangeShow(intersectionRange);
+   
+   //总和时间范围 7s
+   CMTimeRange unionRange =CMTimeRangeGetUnion(range1, range2);
+   CMTimeRangeShow(unionRange);
+</code></pre>
+<h3 id="析构函数">析构函数</h3>
+<p>C++的析构函数 == OC的 dealloc 释放 更快</p>
+<h3 id="有符号取值">有符号取值</h3>
+<p>5bits 0x00010000  第五位是符号为 为1的时候是负数  然后先取反码 再取 补码 （原码+1）</p>
+<h3 id="git版本控制忽略部分文件方法gitignore">Git版本控制忽略部分文件方法(.gitignore)</h3>
+<p>https://github.com/github/gitignore<br>
+vim 文件</p>
+<pre><code>            *.a       # 忽略所有 .a 结尾的文件            
+            !lib.a    # 但 lib.a 除外            
+            /TODO     # 仅仅忽略项目根目录下的 TODO 文件，不包括 subdir/TODO           
+            build/    # 忽略 build/ 目录下的所有文件            
+            doc/*.txt # 会忽略 doc/notes.txt 但不包括 doc/server/arch.txt
+</code></pre>
+<p><strong>将.gitignore文件提交到仓库</strong></p>
+<pre><code>git add .gitignore
+git commit -m &quot;添加项目忽略文件&quot;
+git push
+</code></pre>
+<h3 id="注释">注释</h3>
+<p>https://www.cxyzjd.com/article/qq_14920635/89676810</p>
+<h3 id="swift-resultsuccessfailure">Swift Result&lt;Success,Failure&gt;</h3>
+<p>https://juejin.cn/post/6844903875971907598</p>
+<h3 id="cabasicanimation动画及其keypath值和作用">CABasicAnimation动画及其keypath值和作用</h3>
+<p>https://www.cnblogs.com/liuluoxing/p/5765089.html</p>
 ]]></content>
     </entry>
     <entry>
-        <title type="html"><![CDATA[OpenGL ES 封装顶点数据和绘制代码]]></title>
-        <id>https://smartxiaosiyu.github.io/post/opengl-es-feng-zhuang-ding-dian-shu-ju-he-hui-zhi-dai-ma/</id>
-        <link href="https://smartxiaosiyu.github.io/post/opengl-es-feng-zhuang-ding-dian-shu-ju-he-hui-zhi-dai-ma/">
+        <title type="html"><![CDATA[OpenGl ES 缩放 灵魂出窍滤镜]]></title>
+        <id>https://smartxiaosiyu.github.io/post/opengl-es-suo-fang-lu-jing/</id>
+        <link href="https://smartxiaosiyu.github.io/post/opengl-es-suo-fang-lu-jing/">
         </link>
-        <updated>2021-09-01T07:00:10.000Z</updated>
-        <content type="html"><![CDATA[<p><strong>VBO</strong></p>
-<blockquote>
-<p>顶点缓冲对象VBO是在显卡存储空间中开辟出的一块内存缓存区，用于存储顶点的各类属性信息，如顶点坐标，顶点法向量，顶点颜色数据等。 在渲染时，可以直接从VBO中取出顶点的各类属性数据，由于VBO在显存而不是在内存中，不需要从CPU传输数据，处理效率更高。</p>
-</blockquote>
-<p><strong>创建一个顶点属性数组缓冲区</strong></p>
-<blockquote>
-<p>//创建缓存对象并返回缓存对象的标识符<br>
-<code>1.glGenBuffers(1, &amp;name)</code></p>
-</blockquote>
-<blockquote>
-<p>//将缓存对象对应到相应的缓存上<br>
-<code>2.glBindBuffer(GL_ARRAY_BUFFER,self.name);</code></p>
-</blockquote>
-<blockquote>
-<p>//将数据拷贝到缓存对象<br>
-<code>3.glBufferData(</code><br>
-<code>GL_ARRAY_BUFFER, // Initialize buffer contents</code><br>
-<code>bufferSizeBytes, // Number of bytes to copy</code><br>
-<code>dataPtr, // Address of bytes to copy</code><br>
-<code>usage); // Hint: cache in GPU memory</code></p>
-</blockquote>
-<p><strong>准备顶点绘制</strong></p>
-<blockquote>
-<p>//将缓存对象对应到相应的缓存上<br>
-<code>1.glBindBuffer(GL_ARRAY_BUFFER,self.name);</code></p>
-</blockquote>
-<blockquote>
-<p>//启用指定属性  1.出于性能考虑，所有顶点着色器的属性 （Attribute）变量都是关闭的，意味着数据在着色器端是不可见的，哪怕数据已经上传到GPU，由glEnableVertexAttribArray启用指定属性，才可在顶点着色器中访问逐顶点的属性数据. 2.VBO只是建立CPU和GPU之间的逻辑连接，从而实现了CPU数据上传至GPU。但是，数据在GPU端是否可见，即，着色器能否读取到数据，由是否启用了对应的属性决定，这就是glEnableVertexAttribArray的功能，允许顶点着色器读取GPU（服务器端）数据。<br>
-<code>2.glEnableVertexAttribArray(属性);</code></p>
-</blockquote>
-<blockquote>
-<p>//顶点数据传入GPU之后，还需要通知OpenGL如何解释这些顶点数据，这个工作由函数glVertexAttribPointer完成<br>
-<code>3.glVertexAttribPointer(</code><br>
-<code>index,//参数指定顶点属性位置</code><br>
-<code>count,//指定顶点属性大小</code><br>
-<code>GL_FLOAT,//指定数据类型</code><br>
-<code>GL_FALSE,//数据被标准化</code><br>
-<code>(int)self.stride,//步长</code><br>
-<code>NULL + offset);//偏移量 NULL+offset</code></p>
-</blockquote>
-<p><strong>绘制</strong></p>
-<blockquote>
-<p>//绘制<br>
-/*<br>
-glDrawArrays (GLenum mode, GLint first, GLsizei count);提供绘制功能。当采用顶点数组方式绘制图形时，使用该函数。该函数根据顶点数组中的坐标数据和指定的模式，进行绘制。<br>
-参数列表:<br>
-mode，绘制方式，OpenGL2.0以后提供以下参数：GL_POINTS、GL_LINES、GL_LINE_LOOP、GL_LINE_STRIP、GL_TRIANGLES、GL_TRIANGLE_STRIP、GL_TRIANGLE_FAN。<br>
-first，从数组缓存中的哪一位开始绘制，一般为0。<br>
-count，数组中顶点的数量。<br>
-*/<br>
-<code>glDrawArrays(mode, first, count);</code></p>
-</blockquote>
-]]></content>
-    </entry>
-    <entry>
-        <title type="html"><![CDATA[默然相爱寂静欢喜]]></title>
-        <id>https://smartxiaosiyu.github.io/post/lalal/</id>
-        <link href="https://smartxiaosiyu.github.io/post/lalal/">
-        </link>
-        <updated>2021-08-31T12:54:10.000Z</updated>
-        <content type="html"><![CDATA[<p><code>齐保然最爱肖丝雨！</code></p>
+        <updated>2021-09-11T13:58:09.000Z</updated>
+        <content type="html"><![CDATA[<h3 id="缩放滤镜">缩放滤镜</h3>
+<p>修改顶点坐标和纹理坐标的映射关系<br>
+放大过程顶点着色器完成</p>
+<pre><code>attribute vec4 Position;
+attribute vec2 TextureCoords;
+varying vec2 TextureCoordsVarying;
+
+uniform float Time;
+
+const float PI = 3.1415926;
+
+void main (void) {
+    float duration = 0.6;
+    float maxAmplitude = 0.3;
+    
+    float time = mod(Time, duration);
+    float amplitude = 1.0 + maxAmplitude * abs(sin(time * (PI / duration)));
+    
+    gl_Position = vec4(Position.x * amplitude, Position.y * amplitude, Position.zw);
+    TextureCoordsVarying = TextureCoords;
+}
+</code></pre>
+<h3 id="灵魂出窍滤镜">灵魂出窍滤镜</h3>
+<pre><code>precision highp float;
+
+uniform sampler2D Texture;
+varying vec2 TextureCoordsVarying;
+
+uniform float Time;
+
+void main (void) {
+    float duration = 0.7;
+    float maxAlpha = 0.4;
+    float maxScale = 1.8;
+    
+    float progress = mod(Time, duration) / duration; // 0~1
+    float alpha = maxAlpha * (1.0 - progress);
+    float scale = 1.0 + (maxScale - 1.0) * progress;
+    
+    float weakX = 0.5 + (TextureCoordsVarying.x - 0.5) / scale;
+    float weakY = 0.5 + (TextureCoordsVarying.y - 0.5) / scale;
+    vec2 weakTextureCoords = vec2(weakX, weakY);
+    
+    vec4 weakMask = texture2D(Texture, weakTextureCoords);
+    
+    vec4 mask = texture2D(Texture, TextureCoordsVarying);
+    
+    gl_FragColor = mask * (1.0 - alpha) + weakMask * alpha;
+}
+</code></pre>
 ]]></content>
     </entry>
 </feed>
