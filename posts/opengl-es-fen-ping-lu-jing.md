@@ -9,6 +9,7 @@ isTop: false
 ---
 
 ## 原始图片渲染到屏幕上去
+
  + 1.创建上下文
     self.context = [[EAGLContext alloc] initWithAPI:kEAGLRenderingAPIOpenGLES2];
     [EAGLContext setCurrentContext:self.context];
@@ -24,7 +25,7 @@ isTop: false
     self.vertices[2] = (SenceVertex){{1, 1, 0}, {1, 1}};
     self.vertices[3] = (SenceVertex){{1, -1, 0}, {1, 0}};
  + 4.创建图层
-    `CAEAGLLayer *layer = [[CAEAGLLayer alloc] init];`
+    CAEAGLLayer *layer = [[CAEAGLLayer alloc] init];
  + 5.绑定渲染缓存区
    + 渲染缓存区、帧缓存区
         >1.渲染缓存区,帧缓存区对象
