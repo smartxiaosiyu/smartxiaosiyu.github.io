@@ -1,0 +1,352 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>日积月累 | SmartXiaosiyu</title>
+<link rel="shortcut icon" href="https://smartxiaosiyu.github.io/favicon.ico?v=1637130305299">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
+<link rel="stylesheet" href="https://smartxiaosiyu.github.io/styles/main.css">
+<link rel="alternate" type="application/atom+xml" title="日积月累 | SmartXiaosiyu - Atom Feed" href="https://smartxiaosiyu.github.io/atom.xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
+
+
+
+    <meta name="description" content="异或
+0^0=0,0^1=1 0异或任何数＝任何数
+
+1^0=1,1^1=0 1异或任何数－任何数取反
+
+任何数异或自己＝把自己置0
+
+按位与
+（1）&amp;可以用来取出特定的位
+1&amp;1 = 1 除此之外都是0
+0011 &amp..." />
+    <meta name="keywords" content="日积月累" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+    <script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+  </head>
+  <body>
+    <div class="main">
+      <div class="main-content">
+        <div class="site-header">
+  <a href="https://smartxiaosiyu.github.io">
+  <img class="avatar" src="https://smartxiaosiyu.github.io/images/avatar.png?v=1637130305299" alt="">
+  </a>
+  <h1 class="site-title">
+    SmartXiaosiyu
+  </h1>
+  <p class="site-description">
+    BugMaker
+  </p>
+  <div class="menu-container">
+    
+      
+        <a href="/" class="menu">
+          首页
+        </a>
+      
+    
+      
+        <a href="/archives" class="menu">
+          归档
+        </a>
+      
+    
+      
+        <a href="/tags" class="menu">
+          标签
+        </a>
+      
+    
+      
+        <a href="/post/about" class="menu">
+          关于
+        </a>
+      
+    
+  </div>
+  <div class="social-container">
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+</div>
+
+        <div class="post-detail">
+          <article class="post">
+            <h2 class="post-title">
+              日积月累
+            </h2>
+            <div class="post-info">
+              <span>
+                2021-09-14
+              </span>
+              <span>
+                6 min read
+              </span>
+              
+                <a href="https://smartxiaosiyu.github.io/tag/KwflDJgtq/" class="post-tag">
+                  # 日积月累
+                </a>
+              
+            </div>
+            
+            <div class="post-content-wrapper">
+              <div class="post-content">
+                <h3 id="异或">异或</h3>
+<pre><code>0^0=0,0^1=1 0异或任何数＝任何数
+
+1^0=1,1^1=0 1异或任何数－任何数取反
+
+任何数异或自己＝把自己置0
+</code></pre>
+<h3 id="按位与">按位与</h3>
+<pre><code>（1）&amp;可以用来取出特定的位
+1&amp;1 = 1 除此之外都是0
+0011 &amp; 0001 可以取出最后一位 
+掩码  xxMask  一般用来按位与值的 宏定义 1&lt;&lt;0 1&lt;&lt;1
+
+（2）将某一位置为0 将掩码取反&amp;这个二进制 ～掩码 = 掩码取反
+</code></pre>
+<pre><code>加两个感叹号 可以强转成具体的布尔值 !!(5) 
+</code></pre>
+<h3 id="按位或">按位或</h3>
+<pre><code>“或” 有一个1 就是1
+（1）将某一位置为1 将掩码｜这个二进制 00000010
+</code></pre>
+<h3 id="位域">位域</h3>
+<pre><code> struct {
+     char tall : 1:
+     char rich : 1;
+     char handsome : 1;
+ }_tallRichHandsome
+ 代表占一位
+</code></pre>
+<h3 id="lldb调试器">lldb调试器</h3>
+<pre><code>p/x 变量 
+
+打印内存地址 p/x &amp;(变量 )   address 
+
+x address 查看内容
+</code></pre>
+<p><strong>布尔类型 8位</strong></p>
+<pre><code>把1位的值 扩展8位 则其他位会变成1 
+2位的值 扩展8位 则正常 拉伸操作
+</code></pre>
+<h3 id="判断视频方向">判断视频方向</h3>
+<pre><code>static func orientationFromTransform(_ transform: CGAffineTransform)
+    -&gt; (orientation: UIImage.Orientation, isPortrait: Bool) {
+        var assetOrientation = UIImage.Orientation.up
+        var isPortrait = false
+        if transform.a == 0 &amp;&amp; transform.b == 1.0 &amp;&amp; transform.c == -1.0 &amp;&amp; transform.d == 0 {
+            assetOrientation = .right
+            isPortrait = true
+        } else if transform.a == 0 &amp;&amp; transform.b == 1.0 &amp;&amp; transform.c == 1.0 &amp;&amp; transform.d == 0 {
+            assetOrientation = .rightMirrored
+            isPortrait = true
+        } else if transform.a == 0 &amp;&amp; transform.b == -1.0 &amp;&amp; transform.c == 1.0 &amp;&amp; transform.d == 0 {
+            assetOrientation = .left
+            isPortrait = true
+        } else if transform.a == 0 &amp;&amp; transform.b == -1.0 &amp;&amp; transform.c == -1.0 &amp;&amp; transform.d == 0 {
+            assetOrientation = .leftMirrored
+            isPortrait = true
+        } else if transform.a == 1.0 &amp;&amp; transform.b == 0 &amp;&amp; transform.c == 0 &amp;&amp; transform.d == 1.0 {
+            assetOrientation = .up
+        } else if transform.a == -1.0 &amp;&amp; transform.b == 0 &amp;&amp; transform.c == 0 &amp;&amp; transform.d == -1.0 {
+            assetOrientation = .down
+        }
+        return (assetOrientation, isPortrait)
+}
+</code></pre>
+<p>0xFF 无符号 255 有符号-1</p>
+<h3 id="共用体">共用体</h3>
+<p>union {<br>
+char wrb;<br>
+}_wrb</p>
+<p>有些枚举 ｜ ｜ ｜  当枚举值很特殊 是2的整数次幂 则可以使用 + 但是不推荐用</p>
+<h3 id="静态库和动态库">静态库和动态库</h3>
+<p>静态库：链接时候完整的拷贝到可执行文件，多次使用多次拷贝，造成冗余，使包的体积变大<br>
+动态库：链接时不复制，程序的运行时，由系统加载到内存中，供系统调用，省内存，和其他应用共用<br>
+<strong>iOS的静态库？</strong><br>
+.a和.framework 样式<br>
+<strong>OS的动态库？</strong><br>
+.dylib和.framework<br>
+<strong>为什么framework既是静态又是动态？</strong><br>
+系统的framework是动态的，我们自己创建的是静态的。<br>
+<strong>.a 和 .framework 的区别是什么？</strong><br>
+.a 是单纯的二进制文件，.framework是二进制问价+资源文件。<br>
+其中.a 不能直接使用，需要 .h文件配合，而.framework则可以直接使用。<br>
+.framework = .a + .h + sorrceFile(资源文件)</p>
+<h3 id="cmtime">CMTime</h3>
+<p>虽然很多通用的开发环境使用双精度类型无法应用于更多的高级时基媒体的开发中。比如，一个单一舍入错误就会导致丢帧或音频丢失。于是苹果在Core Media框架中定义了CMTime数据类型作为时间的格式</p>
+<pre><code>typedef struct
+   
+     CMTimeValue    value;      
+     CMTimeScale    timescale;  
+     CMTimeFlags    flags;      
+     CMTimeEpoch    epoch;      
+   } CMTime;
+</code></pre>
+<p>CMTime计算<br>
+CMTime t4 =CMTimeAdd(t1, t2); 相加<br>
+CMTime t5 =CMTimeSubtract(t3, t1); 相减</p>
+<p><strong>CMTimeMake(a,b) a当前第几帧, b每秒钟多少帧，当前播放时间a/b。 CMTimeMakeWithSeconds(a,b) a当前时间,b每秒钟多少帧。</strong></p>
+<h3 id="cmtimerange">CMTimeRange</h3>
+<p>Core Media框架还为时间范围提供了一个数据类型，称为CMTimeRange</p>
+<pre><code>typedef struct
+{
+    CMTime          start;      
+    CMTime          duration;   
+} CMTimeRange;
+</code></pre>
+<p>创建如下：</p>
+<pre><code> CMTimeRange timeRange1 = CMTimeRangeMake(t1, t2);
+ CMTimeRange timeRange2 = CMTimeRangeFromTimeToTime(t4, t3);
+</code></pre>
+<h3 id="cmtimerange的交集和并集">CMTimeRange的交集和并集</h3>
+<pre><code>  //0-5s
+   CMTimeRange range1 =CMTimeRangeMake(kCMTimeZero, CMTimeMake(5,1));
+  //2-5s
+   CMTimeRange range2 =CMTimeRangeMake(CMTimeMake(2, 1), CMTimeMake(5,1));
+   //交叉时间范围 2-5s
+   CMTimeRange intersectionRange =CMTimeRangeGetIntersection(range1, range2);
+   CMTimeRangeShow(intersectionRange);
+   
+   //总和时间范围 7s
+   CMTimeRange unionRange =CMTimeRangeGetUnion(range1, range2);
+   CMTimeRangeShow(unionRange);
+</code></pre>
+<h3 id="析构函数">析构函数</h3>
+<p>C++的析构函数 == OC的 dealloc 释放 更快</p>
+<h3 id="有符号取值">有符号取值</h3>
+<p>5bits 0x00010000  第五位是符号为 为1的时候是负数  然后先取反码 再取 补码 （原码+1）</p>
+<h3 id="git版本控制忽略部分文件方法gitignore">Git版本控制忽略部分文件方法(.gitignore)</h3>
+<p>https://github.com/github/gitignore<br>
+vim 文件</p>
+<pre><code>            *.a       # 忽略所有 .a 结尾的文件            
+            !lib.a    # 但 lib.a 除外            
+            /TODO     # 仅仅忽略项目根目录下的 TODO 文件，不包括 subdir/TODO           
+            build/    # 忽略 build/ 目录下的所有文件            
+            doc/*.txt # 会忽略 doc/notes.txt 但不包括 doc/server/arch.txt
+</code></pre>
+<p><strong>将.gitignore文件提交到仓库</strong></p>
+<pre><code>git add .gitignore
+git commit -m &quot;添加项目忽略文件&quot;
+git push
+</code></pre>
+<h3 id="注释">注释</h3>
+<p>https://www.cxyzjd.com/article/qq_14920635/89676810</p>
+<h3 id="swift-resultsuccessfailure">Swift Result&lt;Success,Failure&gt;</h3>
+<p>https://juejin.cn/post/6844903875971907598</p>
+<h3 id="cabasicanimation动画及其keypath值和作用">CABasicAnimation动画及其keypath值和作用</h3>
+<p>https://www.cnblogs.com/liuluoxing/p/5765089.html</p>
+
+              </div>
+              <div class="toc-container">
+                <ul class="markdownIt-TOC">
+<li>
+<ul>
+<li>
+<ul>
+<li><a href="#%E5%BC%82%E6%88%96">异或</a></li>
+<li><a href="#%E6%8C%89%E4%BD%8D%E4%B8%8E">按位与</a></li>
+<li><a href="#%E6%8C%89%E4%BD%8D%E6%88%96">按位或</a></li>
+<li><a href="#%E4%BD%8D%E5%9F%9F">位域</a></li>
+<li><a href="#lldb%E8%B0%83%E8%AF%95%E5%99%A8">lldb调试器</a></li>
+<li><a href="#%E5%88%A4%E6%96%AD%E8%A7%86%E9%A2%91%E6%96%B9%E5%90%91">判断视频方向</a></li>
+<li><a href="#%E5%85%B1%E7%94%A8%E4%BD%93">共用体</a></li>
+<li><a href="#%E9%9D%99%E6%80%81%E5%BA%93%E5%92%8C%E5%8A%A8%E6%80%81%E5%BA%93">静态库和动态库</a></li>
+<li><a href="#cmtime">CMTime</a></li>
+<li><a href="#cmtimerange">CMTimeRange</a></li>
+<li><a href="#cmtimerange%E7%9A%84%E4%BA%A4%E9%9B%86%E5%92%8C%E5%B9%B6%E9%9B%86">CMTimeRange的交集和并集</a></li>
+<li><a href="#%E6%9E%90%E6%9E%84%E5%87%BD%E6%95%B0">析构函数</a></li>
+<li><a href="#%E6%9C%89%E7%AC%A6%E5%8F%B7%E5%8F%96%E5%80%BC">有符号取值</a></li>
+<li><a href="#git%E7%89%88%E6%9C%AC%E6%8E%A7%E5%88%B6%E5%BF%BD%E7%95%A5%E9%83%A8%E5%88%86%E6%96%87%E4%BB%B6%E6%96%B9%E6%B3%95gitignore">Git版本控制忽略部分文件方法(.gitignore)</a></li>
+<li><a href="#%E6%B3%A8%E9%87%8A">注释</a></li>
+<li><a href="#swift-resultsuccessfailure">Swift Result&lt;Success,Failure&gt;</a></li>
+<li><a href="#cabasicanimation%E5%8A%A8%E7%94%BB%E5%8F%8A%E5%85%B6keypath%E5%80%BC%E5%92%8C%E4%BD%9C%E7%94%A8">CABasicAnimation动画及其keypath值和作用</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+              </div>
+            </div>
+          </article>
+        </div>
+
+        
+          <div class="next-post">
+            <div class="next">下一篇</div>
+            <a href="https://smartxiaosiyu.github.io/post/opengl-es-suo-fang-lu-jing/">
+              <h3 class="post-title">
+                OpenGl ES 缩放 灵魂出窍滤镜
+              </h3>
+            </a>
+          </div>
+        
+
+        
+
+        <div class="site-footer">
+  Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a>
+  <a class="rss" href="https://smartxiaosiyu.github.io/atom.xml" target="_blank">
+    <i class="ri-rss-line"></i> RSS
+  </a>
+</div>
+
+      </div>
+    </div>
+
+    <script>
+      hljs.initHighlightingOnLoad()
+
+      let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
+
+      // This should probably be throttled.
+      // Especially because it triggers during smooth scrolling.
+      // https://lodash.com/docs/4.17.10#throttle
+      // You could do like...
+      // window.addEventListener("scroll", () => {
+      //    _.throttle(doThatStuff, 100);
+      // });
+      // Only not doing it here to keep this Pen dependency-free.
+
+      window.addEventListener("scroll", event => {
+        let fromTop = window.scrollY;
+
+        mainNavLinks.forEach((link, index) => {
+          let section = document.getElementById(decodeURI(link.hash).substring(1));
+          let nextSection = null
+          if (mainNavLinks[index + 1]) {
+            nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
+          }
+          if (section.offsetTop <= fromTop) {
+            if (nextSection) {
+              if (nextSection.offsetTop > fromTop) {
+                link.classList.add("current");
+              } else {
+                link.classList.remove("current");    
+              }
+            } else {
+              link.classList.add("current");
+            }
+          } else {
+            link.classList.remove("current");
+          }
+        });
+      });
+
+    </script>
+  </body>
+</html>

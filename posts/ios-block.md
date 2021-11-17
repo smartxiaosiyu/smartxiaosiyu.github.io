@@ -49,3 +49,83 @@ data段 存储着全局变量
 
 每一种类型的block调用copy后的结果如下所示
 ![](https://smartxiaosiyu.github.io/post-images/1630584991343.png)
+
+### Block的copy
+**在ARC的情况下 会自动将栈上的block放到堆上去**
+ + block作为函数返回值时
+ + 将block赋值给__strong指针时
+ + _block作为Cocoa API中方法名含有usingBlock的方法参数时
+ + block作为GCD API的方法参数时
+  
+> 函数指针 保存的是函数地址
+
+### 当block内部访问了对象类型的auto变量时
+ + **如果block是在栈上，将不会对auto变量产生强引用**
+ + **如果Block被拷贝到堆上**
+    +  会调用block内部的copy函数
+    +  copy函数会调用_block_object_assign函数
+    +  函数会根据auto的变量的修饰符做出相应的操作 类似于retain （形成强引用弱引用）
+ + ** 如果block从堆上移除**
+    + 会调用block内部的dispose函数
+    + dispose函数内部会调用_Block_object_dispose函数
+    + _Block_object_dispose函数会自动释放引用的auto变量（release） 当然auto变量的对象到底释不释放 取决于引用计数是否为0
+
+一个对象什么时候释放 就看bloc访问对象的强引用什么时候销毁 释放掉
+
+### 修改block内部变量__block
+ + 变量是全局变量或者static修饰的变量
+ + 变量是auto修饰的变量 __block 修饰符修饰 
+ + __block可以用于解决block内部无法修改auto变量值的问题
+ + __block不能修饰全局变量、静态变量（static）
+ + 编译器会将__block变量包装成一个对象
+
+
+![](https://smartxiaosiyu.github.io/post-images/1630980710798.png)
+![](https://smartxiaosiyu.github.io/post-images/1630980719497.png)
+![](https://smartxiaosiyu.github.io/post-images/1630980726397.png)
+![](https://smartxiaosiyu.github.io/post-images/1630980733270.png)
+
+block内部修改age 实则是修改__block_byref_age_0.forwading.age 的值
+
+```
+NSMutableArray *array = [NSMutableArray array]
+XSYBlock block = {
+    [array addOIbject:@(1)];
+}
+是可以的 无需__block 因为 这个是在使用指针 不是赋值（修改变量里的值）
+```
+### __block的内存管理
+ + 当block在栈上时，并不会对__block变量产生强引用
+ + 当block被copy到堆时
+   + 会调用block内部的copy函数
+   + copy函数内部会调用_Block_object_assign函数
+   + _Block_object_assign函数会对__block变量形成**强引用（retain）**
+
+![](https://smartxiaosiyu.github.io/post-images/1630996361399.png)
+
++ 当block从堆中移除时
+   + 会调用block内部的dispose函数
+   + dispose函数内部会调用_Block_object_dispose函数
+   + _Block_object_dispose函数会自动释放引用的__block变量（release）
+![](https://smartxiaosiyu.github.io/post-images/1630996445157.png)
+
+### forwarding指针
+![](https://smartxiaosiyu.github.io/post-images/1631006099981.png)
+目的就是 无论谁堆上的age 还是栈上的age 通过forwading指向堆上的age 
+
+>  int a = 0 局部变量存在栈上的  p/x &a  打印a的内存地址
+  
+MRC 环境下  __block 修饰 copy函数内部会调用_Block_object_assign函数 但是不会retain 所以不存在强引用  （视频083 14min）
+
+> 修饰block 是strong或者copy都会拷贝到堆上 但是最好copy 因为MRC ARC统一
+
+### 循环引用
+**ARC**
++ __weak：不会产生强引用，指向的对象销毁时，会自动让指针置为nil
++  __unsafe_unretained：不会产生强引用，不安全，指向的对象销毁时，指针存储的地址值不变
++  __block
+  ![](https://smartxiaosiyu.github.io/post-images/1631102517377.png)
+**MRC**
++  __unsafe_unretained
++  __block 不会产生强引用
+  ![](https://smartxiaosiyu.github.io/post-images/1631103110274.png)

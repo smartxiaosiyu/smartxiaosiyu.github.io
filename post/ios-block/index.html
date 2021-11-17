@@ -3,7 +3,7 @@
     <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>iOS Block | SmartXiaosiyu</title>
-<link rel="shortcut icon" href="https://smartxiaosiyu.github.io/favicon.ico?v=1630747208985">
+<link rel="shortcut icon" href="https://smartxiaosiyu.github.io/favicon.ico?v=1637130305299">
 <link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
 <link rel="stylesheet" href="https://smartxiaosiyu.github.io/styles/main.css">
 <link rel="alternate" type="application/atom+xml" title="iOS Block | SmartXiaosiyu - Atom Feed" href="https://smartxiaosiyu.github.io/atom.xml">
@@ -31,7 +31,7 @@ Block的变量捕获
       <div class="main-content">
         <div class="site-header">
   <a href="https://smartxiaosiyu.github.io">
-  <img class="avatar" src="https://smartxiaosiyu.github.io/images/avatar.png?v=1630747208985" alt="">
+  <img class="avatar" src="https://smartxiaosiyu.github.io/images/avatar.png?v=1637130305299" alt="">
   </a>
   <h1 class="site-title">
     SmartXiaosiyu
@@ -91,7 +91,7 @@ Block的变量捕获
                 2021-09-02
               </span>
               <span>
-                2 min read
+                5 min read
               </span>
               
                 <a href="https://smartxiaosiyu.github.io/tag/ELGGUBv5b/" class="post-tag">
@@ -183,6 +183,99 @@ data段 存储着全局变量<br>
 </blockquote>
 <p>每一种类型的block调用copy后的结果如下所示<br>
 <img src="https://smartxiaosiyu.github.io/post-images/1630584991343.png" alt="" loading="lazy"></p>
+<h3 id="block的copy">Block的copy</h3>
+<p><strong>在ARC的情况下 会自动将栈上的block放到堆上去</strong></p>
+<ul>
+<li>block作为函数返回值时</li>
+<li>将block赋值给__strong指针时</li>
+<li>_block作为Cocoa API中方法名含有usingBlock的方法参数时</li>
+<li>block作为GCD API的方法参数时</li>
+</ul>
+<blockquote>
+<p>函数指针 保存的是函数地址</p>
+</blockquote>
+<h3 id="当block内部访问了对象类型的auto变量时">当block内部访问了对象类型的auto变量时</h3>
+<ul>
+<li><strong>如果block是在栈上，将不会对auto变量产生强引用</strong></li>
+<li><strong>如果Block被拷贝到堆上</strong>
+<ul>
+<li>会调用block内部的copy函数</li>
+<li>copy函数会调用_block_object_assign函数</li>
+<li>函数会根据auto的变量的修饰符做出相应的操作 类似于retain （形成强引用弱引用）</li>
+</ul>
+</li>
+<li>** 如果block从堆上移除**
+<ul>
+<li>会调用block内部的dispose函数</li>
+<li>dispose函数内部会调用_Block_object_dispose函数</li>
+<li>_Block_object_dispose函数会自动释放引用的auto变量（release） 当然auto变量的对象到底释不释放 取决于引用计数是否为0</li>
+</ul>
+</li>
+</ul>
+<p>一个对象什么时候释放 就看bloc访问对象的强引用什么时候销毁 释放掉</p>
+<h3 id="修改block内部变量__block">修改block内部变量__block</h3>
+<ul>
+<li>变量是全局变量或者static修饰的变量</li>
+<li>变量是auto修饰的变量 __block 修饰符修饰</li>
+<li>__block可以用于解决block内部无法修改auto变量值的问题</li>
+<li>__block不能修饰全局变量、静态变量（static）</li>
+<li>编译器会将__block变量包装成一个对象</li>
+</ul>
+<p><img src="https://smartxiaosiyu.github.io/post-images/1630980710798.png" alt="" loading="lazy"><br>
+<img src="https://smartxiaosiyu.github.io/post-images/1630980719497.png" alt="" loading="lazy"><br>
+<img src="https://smartxiaosiyu.github.io/post-images/1630980726397.png" alt="" loading="lazy"><br>
+<img src="https://smartxiaosiyu.github.io/post-images/1630980733270.png" alt="" loading="lazy"></p>
+<p>block内部修改age 实则是修改__block_byref_age_0.forwading.age 的值</p>
+<pre><code>NSMutableArray *array = [NSMutableArray array]
+XSYBlock block = {
+    [array addOIbject:@(1)];
+}
+是可以的 无需__block 因为 这个是在使用指针 不是赋值（修改变量里的值）
+</code></pre>
+<h3 id="__block的内存管理">__block的内存管理</h3>
+<ul>
+<li>当block在栈上时，并不会对__block变量产生强引用</li>
+<li>当block被copy到堆时
+<ul>
+<li>会调用block内部的copy函数</li>
+<li>copy函数内部会调用_Block_object_assign函数</li>
+<li>_Block_object_assign函数会对__block变量形成<strong>强引用（retain）</strong></li>
+</ul>
+</li>
+</ul>
+<figure data-type="image" tabindex="3"><img src="https://smartxiaosiyu.github.io/post-images/1630996361399.png" alt="" loading="lazy"></figure>
+<ul>
+<li>当block从堆中移除时
+<ul>
+<li>会调用block内部的dispose函数</li>
+<li>dispose函数内部会调用_Block_object_dispose函数</li>
+<li>_Block_object_dispose函数会自动释放引用的__block变量（release）<br>
+<img src="https://smartxiaosiyu.github.io/post-images/1630996445157.png" alt="" loading="lazy"></li>
+</ul>
+</li>
+</ul>
+<h3 id="forwarding指针">forwarding指针</h3>
+<p><img src="https://smartxiaosiyu.github.io/post-images/1631006099981.png" alt="" loading="lazy"><br>
+目的就是 无论谁堆上的age 还是栈上的age 通过forwading指向堆上的age</p>
+<blockquote>
+<p>int a = 0 局部变量存在栈上的  p/x &amp;a  打印a的内存地址</p>
+</blockquote>
+<p>MRC 环境下  __block 修饰 copy函数内部会调用_Block_object_assign函数 但是不会retain 所以不存在强引用  （视频083 14min）</p>
+<blockquote>
+<p>修饰block 是strong或者copy都会拷贝到堆上 但是最好copy 因为MRC ARC统一</p>
+</blockquote>
+<h3 id="循环引用">循环引用</h3>
+<p><strong>ARC</strong></p>
+<ul>
+<li>__weak：不会产生强引用，指向的对象销毁时，会自动让指针置为nil</li>
+<li>__unsafe_unretained：不会产生强引用，不安全，指向的对象销毁时，指针存储的地址值不变</li>
+<li>__block<br>
+<img src="https://smartxiaosiyu.github.io/post-images/1631102517377.png" alt="" loading="lazy"><br>
+<strong>MRC</strong></li>
+<li>__unsafe_unretained</li>
+<li>__block 不会产生强引用<br>
+<img src="https://smartxiaosiyu.github.io/post-images/1631103110274.png" alt="" loading="lazy"></li>
+</ul>
 
               </div>
               <div class="toc-container">
@@ -194,6 +287,12 @@ data段 存储着全局变量<br>
 <li><a href="#block%E7%9A%84%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84">Block的数据结构</a></li>
 <li><a href="#block%E7%9A%84%E5%8F%98%E9%87%8F%E6%8D%95%E8%8E%B7">Block的变量捕获</a></li>
 <li><a href="#block%E7%B1%BB%E5%9E%8B">Block类型</a></li>
+<li><a href="#block%E7%9A%84copy">Block的copy</a></li>
+<li><a href="#%E5%BD%93block%E5%86%85%E9%83%A8%E8%AE%BF%E9%97%AE%E4%BA%86%E5%AF%B9%E8%B1%A1%E7%B1%BB%E5%9E%8B%E7%9A%84auto%E5%8F%98%E9%87%8F%E6%97%B6">当block内部访问了对象类型的auto变量时</a></li>
+<li><a href="#%E4%BF%AE%E6%94%B9block%E5%86%85%E9%83%A8%E5%8F%98%E9%87%8F__block">修改block内部变量__block</a></li>
+<li><a href="#__block%E7%9A%84%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86">__block的内存管理</a></li>
+<li><a href="#forwarding%E6%8C%87%E9%92%88">forwarding指针</a></li>
+<li><a href="#%E5%BE%AA%E7%8E%AF%E5%BC%95%E7%94%A8">循环引用</a></li>
 </ul>
 </li>
 </ul>

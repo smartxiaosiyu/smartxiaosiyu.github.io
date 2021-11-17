@@ -1,0 +1,222 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>音视频基础 | SmartXiaosiyu</title>
+<link rel="shortcut icon" href="https://smartxiaosiyu.github.io/favicon.ico?v=1637130305299">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
+<link rel="stylesheet" href="https://smartxiaosiyu.github.io/styles/main.css">
+<link rel="alternate" type="application/atom+xml" title="音视频基础 | SmartXiaosiyu - Atom Feed" href="https://smartxiaosiyu.github.io/atom.xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
+
+
+
+    <meta name="description" content="解协议的作用，就是将流媒体协议的数据，解析为标准的相应的封装格式数据。视音频在网络上传播的时候，常常采用各种流媒体协议，例如HTTP，RTMP，或是MMS等等。这些协议在传输视音频数据的同时，也会传输一些信令数据。这些信令数据包括对播放的控..." />
+    <meta name="keywords" content="音视频" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+    <script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+  </head>
+  <body>
+    <div class="main">
+      <div class="main-content">
+        <div class="site-header">
+  <a href="https://smartxiaosiyu.github.io">
+  <img class="avatar" src="https://smartxiaosiyu.github.io/images/avatar.png?v=1637130305299" alt="">
+  </a>
+  <h1 class="site-title">
+    SmartXiaosiyu
+  </h1>
+  <p class="site-description">
+    BugMaker
+  </p>
+  <div class="menu-container">
+    
+      
+        <a href="/" class="menu">
+          首页
+        </a>
+      
+    
+      
+        <a href="/archives" class="menu">
+          归档
+        </a>
+      
+    
+      
+        <a href="/tags" class="menu">
+          标签
+        </a>
+      
+    
+      
+        <a href="/post/about" class="menu">
+          关于
+        </a>
+      
+    
+  </div>
+  <div class="social-container">
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+</div>
+
+        <div class="post-detail">
+          <article class="post">
+            <h2 class="post-title">
+              音视频基础
+            </h2>
+            <div class="post-info">
+              <span>
+                2021-09-23
+              </span>
+              <span>
+                9 min read
+              </span>
+              
+                <a href="https://smartxiaosiyu.github.io/tag/mB2oscScl/" class="post-tag">
+                  # 音视频
+                </a>
+              
+            </div>
+            
+            <div class="post-content-wrapper">
+              <div class="post-content">
+                <p><strong>解协议</strong>的作用，就是将<strong>流媒体协议的数据</strong>，解析为标准的相应的<strong>封装格式数据</strong>。视音频在网络上传播的时候，常常采用各种流媒体协议，例如HTTP，RTMP，或是MMS等等。这些协议在传输视音频数据的同时，也会传输一些信令数据。这些信令数据包括对播放的控制（播放，暂停，停止），或者对网络状态的描述等。解协议的过程中会<strong>去除掉信令数据而只保留视音频数据</strong>。例如，采用RTMP协议传输的数据，经过解协议操作后，输出FLV格式的数据。</p>
+<p><strong>解封装</strong>的作用，就是将输入的封装格式的数据，分离成为音频流压缩编码数据和视频流压缩编码数据。封装格式种类很多，例如MP4，MKV，RMVB，TS，FLV，AVI等等，它的作用就是将已经压缩编码的视频数据和音频数据按照一定的格式放到一起。例如，FLV格式的数据，经过解封装操作后，输出H.264编码的视频码流和AAC编码的音频码流。</p>
+<p><strong>解码</strong>的作用，就是将视频/音频<strong>压缩编码数据</strong>，<strong>解码</strong>成为<strong>非压缩的视频/音频原始数据</strong>。音频的压缩编码标准包含AAC，MP3，AC-3等等，视频的压缩编码标准则包含H.264，MPEG2，VC-1等等。解码是整个系统中最重要也是最复杂的一个环节。通过解码，压缩编码的视频数据输出成为非压缩的颜色数据，例如YUV420P，RGB等等；压缩编码的音频数据输出成为非压缩的音频抽样数据，例如PCM数据</p>
+<p><strong>视音频同步</strong>的作用，就是根据解封装模块处理过程中获取到的参数信息，同步解码出来的视频和音频数据，并将视频音频数据送至系统的显卡和声卡播放出来。</p>
+<p>**流媒体开发:**网络层(socket或st)负责传输，协议层(rtmp或hls)负责网络打包，封装层(flv、ts)负责编解码数据的封装，编码层(h.264和aac)负责图像，音频压缩。<br>
+帧:每帧代表一幅静止的图像</p>
+<p><strong>GOP</strong>:（Group of Pictures）画面组，一个GOP就是一组连续的画面，每个画面都是一帧，一个GOP就是很多帧的集合<br>
+直播的数据，其实是一组图片，包括I帧、P帧、B帧，当用户第一次观看的时候，会寻找I帧，而播放器会到服务器寻找到最近的I帧反馈给用户。因此，GOP Cache增加了端到端延迟，因为它必须要拿到最近的I帧<br>
+GOP Cache的长度越长，画面质量越好</p>
+<p><strong>视频封装格式</strong>：一种储存视频信息的容器，流式封装可以有TS、FLV等，索引式的封装有MP4,MOV,AVI等，<br>
+主要作用：一个视频文件往往会包含图像和音频，还有一些配置信息(如图像和音频的关联，如何解码它们等)：这些内容需要按照一定的规则组织、封装起来.<br>
+注意：会发现封装格式跟文件格式一样，因为一般视频文件格式的后缀名即采用相应的视频封装格式的名称,所以视频文件格式就是视频封装格式。</p>
+<p><strong>视频压缩编码标准</strong>：对视频进行压缩(视频编码)或者解压缩（视频解码）的编码技术,比如MPEG，H.264,这些视频编码技术是压缩编码视频的<br>
+主要作用:是将视频像素数据压缩成为视频码流，从而降低视频的数据量。如果视频不经过压缩编码的话，体积通常是非常大的，一部电影可能就要上百G的空间。<br>
+注意:最影响视频质量的是其视频编码数据和音频编码数据，跟封装格式没有多大关系<br>
+<strong>MPEG</strong>:一种视频压缩方式，它采用了帧间压缩，仅存储连续帧之间有差别的地方 ，从而达到较大的压缩比<br>
+**H.264/AVC:**一种视频压缩方式,采用事先预测和与MPEG中的P-B帧一样的帧预测方法压缩，它可以根据需要产生适合网络情况传输的视频流,还有更高的压缩比，有更好的图象质量<br>
+注意1:如果是从单个画面清晰度比较，MPEG4有优势；从动作连贯性上的清晰度，H.264有优势<br>
+注意2:由于264的算法更加复杂，程序实现烦琐，运行它需要更多的处理器和内存资源。因此，运行264对系统要求是比较高的。<br>
+注意3:由于264的实现更加灵活，它把一些实现留给了厂商自己去实现，虽然这样给实现带来了很多好处，但是不同产品之间互通成了很大的问题，造成了通过A公司的编码器编出的数据，必须通过A公司的解码器去解这样尴尬的事情</p>
+<p>**H.265/HEVC:**一种视频压缩方式,基于H.264，保留原来的某些技术，同时对一些相关的技术加以改进，以改善码流、编码质量、延时和算法复杂度之间的关系，达到最优化设置。<br>
+H.265 是一种更为高效的编码标准，能够在同等画质效果下将内容的体积压缩得更小，传输时更快更省带宽<br>
+<strong>I帧:</strong>(关键帧)保留一副完整的画面，解码时只需要本帧数据就可以完成（因为包含完整画面）</p>
+<p><strong>P帧</strong>:(差别帧)保留这一帧跟之前帧的差别，解码时需要用之前缓存的画面叠加上本帧定义的差别，生成最终画面。（P帧没有完整画面数据，只有与前一帧的画面差别的数据）</p>
+<p><strong>B帧</strong>:(双向差别帧)保留的是本帧与前后帧的差别，解码B帧，不仅要取得之前的缓存画面，还要解码之后的画面，通过前后画面的与本帧数据的叠加取得最终的画面。B帧压缩率高，但是解码时CPU会比较累<br>
+帧内（Intraframe）压缩:当压缩一帧图像时，仅考虑本帧的数据而不考虑相邻帧之间的冗余信息,帧内一般采用有损压缩算法</p>
+<p>**帧间（Interframe）压缩:**时间压缩（Temporal compression），它通过比较时间轴上不同帧之间的数据进行压缩。帧间压缩一般是无损的</p>
+<p><strong>muxing（合成）</strong>：将视频流、音频流甚至是字幕流封装到一个文件中(容器格式（FLV，TS）)，作为一个信号进行传输。一种视频压缩方式,基于H.264，保留原来的某些技术，同时对一些相关的技术加以改进，以改善码流、编码质量、延时和算法复杂度之间的关系，达到最优化设置。</p>
+<p><strong>流媒体服务器</strong></p>
+<p>*** 5.1常用服务器 ***</p>
+<p>SRS：一款国人开发的优秀开源流媒体服务器系统<br>
+BMS:也是一款流媒体服务器系统，但不开源，是SRS的商业版，比SRS功能更多<br>
+nginx:免费开源web服务器，常用来配置流媒体服务器。</p>
+<ul>
+<li>5.2数据分发 *</li>
+</ul>
+<p><strong>CDN：</strong>(Content Delivery Network)，即内容分发网络,将网站的内容发布到最接近用户的网络”边缘”，使用户可以就近取得所需的内容，解决 Internet网络拥挤的状况，提高用户访问网站的响应速度.<br>
+CDN：代理服务器，相当于一个中介。<br>
+CDN工作原理：比如请求流媒体数据<br>
+1.上传流媒体数据到服务器（源站）<br>
+2.源站存储流媒体数据<br>
+3.客户端播放流媒体，向CDN请求编码后的流媒体数据<br>
+4.CDN的服务器响应请求，若节点上没有该流媒体数据存在，则向源站继续请求流媒体数据；若节点上已经缓存了该视频文件，则跳到第6步。<br>
+5.源站响应CDN的请求，将流媒体分发到相应的CDN节点上<br>
+6.CDN将流媒体数据发送到客户端</p>
+<p>**回源：**当有用户访问某一个URL的时候，如果被解析到的那个CDN节点没有缓存响应的内容，或者是缓存已经到期，就会回源站去获取搜索。如果没有人访问，那么CDN节点不会主动去源站拿.</p>
+<p>**带宽:**在固定的时间可传输的数据总量，<br>
+比如64位、800MHz的前端总线，它的数据传输率就等于64bit×800MHz÷8(Byte)=6.4GB/s</p>
+<p><strong>负载均衡:</strong> 由多台服务器以对称的方式组成一个服务器集合，每台服务器都具有等价的地位，都可以单独对外提供服务而无须其他服务器的辅助.<br>
+通过某种负载分担技术，将外部发送来的请求均匀分配到对称结构中的某一台服务器上，而接收到请求的服务器独立地回应客户的请求。<br>
+均衡负载能够平均分配客户请求到服务器列阵，籍此提供快速获取重要数据，解决大量并发访问服务问题。<br>
+这种群集技术可以用最少的投资获得接近于大型主机的性能。</p>
+<p><strong>QoS（带宽管理</strong>）:限制每一个组群的带宽，让有限的带宽发挥最大的效用</p>
+<p>https://www.cnblogs.com/oc-bowen/p/5895482.html</p>
+
+              </div>
+              <div class="toc-container">
+                
+              </div>
+            </div>
+          </article>
+        </div>
+
+        
+          <div class="next-post">
+            <div class="next">下一篇</div>
+            <a href="https://smartxiaosiyu.github.io/post/ffmpeg/">
+              <h3 class="post-title">
+                FFMpeg 
+              </h3>
+            </a>
+          </div>
+        
+
+        
+
+        <div class="site-footer">
+  Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a>
+  <a class="rss" href="https://smartxiaosiyu.github.io/atom.xml" target="_blank">
+    <i class="ri-rss-line"></i> RSS
+  </a>
+</div>
+
+      </div>
+    </div>
+
+    <script>
+      hljs.initHighlightingOnLoad()
+
+      let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
+
+      // This should probably be throttled.
+      // Especially because it triggers during smooth scrolling.
+      // https://lodash.com/docs/4.17.10#throttle
+      // You could do like...
+      // window.addEventListener("scroll", () => {
+      //    _.throttle(doThatStuff, 100);
+      // });
+      // Only not doing it here to keep this Pen dependency-free.
+
+      window.addEventListener("scroll", event => {
+        let fromTop = window.scrollY;
+
+        mainNavLinks.forEach((link, index) => {
+          let section = document.getElementById(decodeURI(link.hash).substring(1));
+          let nextSection = null
+          if (mainNavLinks[index + 1]) {
+            nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
+          }
+          if (section.offsetTop <= fromTop) {
+            if (nextSection) {
+              if (nextSection.offsetTop > fromTop) {
+                link.classList.add("current");
+              } else {
+                link.classList.remove("current");    
+              }
+            } else {
+              link.classList.add("current");
+            }
+          } else {
+            link.classList.remove("current");
+          }
+        });
+      });
+
+    </script>
+  </body>
+</html>
