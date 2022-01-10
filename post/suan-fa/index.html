@@ -2,22 +2,22 @@
   <head>
     <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>OpenGl ES 缩放 灵魂出窍滤镜 | SmartXiaosiyu</title>
+<title>算法 | SmartXiaosiyu</title>
 <link rel="shortcut icon" href="http://localhost:4000/favicon.ico?v=1641806108661">
 <link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
 <link rel="stylesheet" href="http://localhost:4000/styles/main.css">
-<link rel="alternate" type="application/atom+xml" title="OpenGl ES 缩放 灵魂出窍滤镜 | SmartXiaosiyu - Atom Feed" href="http://localhost:4000/atom.xml">
+<link rel="alternate" type="application/atom+xml" title="算法 | SmartXiaosiyu - Atom Feed" href="http://localhost:4000/atom.xml">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
 
 
 
-    <meta name="description" content="缩放滤镜
-修改顶点坐标和纹理坐标的映射关系
-放大过程顶点着色器完成
-attribute vec4 Position;
-attribute vec2 TextureCoords;
-varying vec2 TextureCoordsVaryi..." />
-    <meta name="keywords" content="OpenGL" />
+    <meta name="description" content="线性结构 树形结构 图形结构
+###线性表
+数组里放的对象的地址值
+保证每个元素所占空间大小一样大
+
+..." />
+    <meta name="keywords" content="" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
     <script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
   </head>
@@ -79,90 +79,29 @@ varying vec2 TextureCoordsVaryi..." />
         <div class="post-detail">
           <article class="post">
             <h2 class="post-title">
-              OpenGl ES 缩放 灵魂出窍滤镜
+              算法
             </h2>
             <div class="post-info">
               <span>
-                2021-09-11
+                2022-01-08
               </span>
               <span>
-                2 min read
+                1 min read
               </span>
-              
-                <a href="http://localhost:4000/tag/YIh5C4kIq/" class="post-tag">
-                  # OpenGL
-                </a>
               
             </div>
             
             <div class="post-content-wrapper">
               <div class="post-content">
-                <h3 id="缩放滤镜">缩放滤镜</h3>
-<p>修改顶点坐标和纹理坐标的映射关系<br>
-放大过程顶点着色器完成</p>
-<pre><code>attribute vec4 Position;
-attribute vec2 TextureCoords;
-varying vec2 TextureCoordsVarying;
-
-uniform float Time;
-
-const float PI = 3.1415926;
-
-void main (void) {
-    float duration = 0.6;
-    float maxAmplitude = 0.3;
-    
-    float time = mod(Time, duration);
-    float amplitude = 1.0 + maxAmplitude * abs(sin(time * (PI / duration)));
-    
-    gl_Position = vec4(Position.x * amplitude, Position.y * amplitude, Position.zw);
-    TextureCoordsVarying = TextureCoords;
-}
-</code></pre>
-<h3 id="灵魂出窍滤镜">灵魂出窍滤镜</h3>
-<pre><code>precision highp float;
-
-uniform sampler2D Texture;
-varying vec2 TextureCoordsVarying;
-
-uniform float Time;
-
-void main (void) {
-    float duration = 0.7;
-    float maxAlpha = 0.4;
-    float maxScale = 1.8;
-    
-    float progress = mod(Time, duration) / duration; // 0~1
-    float alpha = maxAlpha * (1.0 - progress);
-    float scale = 1.0 + (maxScale - 1.0) * progress;
-    
-    float weakX = 0.5 + (TextureCoordsVarying.x - 0.5) / scale;
-    float weakY = 0.5 + (TextureCoordsVarying.y - 0.5) / scale;
-    vec2 weakTextureCoords = vec2(weakX, weakY);
-    
-    vec4 weakMask = texture2D(Texture, weakTextureCoords);
-    
-    vec4 mask = texture2D(Texture, TextureCoordsVarying);
-    
-    gl_FragColor = mask * (1.0 - alpha) + weakMask * alpha;
-}
-</code></pre>
+                <p>线性结构 树形结构 图形结构<br>
+###线性表<br>
+数组里放的对象的地址值<br>
+保证每个元素所占空间大小一样大<br>
+<img src="http://localhost:4000/post-images/1641797998561.png" alt="" loading="lazy"></p>
 
               </div>
               <div class="toc-container">
-                <ul class="markdownIt-TOC">
-<li>
-<ul>
-<li>
-<ul>
-<li><a href="#%E7%BC%A9%E6%94%BE%E6%BB%A4%E9%95%9C">缩放滤镜</a></li>
-<li><a href="#%E7%81%B5%E9%AD%82%E5%87%BA%E7%AA%8D%E6%BB%A4%E9%95%9C">灵魂出窍滤镜</a></li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-
+                
               </div>
             </div>
           </article>
@@ -171,9 +110,9 @@ void main (void) {
         
           <div class="next-post">
             <div class="next">下一篇</div>
-            <a href="http://localhost:4000/post/ffmpeg-ming-ling-xing/">
+            <a href="http://localhost:4000/post/ios-nei-cun/">
               <h3 class="post-title">
-                FFmpeg 命令行
+                iOS 内存
               </h3>
             </a>
           </div>

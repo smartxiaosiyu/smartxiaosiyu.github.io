@@ -3,7 +3,7 @@
     <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>iOS 多线程 | SmartXiaosiyu</title>
-<link rel="shortcut icon" href="http://localhost:4000/favicon.ico?v=1641373104972">
+<link rel="shortcut icon" href="http://localhost:4000/favicon.ico?v=1641806108661">
 <link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
 <link rel="stylesheet" href="http://localhost:4000/styles/main.css">
 <link rel="alternate" type="application/atom+xml" title="iOS 多线程 | SmartXiaosiyu - Atom Feed" href="http://localhost:4000/atom.xml">
@@ -11,10 +11,12 @@
 
 
 
-    <meta name="description" content="// 题目：写出NSLog的打印结果（来自美团 GCD 面试题）
-__block int a = 0;
-while (a &lt; 5) {
-    dispatch_async(dispatch_get_global_queue(0, 0..." />
+    <meta name="description" content="同步和异步主要影响：能不能开启新的线程
+同步：在当前线程中执行任务，不具备开启新线程的能力
+异步：在新的线程中执行任务，具备开启新线程的能力
+并发和串行主要影响：任务的执行方式
+并发：多个任务并发（同时）执行
+串行：一个任务执行完毕后，再执..." />
     <meta name="keywords" content="" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
     <script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
@@ -24,7 +26,7 @@ while (a &lt; 5) {
       <div class="main-content">
         <div class="site-header">
   <a href="http://localhost:4000">
-  <img class="avatar" src="http://localhost:4000/images/avatar.png?v=1641373104972" alt="">
+  <img class="avatar" src="http://localhost:4000/images/avatar.png?v=1641806108661" alt="">
   </a>
   <h1 class="site-title">
     SmartXiaosiyu
@@ -91,7 +93,13 @@ while (a &lt; 5) {
             
             <div class="post-content-wrapper">
               <div class="post-content">
-                <pre><code>// 题目：写出NSLog的打印结果（来自美团 GCD 面试题）
+                <p>同步和异步主要影响：能不能开启新的线程<br>
+同步：在当前线程中执行任务，不具备开启新线程的能力<br>
+异步：在新的线程中执行任务，具备开启新线程的能力</p>
+<p>并发和串行主要影响：任务的执行方式<br>
+并发：多个任务并发（同时）执行<br>
+串行：一个任务执行完毕后，再执行下一个任务</p>
+<pre><code>// 题目：写出NSLog的打印结果（来自美团 GCD 面试题）
 __block int a = 0;
 while (a &lt; 5) {
     dispatch_async(dispatch_get_global_queue(0, 0), ^{
@@ -242,6 +250,8 @@ Qos指定了列队工作的优先级，系统会根据优先级来调度工作�
 提供附加功能：线程池的可拓展性使得我们可以自己加入新的功能，比如说定时、延时来执行某些线程。</p>
 <p>###线程同步、线程依赖、线程组<br>
 https://www.cnblogs.com/chglog/p/6782413.html</p>
+<p>###线程队列同步异步情况<br>
+https://www.jianshu.com/p/745ef335e8cc</p>
 
               </div>
               <div class="toc-container">
