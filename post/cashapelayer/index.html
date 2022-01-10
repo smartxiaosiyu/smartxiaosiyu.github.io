@@ -1,0 +1,213 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>CAShapeLayer | SmartXiaosiyu</title>
+<link rel="shortcut icon" href="http://localhost:4000/favicon.ico?v=1641373104972">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
+<link rel="stylesheet" href="http://localhost:4000/styles/main.css">
+<link rel="alternate" type="application/atom+xml" title="CAShapeLayer | SmartXiaosiyu - Atom Feed" href="http://localhost:4000/atom.xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
+
+
+
+    <meta name="description" content="关于CAShapeLayer和DrawRect的比较
+DrawRect：DrawRect属于CoreGraphic框架，占用CPU，消耗性能大
+CAShapeLayer：CAShapeLayer属于CoreAnimation框架，通过GPU..." />
+    <meta name="keywords" content="UI" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+    <script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+  </head>
+  <body>
+    <div class="main">
+      <div class="main-content">
+        <div class="site-header">
+  <a href="http://localhost:4000">
+  <img class="avatar" src="http://localhost:4000/images/avatar.png?v=1641373104972" alt="">
+  </a>
+  <h1 class="site-title">
+    SmartXiaosiyu
+  </h1>
+  <p class="site-description">
+    BugMaker
+  </p>
+  <div class="menu-container">
+    
+      
+        <a href="/" class="menu">
+          首页
+        </a>
+      
+    
+      
+        <a href="/archives" class="menu">
+          归档
+        </a>
+      
+    
+      
+        <a href="/tags" class="menu">
+          标签
+        </a>
+      
+    
+      
+        <a href="/post/about" class="menu">
+          关于
+        </a>
+      
+    
+  </div>
+  <div class="social-container">
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+</div>
+
+        <div class="post-detail">
+          <article class="post">
+            <h2 class="post-title">
+              CAShapeLayer
+            </h2>
+            <div class="post-info">
+              <span>
+                2021-11-24
+              </span>
+              <span>
+                2 min read
+              </span>
+              
+                <a href="http://localhost:4000/tag/gspM72pMk/" class="post-tag">
+                  # UI
+                </a>
+              
+            </div>
+            
+            <div class="post-content-wrapper">
+              <div class="post-content">
+                <p>关于CAShapeLayer和DrawRect的比较</p>
+<p>DrawRect：DrawRect属于CoreGraphic框架，占用CPU，消耗性能大<br>
+CAShapeLayer：CAShapeLayer属于CoreAnimation框架，通过GPU来渲染图形，节省性能。动画渲染直接提交给手机GPU，不消耗内存</p>
+<h3 id="布局">布局</h3>
+<p>要分析CALayer的anchorPoint和position属性,首先要讨论一下CALayer的布局.<br>
+我们所熟悉的UIView有三个重要的布局属性:frame,bounds和center,CALayer对应的叫做 frame,bounds和position.</p>
+<p>frame代表了图层的外部坐标(在父图层上占据的空间)<br>
+bounds为内部坐标<br>
+position代表了相对父图层anchorPoint的位置</p>
+<h3 id="锚点">锚点</h3>
+<ul>
+<li>和position共同决定图层相对父图层的位置,即frame的x,y</li>
+<li>在图层旋转时的固定点<br>
+锚点使用单位坐标来描述,范围为左上角{0, 0}到右下角{1, 1},默认坐标是{0.5, 0.5}.</li>
+</ul>
+<h3 id="锚点和position的关系">锚点和position的关系</h3>
+<p>position是图层的anchorPoint在父图层中的位置坐标.<br>
+anchorPoint和position共同决定图层相对父图层的位置,即frame属性的frame.origin.<br>
+单方面修改anchorPoint或者position并不会对彼此产生影响,修改其中一个值,受影响的只会是frame.origin.<br>
+anchorPoint如果是0.5，0。5 就相当于 中心点 那可以理解成 子view的中心点在父view的位置坐标</p>
+<p>position.x =  frame.origin.x - anchorPoint.x * bounds.size.width；</p>
+<p>position.y =  frame.origin.y - anchorPoint.y * bounds.size.height</p>
+<h3 id="总结">总结</h3>
+<p>单方面修改anchorPoint或者position并不会对彼此产生影响,修改其中一个值,受影响的只会是frame.origin.</p>
+<p>anchorPoint和position共同决定了frame<br>
+frame.origin.x = position.x - anchorPoint.x * bounds.size.width；<br>
+frame.origin.y = position.y - anchorPoint.y * bounds.size.height</p>
+<p>anchorPoint是图层在旋转时的固定点</p>
+<p>https://www.jianshu.com/p/998a6119a275</p>
+
+              </div>
+              <div class="toc-container">
+                <ul class="markdownIt-TOC">
+<li>
+<ul>
+<li>
+<ul>
+<li><a href="#%E5%B8%83%E5%B1%80">布局</a></li>
+<li><a href="#%E9%94%9A%E7%82%B9">锚点</a></li>
+<li><a href="#%E9%94%9A%E7%82%B9%E5%92%8Cposition%E7%9A%84%E5%85%B3%E7%B3%BB">锚点和position的关系</a></li>
+<li><a href="#%E6%80%BB%E7%BB%93">总结</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+              </div>
+            </div>
+          </article>
+        </div>
+
+        
+          <div class="next-post">
+            <div class="next">下一篇</div>
+            <a href="http://localhost:4000/post/ios-duo-xian-cheng/">
+              <h3 class="post-title">
+                iOS 多线程
+              </h3>
+            </a>
+          </div>
+        
+
+        
+
+        <div class="site-footer">
+  Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a>
+  <a class="rss" href="http://localhost:4000/atom.xml" target="_blank">
+    <i class="ri-rss-line"></i> RSS
+  </a>
+</div>
+
+      </div>
+    </div>
+
+    <script>
+      hljs.initHighlightingOnLoad()
+
+      let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
+
+      // This should probably be throttled.
+      // Especially because it triggers during smooth scrolling.
+      // https://lodash.com/docs/4.17.10#throttle
+      // You could do like...
+      // window.addEventListener("scroll", () => {
+      //    _.throttle(doThatStuff, 100);
+      // });
+      // Only not doing it here to keep this Pen dependency-free.
+
+      window.addEventListener("scroll", event => {
+        let fromTop = window.scrollY;
+
+        mainNavLinks.forEach((link, index) => {
+          let section = document.getElementById(decodeURI(link.hash).substring(1));
+          let nextSection = null
+          if (mainNavLinks[index + 1]) {
+            nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
+          }
+          if (section.offsetTop <= fromTop) {
+            if (nextSection) {
+              if (nextSection.offsetTop > fromTop) {
+                link.classList.add("current");
+              } else {
+                link.classList.remove("current");    
+              }
+            } else {
+              link.classList.add("current");
+            }
+          } else {
+            link.classList.remove("current");
+          }
+        });
+      });
+
+    </script>
+  </body>
+</html>

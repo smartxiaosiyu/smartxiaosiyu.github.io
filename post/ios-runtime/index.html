@@ -1,0 +1,395 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>iOS Runtime | SmartXiaosiyu</title>
+<link rel="shortcut icon" href="http://localhost:4000/favicon.ico?v=1641373104972">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
+<link rel="stylesheet" href="http://localhost:4000/styles/main.css">
+<link rel="alternate" type="application/atom+xml" title="iOS Runtime | SmartXiaosiyu - Atom Feed" href="http://localhost:4000/atom.xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
+
+
+
+    <meta name="description" content="instance对象
+instance对象是通过类alloc出来的对象，每个instance对象是不同的对象，占据着两块不同的内存
+
+Class对象
+
+
+objectClass1 ~ objectClass5都是NSObject的class..." />
+    <meta name="keywords" content="iOS" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+    <script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+  </head>
+  <body>
+    <div class="main">
+      <div class="main-content">
+        <div class="site-header">
+  <a href="http://localhost:4000">
+  <img class="avatar" src="http://localhost:4000/images/avatar.png?v=1641373104972" alt="">
+  </a>
+  <h1 class="site-title">
+    SmartXiaosiyu
+  </h1>
+  <p class="site-description">
+    BugMaker
+  </p>
+  <div class="menu-container">
+    
+      
+        <a href="/" class="menu">
+          首页
+        </a>
+      
+    
+      
+        <a href="/archives" class="menu">
+          归档
+        </a>
+      
+    
+      
+        <a href="/tags" class="menu">
+          标签
+        </a>
+      
+    
+      
+        <a href="/post/about" class="menu">
+          关于
+        </a>
+      
+    
+  </div>
+  <div class="social-container">
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+</div>
+
+        <div class="post-detail">
+          <article class="post">
+            <h2 class="post-title">
+              iOS Runtime
+            </h2>
+            <div class="post-info">
+              <span>
+                2021-09-14
+              </span>
+              <span>
+                6 min read
+              </span>
+              
+                <a href="http://localhost:4000/tag/ELGGUBv5b/" class="post-tag">
+                  # iOS
+                </a>
+              
+            </div>
+            
+            <div class="post-content-wrapper">
+              <div class="post-content">
+                <h3 id="instance对象">instance对象</h3>
+<p>instance对象是通过类alloc出来的对象，每个instance对象是不同的对象，占据着两块不同的内存<br>
+<img src="http://localhost:4000/post-images/1634715225272.png" alt="" loading="lazy"></p>
+<h3 id="class对象">Class对象</h3>
+<p><img src="http://localhost:4000/post-images/1634715332044.png" alt="" loading="lazy"><br>
+<img src="http://localhost:4000/post-images/1634715341334.png" alt="" loading="lazy"><br>
+objectClass1 ~ objectClass5都是NSObject的class对象（类对象）<br>
+它们是同一个对象。<strong>每个类在内存中有且只有一个class对象</strong></p>
+<h3 id="元类对象">元类对象</h3>
+<p><img src="http://localhost:4000/post-images/1634715483854.png" alt="" loading="lazy"><br>
+objectMetaClass是NSObject的meta-class对象（元类对象）<br>
+<strong>每个类在内存中有且只有一个meta-class对象</strong><br>
+<img src="http://localhost:4000/post-images/1634715522926.png" alt="" loading="lazy"><br>
+查看MetaClass对象<br>
+<img src="http://localhost:4000/post-images/1634715559338.png" alt="" loading="lazy"></p>
+<ul>
+<li>Objective-C是一门动态性比较强的编程语言，跟C、C++等语言有着很大的不同</li>
+<li>Objective-C的动态性是由Runtime API来支撑的</li>
+<li>Runtime API提供的接口基本都是C语言的，源码由C\C++\汇编语言编写<br>
+类对象、元类对象的内存地址 后三位都是0</li>
+</ul>
+<p><img src="http://localhost:4000/post-images/1634715730857.png" alt="" loading="lazy"><br>
+instance的isa指向class<br>
+当调用对象方法时，通过instance的isa找到class，最后找到对象方法的实现进行调用</p>
+<p>class的isa指向meta-class<br>
+当调用类方法时，通过class的isa找到meta-class，最后找到类方法的实现进行调用</p>
+<figure data-type="image" tabindex="1"><img src="http://localhost:4000/post-images/1634715840415.png" alt="" loading="lazy"></figure>
+<pre><code>instance的isa指向class
+
+class的isa指向meta-class
+
+meta-class的isa指向基类的meta-class
+
+class的superclass指向父类的class
+如果没有父类，superclass指针为nil
+
+meta-class的superclass指向父类的meta-class
+基类的meta-class的superclass指向基类的class
+
+instance调用对象方法的轨迹
+isa找到class，方法不存在，就通过superclass找父类
+
+class调用类方法的轨迹
+isa找meta-class，方法不存在，就通过superclass找父类
+</code></pre>
+<h3 id="isa">isa</h3>
+<p>arm64前 实例对象的isa指向类对象地址 类对象指向元类对象<br>
+arm64后 isa使用共用体做了优化 将64位的数据 其中33位才用才存储内存地址  需要isa&amp;一个掩码得到内存地址</p>
+<pre><code>nonpointer
+0，代表普通的指针，存储着Class、Meta-Class对象的内存地址
+1，代表优化过，使用位域存储更多的信息
+
+has_assoc
+是否有设置过关联对象，如果没有，释放时会更快
+
+has_cxx_dtor
+是否有C++的析构函数（.cxx_destruct），如果没有，释放时会更快
+
+shiftcls
+存储着Class、Meta-Class对象的内存地址信息
+
+magic
+用于在调试时分辨对象是否未完成初始化
+
+weakly_referenced
+是否有被弱引用指向过，如果没有，释放时会更快
+
+deallocating
+对象是否正在释放
+
+extra_rc
+里面存储的值是引用计数器减1
+
+has_sidetable_rc
+引用计数器是否过大无法存储在isa中
+如果为1，那么引用计数会存储在一个叫SideTable的类的属性中
+
+</code></pre>
+<h3 id="class的结构">Class的结构</h3>
+<figure data-type="image" tabindex="2"><img src="http://localhost:4000/post-images/1634721542720.png" alt="" loading="lazy"></figure>
+<p>class_rw_t里面的methods、properties、protocols是二维数组，是可读可写的，包含了类的初始内容、分类的内容</p>
+<figure data-type="image" tabindex="3"><img src="http://localhost:4000/post-images/1634721677224.png" alt="" loading="lazy"></figure>
+<h3 id="销毁一个实例对象">销毁一个实例对象</h3>
+<figure data-type="image" tabindex="4"><img src="http://localhost:4000/post-images/1633693179449.png" alt="" loading="lazy"></figure>
+<h3 id="method_t是对方法函数的封装">method_t是对方法\函数的封装</h3>
+<figure data-type="image" tabindex="5"><img src="http://localhost:4000/post-images/1633953700358.png" alt="" loading="lazy"></figure>
+<p><strong>SEL</strong><br>
+SEL代表方法\函数名，一般叫做选择器，底层结构跟char *类似<br>
+可以通过@selector()和sel_registerName()获得<br>
+可以通过sel_getName()和NSStringFromSelector()转成字符串<br>
+不同类中相同名字的方法，所对应的方法选择器是相同的<br>
+<strong>IMP</strong><br>
+指向函数的指针，存储的就是函数的实现<br>
+<strong>Types</strong><br>
+i 24 @ 0 ： 8 i16 f 20<br>
+返回Int类型 总共24个字节  @ 代表id （self）：代表SEL参数 下一个是Int参数 最后一个是Float参数<br>
+数字代表在哪个位置 占多少字节数</p>
+<h3 id="方法缓存">方法缓存</h3>
+<p>运用散列表存储 Key：SEL Value：IMP<br>
+用 Key &amp; Mask 取出 在散列表里的索引 如果不是当前key 则索引-1 散裂碰撞<br>
+mask = 散列表长度-1<br>
+如果散列表长度不够用 则扩容 mask变化 清除缓存<br>
+无论哈希还是散列表 本质都是给一个值通过算法得到一个索引</p>
+<h3 id="objc_msgsend执行流程">objc_msgSend执行流程</h3>
+<p>OC中的方法调用，其实都是转换为objc_msgSend函数的调用<br>
+<strong>objc_msgSend的执行流程可以分为3大阶段</strong></p>
+<ul>
+<li>
+<p>消息发送<br>
+<img src="http://localhost:4000/post-images/1634721850187.png" alt="" loading="lazy"></p>
+</li>
+<li>
+<p>动态方法解析<br>
+<strong>如果当时没有这个方法就动态添创建一个方法</strong></p>
+</li>
+</ul>
+<p>消息发送 找不到test方法</p>
+<pre><code>+ (BOOL)resolveInstanceMethod:(SEL)sel
+{
+    if (sel == @selector(test)) {
+        // 获取其他方法
+        Method method = class_getInstanceMethod(self, @selector(other));
+
+        // 动态添加test方法的实现
+        class_addMethod(self, sel,
+                        method_getImplementation(method),
+                        method_getTypeEncoding(method));
+
+        // 返回YES代表有动态添加方法
+        return YES;
+    }
+    return [super resolveInstanceMethod:sel];
+}
+</code></pre>
+<figure data-type="image" tabindex="6"><img src="http://localhost:4000/post-images/1635164774221.png" alt="" loading="lazy"></figure>
+<ul>
+<li>
+<p>消息转发<br>
+我自己处理不了，交给别人处理<br>
+<img src="http://localhost:4000/post-images/1635409522559.png" alt="" loading="lazy"><br>
+<img src="http://localhost:4000/post-images/1635409577096.png" alt="" loading="lazy"></p>
+<p>forwardInvocation哪怕不做什么都可以 不会崩溃<br>
+NSInvocation 包装了一个方法的调用</p>
+<p>forwardingTargetForSelector<br>
+类对象也有消息转发 而且 可以转成实例对象调用方法 因为 本质是 objc_msgSend（对象，@selector(test)）</p>
+</li>
+</ul>
+<h3 id="super-messsage底层实现">[super messsage]底层实现</h3>
+<p>方法调用者也就是消息接受者<br>
+1.消息接受者仍然是子类对象<br>
+2.从父类开始查找方法的实现</p>
+<p><img src="http://localhost:4000/post-images/1635682771655.png" alt="" loading="lazy"><br>
+<img src="http://localhost:4000/post-images/1635682800680.png" alt="" loading="lazy"></p>
+<h3 id="监控找不到的方法-可输出log">监控找不到的方法 可输出Log</h3>
+<figure data-type="image" tabindex="7"><img src="http://localhost:4000/post-images/1635683410053.png" alt="" loading="lazy"></figure>
+<h3 id="iskindofclass-ismemberofclass">isKindOfClass isMemberOfClass</h3>
+<p><img src="http://localhost:4000/post-images/1636282412947.png" alt="" loading="lazy"><br>
+<img src="http://localhost:4000/post-images/1636282421258.jpg" alt="" loading="lazy"></p>
+<p>实例的class方法直接返回 类对象 object_getClass(self)<br>
+实例的object_getClass(self) 直接返回 类对象<br>
+类的class方法直接返回 self<br>
+类的object_getClass(类对象) 直接返回 元类对象</p>
+<h3 id="栈空间分布">栈空间分布</h3>
+<figure data-type="image" tabindex="8"><img src="http://localhost:4000/post-images/1635854968046.png" alt="" loading="lazy"></figure>
+<p><img src="http://localhost:4000/post-images/1636293981407.png" alt="" loading="lazy"><br>
+<img src="http://localhost:4000/post-images/1636293991588.JPG" alt="" loading="lazy"><br>
+<strong>person调用run方法 实际就是</strong><br>
+<strong>person 实例对象 -&gt;isa -&gt;类对象 类对象找到run方法调用</strong><br>
+**person找isa  实际上就是找指向的那块内存的 最前面的八个字节并且取出 **</p>
+<h3 id="runtime-设置成员变量值">Runtime 设置成员变量值</h3>
+<figure data-type="image" tabindex="9"><img src="http://localhost:4000/post-images/1637322148975.png" alt="" loading="lazy"></figure>
+<p>数组就可以当指针用</p>
+<h3 id="runtime-字典转模型">Runtime 字典转模型</h3>
+<figure data-type="image" tabindex="10"><img src="http://localhost:4000/post-images/1637323503762.png" alt="" loading="lazy"></figure>
+<h3 id="api">API</h3>
+<p><img src="http://localhost:4000/post-images/1637415110902.png" alt="" loading="lazy"><br>
+<img src="http://localhost:4000/post-images/1637415125719.png" alt="" loading="lazy"><br>
+<img src="http://localhost:4000/post-images/1637415133409.png" alt="" loading="lazy"><br>
+<img src="http://localhost:4000/post-images/1637415139745.png" alt="" loading="lazy"><br>
+<img src="http://localhost:4000/post-images/1637415145903.png" alt="" loading="lazy"></p>
+<h3 id="面试题">面试题</h3>
+<p>什么是Runtime？平时项目中有用过么？<br>
+OC是一门动态性比较强的编程语言，允许很多操作推迟到程序运行时再进行<br>
+OC的动态性就是由Runtime来支撑和实现的，Runtime是一套C语言的API，封装了很多动态性相关的函数<br>
+平时编写的OC代码，底层都是转换成了Runtime API进行调用</p>
+<p>具体应用<br>
+利用关联对象（AssociatedObject）给分类添加属性<br>
+遍历类的所有成员变量（修改textfield的占位文字颜色、字典转模型、自动归档解档）<br>
+交换方法实现（交换系统的方法）<br>
+利用消息转发机制解决方法找不到的异常问题<br>
+......</p>
+<h3 id="方法交换">方法交换</h3>
+<figure data-type="image" tabindex="11"><img src="http://localhost:4000/post-images/1637419811043.png" alt="" loading="lazy"></figure>
+
+              </div>
+              <div class="toc-container">
+                <ul class="markdownIt-TOC">
+<li>
+<ul>
+<li>
+<ul>
+<li><a href="#instance%E5%AF%B9%E8%B1%A1">instance对象</a></li>
+<li><a href="#class%E5%AF%B9%E8%B1%A1">Class对象</a></li>
+<li><a href="#%E5%85%83%E7%B1%BB%E5%AF%B9%E8%B1%A1">元类对象</a></li>
+<li><a href="#isa">isa</a></li>
+<li><a href="#class%E7%9A%84%E7%BB%93%E6%9E%84">Class的结构</a></li>
+<li><a href="#%E9%94%80%E6%AF%81%E4%B8%80%E4%B8%AA%E5%AE%9E%E4%BE%8B%E5%AF%B9%E8%B1%A1">销毁一个实例对象</a></li>
+<li><a href="#method_t%E6%98%AF%E5%AF%B9%E6%96%B9%E6%B3%95%E5%87%BD%E6%95%B0%E7%9A%84%E5%B0%81%E8%A3%85">method_t是对方法\函数的封装</a></li>
+<li><a href="#%E6%96%B9%E6%B3%95%E7%BC%93%E5%AD%98">方法缓存</a></li>
+<li><a href="#objc_msgsend%E6%89%A7%E8%A1%8C%E6%B5%81%E7%A8%8B">objc_msgSend执行流程</a></li>
+<li><a href="#super-messsage%E5%BA%95%E5%B1%82%E5%AE%9E%E7%8E%B0">[super messsage]底层实现</a></li>
+<li><a href="#%E7%9B%91%E6%8E%A7%E6%89%BE%E4%B8%8D%E5%88%B0%E7%9A%84%E6%96%B9%E6%B3%95-%E5%8F%AF%E8%BE%93%E5%87%BAlog">监控找不到的方法 可输出Log</a></li>
+<li><a href="#iskindofclass-ismemberofclass">isKindOfClass isMemberOfClass</a></li>
+<li><a href="#%E6%A0%88%E7%A9%BA%E9%97%B4%E5%88%86%E5%B8%83">栈空间分布</a></li>
+<li><a href="#runtime-%E8%AE%BE%E7%BD%AE%E6%88%90%E5%91%98%E5%8F%98%E9%87%8F%E5%80%BC">Runtime 设置成员变量值</a></li>
+<li><a href="#runtime-%E5%AD%97%E5%85%B8%E8%BD%AC%E6%A8%A1%E5%9E%8B">Runtime 字典转模型</a></li>
+<li><a href="#api">API</a></li>
+<li><a href="#%E9%9D%A2%E8%AF%95%E9%A2%98">面试题</a></li>
+<li><a href="#%E6%96%B9%E6%B3%95%E4%BA%A4%E6%8D%A2">方法交换</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+              </div>
+            </div>
+          </article>
+        </div>
+
+        
+          <div class="next-post">
+            <div class="next">下一篇</div>
+            <a href="http://localhost:4000/post/ri-ji-yue-lei/">
+              <h3 class="post-title">
+                日积月累
+              </h3>
+            </a>
+          </div>
+        
+
+        
+
+        <div class="site-footer">
+  Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a>
+  <a class="rss" href="http://localhost:4000/atom.xml" target="_blank">
+    <i class="ri-rss-line"></i> RSS
+  </a>
+</div>
+
+      </div>
+    </div>
+
+    <script>
+      hljs.initHighlightingOnLoad()
+
+      let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
+
+      // This should probably be throttled.
+      // Especially because it triggers during smooth scrolling.
+      // https://lodash.com/docs/4.17.10#throttle
+      // You could do like...
+      // window.addEventListener("scroll", () => {
+      //    _.throttle(doThatStuff, 100);
+      // });
+      // Only not doing it here to keep this Pen dependency-free.
+
+      window.addEventListener("scroll", event => {
+        let fromTop = window.scrollY;
+
+        mainNavLinks.forEach((link, index) => {
+          let section = document.getElementById(decodeURI(link.hash).substring(1));
+          let nextSection = null
+          if (mainNavLinks[index + 1]) {
+            nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
+          }
+          if (section.offsetTop <= fromTop) {
+            if (nextSection) {
+              if (nextSection.offsetTop > fromTop) {
+                link.classList.add("current");
+              } else {
+                link.classList.remove("current");    
+              }
+            } else {
+              link.classList.add("current");
+            }
+          } else {
+            link.classList.remove("current");
+          }
+        });
+      });
+
+    </script>
+  </body>
+</html>

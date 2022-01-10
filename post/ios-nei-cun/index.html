@@ -1,0 +1,269 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>iOS 内存 | SmartXiaosiyu</title>
+<link rel="shortcut icon" href="http://localhost:4000/favicon.ico?v=1641373104972">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
+<link rel="stylesheet" href="http://localhost:4000/styles/main.css">
+<link rel="alternate" type="application/atom+xml" title="iOS 内存 | SmartXiaosiyu - Atom Feed" href="http://localhost:4000/atom.xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
+
+
+
+    <meta name="description" content="内存布局
+
+代码段：编译之后的代码
+数据段： 字符串常量  已初始化数据：已初始化的全局变量、静态变量  未初始化数据：未初始化的全局变
+量、静态变量
+堆：alloc malloc动态分配的内存 分配内存的空间地址越来越大
+栈：函数调用开销..." />
+    <meta name="keywords" content="iOS" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+    <script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+  </head>
+  <body>
+    <div class="main">
+      <div class="main-content">
+        <div class="site-header">
+  <a href="http://localhost:4000">
+  <img class="avatar" src="http://localhost:4000/images/avatar.png?v=1641373104972" alt="">
+  </a>
+  <h1 class="site-title">
+    SmartXiaosiyu
+  </h1>
+  <p class="site-description">
+    BugMaker
+  </p>
+  <div class="menu-container">
+    
+      
+        <a href="/" class="menu">
+          首页
+        </a>
+      
+    
+      
+        <a href="/archives" class="menu">
+          归档
+        </a>
+      
+    
+      
+        <a href="/tags" class="menu">
+          标签
+        </a>
+      
+    
+      
+        <a href="/post/about" class="menu">
+          关于
+        </a>
+      
+    
+  </div>
+  <div class="social-container">
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+</div>
+
+        <div class="post-detail">
+          <article class="post">
+            <h2 class="post-title">
+              iOS 内存
+            </h2>
+            <div class="post-info">
+              <span>
+                2021-12-15
+              </span>
+              <span>
+                4 min read
+              </span>
+              
+                <a href="http://localhost:4000/tag/ELGGUBv5b/" class="post-tag">
+                  # iOS
+                </a>
+              
+            </div>
+            
+            <div class="post-content-wrapper">
+              <div class="post-content">
+                <h3 id="内存布局">内存布局</h3>
+<p><img src="http://localhost:4000/post-images/1639624670540.png" alt="" loading="lazy"><br>
+代码段：编译之后的代码<br>
+数据段： 字符串常量  已初始化数据：已初始化的全局变量、静态变量  未初始化数据：未初始化的全局变<br>
+量、静态变量<br>
+堆：alloc malloc动态分配的内存 分配内存的空间地址越来越大<br>
+栈：函数调用开销，局部变量。分配的内存空间地址越来越小<br>
+堆空间越来越大 栈空间越来越小</p>
+<h3 id="tagged-point">Tagged Point</h3>
+<ul>
+<li>从64位开始，iOS引入了Tagged Point技术，用于优化NSNumber、NSDate、NSString等小对象的存储</li>
+<li>在没有使用Tagged Point之前 NSNumber、NSDate、NSString他们是对象 需要动态分配内存，维护引用技术等 NSNumber指针指向的是堆中NSNumber对象的地址值 指针8个字节 对象16个字节 一共24个字节</li>
+<li>使用 Tagged Point之后，NSNumber指针里存储的数据变成了：Tag+Data 数据直接存在指针中</li>
+<li>但是当指针不够存储数据的时候 才会使用动态内存的方式来存储数据</li>
+<li>obj_mgsend 可以识别出来如果是Tagged Point，直接从指针中取出值 不需要找到isa指向的类对象 再从类对象找方法 节省了内存开销 查找开销</li>
+<li>如何判断一个指针是否为Tagged Pointer？<br>
+iOS平台，最高有效位是1（第64bit）<br>
+Mac平台，最低有效位是1<br>
+<img src="http://localhost:4000/post-images/1639636465743.png" alt="" loading="lazy"></li>
+</ul>
+<figure data-type="image" tabindex="1"><img src="http://localhost:4000/post-images/1639735258084.png" alt="" loading="lazy"></figure>
+<h3 id="copy">Copy</h3>
+<p>拷贝的目的 产生一个新副本对象 修改了源对象 不会影响副本对象 反之亦然<br>
+copy 就相当于 retain操作<br>
+copy 不可变拷贝 产生不可变副本 浅拷贝 指针拷贝 计数器+1 的操作 没产生新对象<br>
+mutableCopy 可变拷贝 产生可变副本  深拷贝 内容拷贝 产生新对象</p>
+<figure data-type="image" tabindex="2"><img src="http://localhost:4000/post-images/1640347715615.png" alt="" loading="lazy"></figure>
+<p><img src="http://localhost:4000/post-images/1640416746636.jpeg" alt="" loading="lazy"><br>
+<img src="http://localhost:4000/post-images/1640416752678.jpeg" alt="" loading="lazy"></p>
+<p>属性不可以是mutableCopy<br>
+对象copy必须遵循Copying协议 是一个新的对象</p>
+<h3 id="引用计数存储">引用计数存储</h3>
+<p><img src="http://localhost:4000/post-images/1640503801508.png" alt="" loading="lazy"><br>
+<img src="http://localhost:4000/post-images/1640503821772.png" alt="" loading="lazy"><br>
+如果extra_rc 存不下引用计数的值 has_sidetable_rc变成1 就会 存储在SideTable类中<br>
+<img src="http://localhost:4000/post-images/1640693158136.png" alt="" loading="lazy"><br>
+获取 引用计数值<br>
+<img src="http://localhost:4000/post-images/1640504815778.png" alt="" loading="lazy"><br>
+<img src="http://localhost:4000/post-images/1640504823834.png" alt="" loading="lazy"></p>
+<p>retain<br>
+<img src="http://localhost:4000/post-images/1640504834582.png" alt="" loading="lazy"><br>
+release<br>
+<img src="http://localhost:4000/post-images/1640504842986.png" alt="" loading="lazy"></p>
+<h3 id="weak指针">weak指针</h3>
+<p>weak指针指向的对象如果释放了，则这个指针会自动释放<br>
+将弱引用存到哈希里 当对象释放的时候 清空weak指针</p>
+<h3 id="arc">ARC</h3>
+<p>LLVM和runtime系统相互协作的一个结果<br>
+利用LLVM编译器帮我们自动release<br>
+弱引用是利用runtime</p>
+<h3 id="dealloc">Dealloc</h3>
+<p><img src="http://localhost:4000/post-images/1640693014995.png" alt="" loading="lazy"><br>
+<img src="http://localhost:4000/post-images/1640693452325.png" alt="" loading="lazy"><br>
+<img src="http://localhost:4000/post-images/1640693461628.png" alt="" loading="lazy"><br>
+<img src="http://localhost:4000/post-images/1640693467045.png" alt="" loading="lazy"></p>
+<h3 id="autoreleasepool">AutoReleasePool</h3>
+<p><img src="http://localhost:4000/post-images/1641282087999.png" alt="" loading="lazy"><br>
+<img src="http://localhost:4000/post-images/1641282100148.png" alt="" loading="lazy"></p>
+<p>每个AutoreleasePoolPage对象占用4096字节内存，除了用来存放它内部的成员变量，剩下的空间用来存放autorelease对象的地址<br>
+所有的AutoreleasePoolPage对象通过双向链表的形式连接在一起<br>
+<img src="http://localhost:4000/post-images/1641282280295.png" alt="" loading="lazy"><br>
+调用push方法会将一个POOL_BOUNDARY入栈，并且返回其存放的内存地址</p>
+<p>调用pop方法时传入一个POOL_BOUNDARY的内存地址，会从最后一个入栈的对象开始发送release消息，直到遇到这个POOL_BOUNDARY</p>
+<p>id *next指向了下一个能存放autorelease对象地址的区域</p>
+<h3 id="runloop和autorelease">Runloop和Autorelease</h3>
+<ul>
+<li>autorelease对象在什么时机会被调用release？？<br>
+iOS在主线程的Runloop中注册了2个Observer<br>
+第1个Observer监听了kCFRunLoopEntry事件，会调用objc_autoreleasePoolPush()<br>
+第2个Observer<br>
+监听了kCFRunLoopBeforeWaiting事件，会调用objc_autoreleasePoolPop()、objc_autoreleasePoolPush()<br>
+监听了kCFRunLoopBeforeExit事件，会调用objc_autoreleasePoolPop()</li>
+<li>方法里有局部对象， 出了方法后会立即释放吗<br>
+MRC的话 RunloopkCFRunLoopBeforeWaiting或者kCFRunLoopBeforeExit 时候释放<br>
+ARC的话 默认函数内就释放 因为函数结束前调用release</li>
+</ul>
+
+              </div>
+              <div class="toc-container">
+                <ul class="markdownIt-TOC">
+<li>
+<ul>
+<li>
+<ul>
+<li><a href="#%E5%86%85%E5%AD%98%E5%B8%83%E5%B1%80">内存布局</a></li>
+<li><a href="#tagged-point">Tagged Point</a></li>
+<li><a href="#copy">Copy</a></li>
+<li><a href="#%E5%BC%95%E7%94%A8%E8%AE%A1%E6%95%B0%E5%AD%98%E5%82%A8">引用计数存储</a></li>
+<li><a href="#weak%E6%8C%87%E9%92%88">weak指针</a></li>
+<li><a href="#arc">ARC</a></li>
+<li><a href="#dealloc">Dealloc</a></li>
+<li><a href="#autoreleasepool">AutoReleasePool</a></li>
+<li><a href="#runloop%E5%92%8Cautorelease">Runloop和Autorelease</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+              </div>
+            </div>
+          </article>
+        </div>
+
+        
+          <div class="next-post">
+            <div class="next">下一篇</div>
+            <a href="http://localhost:4000/post/ios-fen-lei/">
+              <h3 class="post-title">
+                iOS 分类
+              </h3>
+            </a>
+          </div>
+        
+
+        
+
+        <div class="site-footer">
+  Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a>
+  <a class="rss" href="http://localhost:4000/atom.xml" target="_blank">
+    <i class="ri-rss-line"></i> RSS
+  </a>
+</div>
+
+      </div>
+    </div>
+
+    <script>
+      hljs.initHighlightingOnLoad()
+
+      let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
+
+      // This should probably be throttled.
+      // Especially because it triggers during smooth scrolling.
+      // https://lodash.com/docs/4.17.10#throttle
+      // You could do like...
+      // window.addEventListener("scroll", () => {
+      //    _.throttle(doThatStuff, 100);
+      // });
+      // Only not doing it here to keep this Pen dependency-free.
+
+      window.addEventListener("scroll", event => {
+        let fromTop = window.scrollY;
+
+        mainNavLinks.forEach((link, index) => {
+          let section = document.getElementById(decodeURI(link.hash).substring(1));
+          let nextSection = null
+          if (mainNavLinks[index + 1]) {
+            nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
+          }
+          if (section.offsetTop <= fromTop) {
+            if (nextSection) {
+              if (nextSection.offsetTop > fromTop) {
+                link.classList.add("current");
+              } else {
+                link.classList.remove("current");    
+              }
+            } else {
+              link.classList.add("current");
+            }
+          } else {
+            link.classList.remove("current");
+          }
+        });
+      });
+
+    </script>
+  </body>
+</html>

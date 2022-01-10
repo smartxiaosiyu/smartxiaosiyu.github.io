@@ -1,0 +1,233 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>iOS 底层 | SmartXiaosiyu</title>
+<link rel="shortcut icon" href="http://localhost:4000/favicon.ico?v=1641373104972">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
+<link rel="stylesheet" href="http://localhost:4000/styles/main.css">
+<link rel="alternate" type="application/atom+xml" title="iOS 底层 | SmartXiaosiyu - Atom Feed" href="http://localhost:4000/atom.xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
+
+
+
+    <meta name="description" content="加壳
+从AppStore下载的App，会被加密
+利用特殊的算法，对我们可执行文件的编码进行改变
+壳程序里面有（可执行文件（已加密））———&gt; 执行到———&gt;内存中（壳程序里面有（可执行文件（已加密）））———&gt;解密 ———..." />
+    <meta name="keywords" content="" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+    <script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+  </head>
+  <body>
+    <div class="main">
+      <div class="main-content">
+        <div class="site-header">
+  <a href="http://localhost:4000">
+  <img class="avatar" src="http://localhost:4000/images/avatar.png?v=1641373104972" alt="">
+  </a>
+  <h1 class="site-title">
+    SmartXiaosiyu
+  </h1>
+  <p class="site-description">
+    BugMaker
+  </p>
+  <div class="menu-container">
+    
+      
+        <a href="/" class="menu">
+          首页
+        </a>
+      
+    
+      
+        <a href="/archives" class="menu">
+          归档
+        </a>
+      
+    
+      
+        <a href="/tags" class="menu">
+          标签
+        </a>
+      
+    
+      
+        <a href="/post/about" class="menu">
+          关于
+        </a>
+      
+    
+  </div>
+  <div class="social-container">
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+</div>
+
+        <div class="post-detail">
+          <article class="post">
+            <h2 class="post-title">
+              iOS 底层
+            </h2>
+            <div class="post-info">
+              <span>
+                2021-12-05
+              </span>
+              <span>
+                3 min read
+              </span>
+              
+            </div>
+            
+            <div class="post-content-wrapper">
+              <div class="post-content">
+                <h3 id="加壳">加壳</h3>
+<p>从AppStore下载的App，会被加密<br>
+利用特殊的算法，对我们可执行文件的编码进行改变</p>
+<p>壳程序里面有（可执行文件（已加密））———&gt; 执行到———&gt;内存中（壳程序里面有（可执行文件（已加密）））———&gt;解密 ———&gt;内存中（壳程序里面有（可执行文件（解密）））</p>
+<p>脱壳<br>
+硬脱壳： 通过解密算法 从壳程序里解出可执行文件<br>
+动态脱壳：当壳程序执行到内存中解密出可执行文件 ，我们从内存中拿到解密后的可执行文件</p>
+<h3 id="ios签名机制">iOS签名机制</h3>
+<p>加密方法有两个</p>
+<ul>
+<li>对称密码 加密和解密用的同一个密钥</li>
+<li>非对称密码（公钥密码）加密和解密用的密钥是不一样的<br>
+密钥 56bit</li>
+</ul>
+<h3 id="对称密码">对称密码：</h3>
+<p>**DES ** 只能加密64bit的明文 已经被破解<br>
+<strong>3DES</strong> 3DES，将DES重复3次所得到的一种密码算法，也叫做3重DES 目前还被一些银行等机构使用，但处理速度不高，安全性逐渐暴露出问题<br>
+<strong>AES</strong> 取代DES成为新标准的一种对称密码算法 它经过了全世界密码学家所进行的高品质验证工作</p>
+<h3 id="如何解决密钥配送问题">如何解决密钥配送问题</h3>
+<p>有以下几种解决密钥配送的方法</p>
+<ul>
+<li>事先共享密钥</li>
+<li>密钥分配中心</li>
+<li>Diffie-Hellman密钥交换</li>
+</ul>
+<h3 id="公钥密码">公钥密码</h3>
+<p>公钥密码中，密钥分为加密密钥、解密密钥2种，它们并不是同一个密钥<br>
+加密密钥，一般是公开的，因此该密钥称为公钥（public key）<br>
+解密密钥，由消息接收者自己保管的，不能公开，因此也称为私钥（private key）<br>
+公钥和私钥是一 一对应的，是不能单独生成的，一对公钥和密钥统称为密钥对（key pair）<br>
+由公钥加密的密文，必须使用与该公钥对应的私钥才能解密<br>
+由私钥加密的密文，必须使用与该私钥对应的公钥才能解密<br>
+<img src="http://localhost:4000/post-images/1638709484493.png" alt="" loading="lazy"><br>
+目前使用最广泛的公钥密码算法是RSA</p>
+<h3 id="解决密钥配送问题">解决密钥配送问题</h3>
+<p>由消息的接收者，生成一对公钥、私钥<br>
+将公钥发给消息的发送者<br>
+消息的发送者使用公钥加密消息</p>
+<p>对称密码的缺点<br>
+不能很好地解决密钥配送问题</p>
+<p>公钥密码的缺点<br>
+加密解密速度比较慢</p>
+<p>混合密码系统，是将对称密码和公钥密码的优势相结合的方法<br>
+解决了公钥密码速度慢的问题<br>
+并通过公钥密码解决了对称密码的密钥配送问题</p>
+<p>网络上的密码通信所用的SSL/TLS都运用了混合密码系统</p>
+<h3 id="混合密码-加密">混合密码-加密</h3>
+<p><img src="http://localhost:4000/post-images/1638710695280.png" alt="" loading="lazy"><br>
+<img src="http://localhost:4000/post-images/1638710701498.png" alt="" loading="lazy"></p>
+
+              </div>
+              <div class="toc-container">
+                <ul class="markdownIt-TOC">
+<li>
+<ul>
+<li>
+<ul>
+<li><a href="#%E5%8A%A0%E5%A3%B3">加壳</a></li>
+<li><a href="#ios%E7%AD%BE%E5%90%8D%E6%9C%BA%E5%88%B6">iOS签名机制</a></li>
+<li><a href="#%E5%AF%B9%E7%A7%B0%E5%AF%86%E7%A0%81">对称密码：</a></li>
+<li><a href="#%E5%A6%82%E4%BD%95%E8%A7%A3%E5%86%B3%E5%AF%86%E9%92%A5%E9%85%8D%E9%80%81%E9%97%AE%E9%A2%98">如何解决密钥配送问题</a></li>
+<li><a href="#%E5%85%AC%E9%92%A5%E5%AF%86%E7%A0%81">公钥密码</a></li>
+<li><a href="#%E8%A7%A3%E5%86%B3%E5%AF%86%E9%92%A5%E9%85%8D%E9%80%81%E9%97%AE%E9%A2%98">解决密钥配送问题</a></li>
+<li><a href="#%E6%B7%B7%E5%90%88%E5%AF%86%E7%A0%81-%E5%8A%A0%E5%AF%86">混合密码-加密</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+              </div>
+            </div>
+          </article>
+        </div>
+
+        
+          <div class="next-post">
+            <div class="next">下一篇</div>
+            <a href="http://localhost:4000/post/ios-qian-ming-ji-zhi/">
+              <h3 class="post-title">
+                iOS 签名机制
+              </h3>
+            </a>
+          </div>
+        
+
+        
+
+        <div class="site-footer">
+  Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a>
+  <a class="rss" href="http://localhost:4000/atom.xml" target="_blank">
+    <i class="ri-rss-line"></i> RSS
+  </a>
+</div>
+
+      </div>
+    </div>
+
+    <script>
+      hljs.initHighlightingOnLoad()
+
+      let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
+
+      // This should probably be throttled.
+      // Especially because it triggers during smooth scrolling.
+      // https://lodash.com/docs/4.17.10#throttle
+      // You could do like...
+      // window.addEventListener("scroll", () => {
+      //    _.throttle(doThatStuff, 100);
+      // });
+      // Only not doing it here to keep this Pen dependency-free.
+
+      window.addEventListener("scroll", event => {
+        let fromTop = window.scrollY;
+
+        mainNavLinks.forEach((link, index) => {
+          let section = document.getElementById(decodeURI(link.hash).substring(1));
+          let nextSection = null
+          if (mainNavLinks[index + 1]) {
+            nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
+          }
+          if (section.offsetTop <= fromTop) {
+            if (nextSection) {
+              if (nextSection.offsetTop > fromTop) {
+                link.classList.add("current");
+              } else {
+                link.classList.remove("current");    
+              }
+            } else {
+              link.classList.add("current");
+            }
+          } else {
+            link.classList.remove("current");
+          }
+        });
+      });
+
+    </script>
+  </body>
+</html>

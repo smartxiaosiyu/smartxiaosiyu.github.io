@@ -187,3 +187,7 @@ https://juejin.cn/post/6844903875971907598
 
 ### CABasicAnimation动画及其keypath值和作用
 https://www.cnblogs.com/liuluoxing/p/5765089.html
+
+### 尽量少浮点型
+x = x *1.5
+x = x + x >> 1

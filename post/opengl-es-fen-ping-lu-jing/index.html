@@ -3,18 +3,20 @@
     <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>OpenGL ES 分屏滤镜 | SmartXiaosiyu</title>
-<link rel="shortcut icon" href="https://smartxiaosiyu.github.io/favicon.ico?v=1637130305299">
+<link rel="shortcut icon" href="http://localhost:4000/favicon.ico?v=1641373104972">
 <link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
-<link rel="stylesheet" href="https://smartxiaosiyu.github.io/styles/main.css">
-<link rel="alternate" type="application/atom+xml" title="OpenGL ES 分屏滤镜 | SmartXiaosiyu - Atom Feed" href="https://smartxiaosiyu.github.io/atom.xml">
+<link rel="stylesheet" href="http://localhost:4000/styles/main.css">
+<link rel="alternate" type="application/atom+xml" title="OpenGL ES 分屏滤镜 | SmartXiaosiyu - Atom Feed" href="http://localhost:4000/atom.xml">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
 
 
 
     <meta name="description" content="原始图片渲染到屏幕上去
 
+
 1.创建上下文
-self.context = [[EAGLContext alloc] initWithAPI:kEAGLRenderingAPIOpenGLES2]; [EAGLContext setCurren..." />
+self.context = [[EAGLContext alloc] initWithAPI:kEAGLRenderingAPIOpenGLES2];
+[EAGLContext setCurre..." />
     <meta name="keywords" content="OpenGL" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
     <script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
@@ -23,8 +25,8 @@ self.context = [[EAGLContext alloc] initWithAPI:kEAGLRenderingAPIOpenGLES2]; [EA
     <div class="main">
       <div class="main-content">
         <div class="site-header">
-  <a href="https://smartxiaosiyu.github.io">
-  <img class="avatar" src="https://smartxiaosiyu.github.io/images/avatar.png?v=1637130305299" alt="">
+  <a href="http://localhost:4000">
+  <img class="avatar" src="http://localhost:4000/images/avatar.png?v=1641373104972" alt="">
   </a>
   <h1 class="site-title">
     SmartXiaosiyu
@@ -87,7 +89,7 @@ self.context = [[EAGLContext alloc] initWithAPI:kEAGLRenderingAPIOpenGLES2]; [EA
                 3 min read
               </span>
               
-                <a href="https://smartxiaosiyu.github.io/tag/YIh5C4kIq/" class="post-tag">
+                <a href="http://localhost:4000/tag/YIh5C4kIq/" class="post-tag">
                   # OpenGL
                 </a>
               
@@ -97,62 +99,62 @@ self.context = [[EAGLContext alloc] initWithAPI:kEAGLRenderingAPIOpenGLES2]; [EA
               <div class="post-content">
                 <h2 id="原始图片渲染到屏幕上去">原始图片渲染到屏幕上去</h2>
 <ul>
-<li>1.创建上下文<br>
-<code>self.context = [[EAGLContext alloc] initWithAPI:kEAGLRenderingAPIOpenGLES2]; [EAGLContext setCurrentContext:self.context];</code></li>
-<li>2.开辟顶点数组内存空间
-<blockquote>
-<p>typedef struct {<br>
+<li>
+<p>1.创建上下文<br>
+self.context = [[EAGLContext alloc] initWithAPI:kEAGLRenderingAPIOpenGLES2];<br>
+[EAGLContext setCurrentContext:self.context];</p>
+</li>
+<li>
+<p>2.开辟顶点数组内存空间<br>
+typedef struct {<br>
 GLKVector3 positionCoord; // (X, Y, Z)<br>
 GLKVector2 textureCoord; // (U, V)<br>
 } SenceVertex;<br>
-<code>self.vertices = malloc(sizeof(SenceVertex) * 4);</code></p>
-</blockquote>
+self.vertices = malloc(sizeof(SenceVertex) * 4);</p>
 </li>
-<li>3.初始化顶点(0,1,2,3)的顶点坐标以及纹理坐标<br>
-<code>self.vertices[0] = (SenceVertex){{-1, 1, 0}, {0, 1}};</code><br>
-<code>self.vertices[1] = (SenceVertex){{-1, -1, 0}, {0, 0}};</code><br>
-<code>self.vertices[2] = (SenceVertex){{1, 1, 0}, {1, 1}};</code><br>
-<code>self.vertices[3] = (SenceVertex){{1, -1, 0}, {1, 0}};</code></li>
-<li>4.创建图层<br>
-<code>CAEAGLLayer *layer = [[CAEAGLLayer alloc] init];</code></li>
-<li>5.绑定渲染缓存区
-<ul>
 <li>
-<p>渲染缓存区、帧缓存区</p>
-<blockquote>
-<p>1.渲染缓存区,帧缓存区对象<br>
-<code>GLuint renderBuffer;</code><br>
-<code>GLuint frameBuffer;</code></p>
-</blockquote>
-<blockquote>
-<p>2.获取帧渲染缓存区名称,绑定渲染缓存区以及将渲染缓存区与layer建立连接<br>
-<code>glGenRenderbuffers(1, &amp;renderBuffer);</code><br>
-<code>glBindRenderbuffer(GL_RENDERBUFFER, renderBuffer);</code><br>
-<code>[self.context renderbufferStorage:GL_RENDERBUFFER fromDrawable:layer];</code></p>
-</blockquote>
-<blockquote>
-<p>3.获取帧缓存区名称,绑定帧缓存区以及将渲染缓存区附着到帧缓存区上<br>
-<code>glGenFramebuffers(1, &amp;frameBuffer);</code><br>
-<code>glBindFramebuffer(GL_FRAMEBUFFER, frameBuffer);</code><br>
-<code>glFramebufferRenderbuffer(GL_FRAMEBUFFER,</code><br>
-<code>GL_COLOR_ATTACHMENT0,</code><br>
-<code>GL_RENDERBUFFER,</code><br>
-<code>renderBuffer);</code></p>
-</blockquote>
+<p>3.初始化顶点(0,1,2,3)的顶点坐标以及纹理坐标<br>
+self.vertices[0] = (SenceVertex){{-1, 1, 0}, {0, 1}};<br>
+self.vertices[1] = (SenceVertex){{-1, -1, 0}, {0, 0}};<br>
+self.vertices[2] = (SenceVertex){{1, 1, 0}, {1, 1}};<br>
+self.vertices[3] = (SenceVertex){{1, -1, 0}, {1, 0}};</p>
 </li>
-</ul>
+<li>
+<p>4.创建图层<br>
+CAEAGLLayer *layer = [[CAEAGLLayer alloc] init];</p>
 </li>
-<li>6.读取图片，把图片载入到纹理中去
-<blockquote>
-<p>将图片解压缩成位图 载入到纹理去</p>
-</blockquote>
+<li>
+<p>5.绑定渲染缓存区<br>
+渲染缓存区、帧缓存区</p>
+<pre><code> 1.渲染缓存区,帧缓存区对象
+     GLuint renderBuffer;
+     GLuint frameBuffer;
+ 
+ 2.获取帧渲染缓存区名称,绑定渲染缓存区以及将渲染缓存区与layer建立连接
+ glGenRenderbuffers(1, &amp;renderBuffer);
+ glBindRenderbuffer(GL_RENDERBUFFER, renderBuffer);
+</code></pre>
+<p>[self.context renderbufferStorage:GL_RENDERBUFFER fromDrawable:layer];</p>
+<pre><code> 3.获取帧缓存区名称,绑定帧缓存区以及将渲染缓存区附着到帧缓存区上
+ glGenFramebuffers(1, &amp;frameBuffer);
+ glBindFramebuffer(GL_FRAMEBUFFER, frameBuffer);
+ glFramebufferRenderbuffer(GL_FRAMEBUFFER,
+                          GL_COLOR_ATTACHMENT0,
+                         `GL_RENDERBUFFER,
+                         renderBuffer);
+</code></pre>
 </li>
-<li>7.设置视口<br>
-<code>glViewport(0, 0, self.drawableWidth, self.drawableHeight);</code></li>
-<li>8.设置顶点缓存区
-<blockquote>
-<p>将我们的顶点数据拷贝到缓存中去</p>
-</blockquote>
+<li>
+<p>6.读取图片，把图片载入到纹理中去<br>
+将图片解压缩成位图 载入到纹理去</p>
+</li>
+<li>
+<p>7.设置视口<br>
+glViewport(0, 0, self.drawableWidth, self.drawableHeight);</p>
+</li>
+<li>
+<p>8.设置顶点缓存区<br>
+将我们的顶点数据拷贝到缓存中去</p>
 <pre><code>GLuint vertexBuffer;
  glGenBuffers(1, &amp;vertexBuffer);
  glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
@@ -160,7 +162,9 @@ GLKVector2 textureCoord; // (U, V)<br>
  glBufferData(GL_ARRAY_BUFFER, bufferSizeBytes, self.vertices, GL_STATIC_DRAW);
 </code></pre>
 </li>
-<li>9.设置默认着色器</li>
+<li>
+<p>9.设置默认着色器</p>
+</li>
 </ul>
 <h3 id="片元着色器代码关于分屏的着色器代码">片元着色器代码(关于分屏的着色器代码)</h3>
 <pre><code>precision highp float;
@@ -221,7 +225,7 @@ void main() {
         
           <div class="next-post">
             <div class="next">下一篇</div>
-            <a href="https://smartxiaosiyu.github.io/post/ios-block/">
+            <a href="http://localhost:4000/post/ios-block/">
               <h3 class="post-title">
                 iOS Block
               </h3>
@@ -233,7 +237,7 @@ void main() {
 
         <div class="site-footer">
   Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a>
-  <a class="rss" href="https://smartxiaosiyu.github.io/atom.xml" target="_blank">
+  <a class="rss" href="http://localhost:4000/atom.xml" target="_blank">
     <i class="ri-rss-line"></i> RSS
   </a>
 </div>
