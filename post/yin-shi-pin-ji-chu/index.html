@@ -3,10 +3,10 @@
     <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>音视频基础 | SmartXiaosiyu</title>
-<link rel="shortcut icon" href="https://smartxiaosiyu.github.io/favicon.ico?v=1637130305299">
+<link rel="shortcut icon" href="http://localhost:4000/favicon.ico?v=1641806108661">
 <link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
-<link rel="stylesheet" href="https://smartxiaosiyu.github.io/styles/main.css">
-<link rel="alternate" type="application/atom+xml" title="音视频基础 | SmartXiaosiyu - Atom Feed" href="https://smartxiaosiyu.github.io/atom.xml">
+<link rel="stylesheet" href="http://localhost:4000/styles/main.css">
+<link rel="alternate" type="application/atom+xml" title="音视频基础 | SmartXiaosiyu - Atom Feed" href="http://localhost:4000/atom.xml">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
 
 
@@ -20,8 +20,8 @@
     <div class="main">
       <div class="main-content">
         <div class="site-header">
-  <a href="https://smartxiaosiyu.github.io">
-  <img class="avatar" src="https://smartxiaosiyu.github.io/images/avatar.png?v=1637130305299" alt="">
+  <a href="http://localhost:4000">
+  <img class="avatar" src="http://localhost:4000/images/avatar.png?v=1641806108661" alt="">
   </a>
   <h1 class="site-title">
     SmartXiaosiyu
@@ -81,10 +81,10 @@
                 2021-09-23
               </span>
               <span>
-                9 min read
+                12 min read
               </span>
               
-                <a href="https://smartxiaosiyu.github.io/tag/mB2oscScl/" class="post-tag">
+                <a href="http://localhost:4000/tag/mB2oscScl/" class="post-tag">
                   # 音视频
                 </a>
               
@@ -146,10 +146,57 @@ CDN工作原理：比如请求流媒体数据<br>
 这种群集技术可以用最少的投资获得接近于大型主机的性能。</p>
 <p><strong>QoS（带宽管理</strong>）:限制每一个组群的带宽，让有限的带宽发挥最大的效用</p>
 <p>https://www.cnblogs.com/oc-bowen/p/5895482.html</p>
+<h3 id="yuv-的采样与格式">YUV 的采样与格式</h3>
+<p>https://mp.weixin.qq.com/s/KKfkS5QpwPAdYcEwFAN9VA</p>
+<h3 id="divx-avc-hevc格式的区别">DIVX、AVC、HEVC格式的区别</h3>
+<p>DIVX格式：这种编码也就是早期的一种MEPG格式-4衍生出来的一种格式，也是我们通常说的DVDrip格式；<br>
+AVC格式：（即H264格式）也是目前的主流视频压缩编码，不论是电脑，手机，硬盘播放器，高清盒子，都支持多H264的解码，这种格式的视频质量好，且兼容性很不错，是理想的视频编码格式，在不知道用哪种视频编码格式的时候选用这种一般是不会出问题的。<br>
+HEVC格式：（H265格式）是当前最新的视频压缩编码，编码效率比H264有较大提升。可以说，同等文件大小，H265的视频质量最好；同等视频质量，H265的体积最小。但是，因为编码比较新，有些播放软件、高清播放机、高清盒子、智能电视、智能手机是不支持这种编码的。</p>
+<h3 id="编码中的规格">编码中的规格</h3>
+<p>https://blog.csdn.net/ameyume/article/details/6547923</p>
+<h3 id="关于gop和帧率-码率的关系">关于GOP和帧率、码率的关系</h3>
+<p>https://zhuanlan.zhihu.com/p/259870429</p>
+<p>M值表示I帧或者P帧之间的帧数目，N值表示GOP的长度。如上图所示M = 1，则表示两个P帧相差1帧（无B帧），N = 30, 则表示GOP长度为30<br>
+M = 1 IPPPPPPI P帧之间无B帧<br>
+M = 3 IPBBPBBPI P帧之间两个B帧</p>
+<h3 id="dts-pts-的概念">DTS、PTS 的概念</h3>
+<p>DTS（Decoding Time Stamp）：即解码时间戳，这个时间戳的意义在于告诉播放器该在什么时候解码这一帧的数据。<br>
+PTS（Presentation Time Stamp）：即显示时间戳，这个时间戳用来告诉播放器该在什么时候显示这一帧的数据。<br>
+需要注意的是：虽然 DTS、PTS 是用于指导播放端的行为，但它们是在编码的时候由编码器生成的。</p>
+<p>当视频流中没有 B 帧时，通常 DTS 和 PTS 的顺序是一致的。但如果有 B 帧时，就回到了我们前面说的问题：解码顺序和播放顺序不一致了。</p>
+<p>比如一个视频中，帧的显示顺序是：I B B P，现在我们需要在解码 B 帧时知道 P 帧中信息，因此这几帧在视频流中的顺序可能是：I P B B，这时候就体现出每帧都有 DTS 和 PTS 的作用了。DTS 告诉我们该按什么顺序解码这几帧图像，PTS 告诉我们该按什么顺序显示这几帧图像。顺序大概如下：</p>
+<p>PTS: 1 4 2 3<br>
+DTS: 1 2 3 4<br>
+Stream: I P B B</p>
+<h3 id="ios-录播视频清晰度提升">iOS 录播视频清晰度提升</h3>
+<p>https://toutiao.io/posts/zrh0ah/preview</p>
+<h3 id="cmsamplebuffer深拷贝">CMSampleBuffer深拷贝</h3>
+<p>https://www.jianshu.com/p/9fe6e76a289b<br>
+https://qa.1r1g.com/sf/ask/2683475581/</p>
+<h3 id="深入理解-cvpixelbufferref">深入理解 CVPixelBufferRef</h3>
+<p>https://zhuanlan.zhihu.com/p/24762605</p>
 
               </div>
               <div class="toc-container">
-                
+                <ul class="markdownIt-TOC">
+<li>
+<ul>
+<li>
+<ul>
+<li><a href="#yuv-%E7%9A%84%E9%87%87%E6%A0%B7%E4%B8%8E%E6%A0%BC%E5%BC%8F">YUV 的采样与格式</a></li>
+<li><a href="#divx-avc-hevc%E6%A0%BC%E5%BC%8F%E7%9A%84%E5%8C%BA%E5%88%AB">DIVX、AVC、HEVC格式的区别</a></li>
+<li><a href="#%E7%BC%96%E7%A0%81%E4%B8%AD%E7%9A%84%E8%A7%84%E6%A0%BC">编码中的规格</a></li>
+<li><a href="#%E5%85%B3%E4%BA%8Egop%E5%92%8C%E5%B8%A7%E7%8E%87-%E7%A0%81%E7%8E%87%E7%9A%84%E5%85%B3%E7%B3%BB">关于GOP和帧率、码率的关系</a></li>
+<li><a href="#dts-pts-%E7%9A%84%E6%A6%82%E5%BF%B5">DTS、PTS 的概念</a></li>
+<li><a href="#ios-%E5%BD%95%E6%92%AD%E8%A7%86%E9%A2%91%E6%B8%85%E6%99%B0%E5%BA%A6%E6%8F%90%E5%8D%87">iOS 录播视频清晰度提升</a></li>
+<li><a href="#cmsamplebuffer%E6%B7%B1%E6%8B%B7%E8%B4%9D">CMSampleBuffer深拷贝</a></li>
+<li><a href="#%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3-cvpixelbufferref">深入理解 CVPixelBufferRef</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
               </div>
             </div>
           </article>
@@ -158,7 +205,7 @@ CDN工作原理：比如请求流媒体数据<br>
         
           <div class="next-post">
             <div class="next">下一篇</div>
-            <a href="https://smartxiaosiyu.github.io/post/ffmpeg/">
+            <a href="http://localhost:4000/post/ffmpeg/">
               <h3 class="post-title">
                 FFMpeg 
               </h3>
@@ -170,7 +217,7 @@ CDN工作原理：比如请求流媒体数据<br>
 
         <div class="site-footer">
   Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a>
-  <a class="rss" href="https://smartxiaosiyu.github.io/atom.xml" target="_blank">
+  <a class="rss" href="http://localhost:4000/atom.xml" target="_blank">
     <i class="ri-rss-line"></i> RSS
   </a>
 </div>

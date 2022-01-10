@@ -1,0 +1,205 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>iOS 分类 | SmartXiaosiyu</title>
+<link rel="shortcut icon" href="http://localhost:4000/favicon.ico?v=1641806108661">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
+<link rel="stylesheet" href="http://localhost:4000/styles/main.css">
+<link rel="alternate" type="application/atom+xml" title="iOS 分类 | SmartXiaosiyu - Atom Feed" href="http://localhost:4000/atom.xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
+
+
+
+    <meta name="description" content="编译出来的结果
+
+运行时
+将 rw-&gt;methods 指向的数组扩容，将原来的方法列表移到最后，add分类到数组里，优先调用最后面编译的分类，再调用原来的方法
+Category的加载处理过程
+通过Runtime加载某个类的所有Cate..." />
+    <meta name="keywords" content="iOS" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+    <script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+  </head>
+  <body>
+    <div class="main">
+      <div class="main-content">
+        <div class="site-header">
+  <a href="http://localhost:4000">
+  <img class="avatar" src="http://localhost:4000/images/avatar.png?v=1641806108661" alt="">
+  </a>
+  <h1 class="site-title">
+    SmartXiaosiyu
+  </h1>
+  <p class="site-description">
+    BugMaker
+  </p>
+  <div class="menu-container">
+    
+      
+        <a href="/" class="menu">
+          首页
+        </a>
+      
+    
+      
+        <a href="/archives" class="menu">
+          归档
+        </a>
+      
+    
+      
+        <a href="/tags" class="menu">
+          标签
+        </a>
+      
+    
+      
+        <a href="/post/about" class="menu">
+          关于
+        </a>
+      
+    
+  </div>
+  <div class="social-container">
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+</div>
+
+        <div class="post-detail">
+          <article class="post">
+            <h2 class="post-title">
+              iOS 分类
+            </h2>
+            <div class="post-info">
+              <span>
+                2021-12-13
+              </span>
+              <span>
+                1 min read
+              </span>
+              
+                <a href="http://localhost:4000/tag/ELGGUBv5b/" class="post-tag">
+                  # iOS
+                </a>
+              
+            </div>
+            
+            <div class="post-content-wrapper">
+              <div class="post-content">
+                <p>编译出来的结果<br>
+<img src="http://localhost:4000/post-images/1639382328780.png" alt="" loading="lazy"></p>
+<p>运行时<br>
+将 rw-&gt;methods 指向的数组扩容，将原来的方法列表移到最后，add分类到数组里，优先调用最后面编译的分类，再调用原来的方法</p>
+<h3 id="category的加载处理过程">Category的加载处理过程</h3>
+<p>通过Runtime加载某个类的所有Category数据</p>
+<p>把所有Category的方法、属性、协议数据，合并到一个大数组中<br>
+后面参与编译的Category数据，会在数组的前面</p>
+<p>将合并后的分类数据（方法、属性、协议），插入到类原来数据的前面</p>
+<h3 id="类扩展和分类的区别">类扩展和分类的区别</h3>
+<p>类扩展 编译的时候 就已经合并在类中了 无非将.h里公开声明里的东西变成.m里私有的<br>
+<img src="http://localhost:4000/post-images/1639383526599.png" alt="" loading="lazy"><br>
+分类是运行时机制 再将分类的东西合并到类里面</p>
+<p><img src="http://localhost:4000/post-images/1639387605285.png" alt="" loading="lazy"><br>
+<img src="http://localhost:4000/post-images/1639387680149.png" alt="" loading="lazy"></p>
+<h3 id="memmove和memcpy">memmove和memcpy</h3>
+<p>1234 -&gt; 0124<br>
+memmove  直接可以<br>
+memcpy 变成0114</p>
+
+              </div>
+              <div class="toc-container">
+                <ul class="markdownIt-TOC">
+<li>
+<ul>
+<li>
+<ul>
+<li><a href="#category%E7%9A%84%E5%8A%A0%E8%BD%BD%E5%A4%84%E7%90%86%E8%BF%87%E7%A8%8B">Category的加载处理过程</a></li>
+<li><a href="#%E7%B1%BB%E6%89%A9%E5%B1%95%E5%92%8C%E5%88%86%E7%B1%BB%E7%9A%84%E5%8C%BA%E5%88%AB">类扩展和分类的区别</a></li>
+<li><a href="#memmove%E5%92%8Cmemcpy">memmove和memcpy</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+              </div>
+            </div>
+          </article>
+        </div>
+
+        
+          <div class="next-post">
+            <div class="next">下一篇</div>
+            <a href="http://localhost:4000/post/ios-di-ceng/">
+              <h3 class="post-title">
+                iOS 底层
+              </h3>
+            </a>
+          </div>
+        
+
+        
+
+        <div class="site-footer">
+  Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a>
+  <a class="rss" href="http://localhost:4000/atom.xml" target="_blank">
+    <i class="ri-rss-line"></i> RSS
+  </a>
+</div>
+
+      </div>
+    </div>
+
+    <script>
+      hljs.initHighlightingOnLoad()
+
+      let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
+
+      // This should probably be throttled.
+      // Especially because it triggers during smooth scrolling.
+      // https://lodash.com/docs/4.17.10#throttle
+      // You could do like...
+      // window.addEventListener("scroll", () => {
+      //    _.throttle(doThatStuff, 100);
+      // });
+      // Only not doing it here to keep this Pen dependency-free.
+
+      window.addEventListener("scroll", event => {
+        let fromTop = window.scrollY;
+
+        mainNavLinks.forEach((link, index) => {
+          let section = document.getElementById(decodeURI(link.hash).substring(1));
+          let nextSection = null
+          if (mainNavLinks[index + 1]) {
+            nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
+          }
+          if (section.offsetTop <= fromTop) {
+            if (nextSection) {
+              if (nextSection.offsetTop > fromTop) {
+                link.classList.add("current");
+              } else {
+                link.classList.remove("current");    
+              }
+            } else {
+              link.classList.add("current");
+            }
+          } else {
+            link.classList.remove("current");
+          }
+        });
+      });
+
+    </script>
+  </body>
+</html>
