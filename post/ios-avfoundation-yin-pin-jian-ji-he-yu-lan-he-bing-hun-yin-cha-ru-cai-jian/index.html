@@ -3,10 +3,10 @@
     <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>iOS AVFoundation 音视频剪辑和预览（合并、混音、插入、裁剪） | SmartXiaosiyu</title>
-<link rel="shortcut icon" href="http://localhost:4000/favicon.ico?v=1641806108661">
+<link rel="shortcut icon" href="https://smartxiaosiyu.github.io/favicon.ico?v=1637130305299">
 <link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
-<link rel="stylesheet" href="http://localhost:4000/styles/main.css">
-<link rel="alternate" type="application/atom+xml" title="iOS AVFoundation 音视频剪辑和预览（合并、混音、插入、裁剪） | SmartXiaosiyu - Atom Feed" href="http://localhost:4000/atom.xml">
+<link rel="stylesheet" href="https://smartxiaosiyu.github.io/styles/main.css">
+<link rel="alternate" type="application/atom+xml" title="iOS AVFoundation 音视频剪辑和预览（合并、混音、插入、裁剪） | SmartXiaosiyu - Atom Feed" href="https://smartxiaosiyu.github.io/atom.xml">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
 
 
@@ -25,8 +25,8 @@ https://w..." />
     <div class="main">
       <div class="main-content">
         <div class="site-header">
-  <a href="http://localhost:4000">
-  <img class="avatar" src="http://localhost:4000/images/avatar.png?v=1641806108661" alt="">
+  <a href="https://smartxiaosiyu.github.io">
+  <img class="avatar" src="https://smartxiaosiyu.github.io/images/avatar.png?v=1637130305299" alt="">
   </a>
   <h1 class="site-title">
     SmartXiaosiyu
@@ -89,11 +89,11 @@ https://w..." />
                 4 min read
               </span>
               
-                <a href="http://localhost:4000/tag/rIQ6g1HfL/" class="post-tag">
+                <a href="https://smartxiaosiyu.github.io/tag/rIQ6g1HfL/" class="post-tag">
                   # AVFoundation
                 </a>
               
-                <a href="http://localhost:4000/tag/mB2oscScl/" class="post-tag">
+                <a href="https://smartxiaosiyu.github.io/tag/mB2oscScl/" class="post-tag">
                   # 音视频
                 </a>
               
@@ -113,7 +113,7 @@ https://www.twblogs.net/a/5b8ce6c72b7177188336bec1/?lang=zh-cn</p>
 <p>在 AVFoundation 中，视频和音频数据可以用 AVAsset 表示，AVAsset 里面包含了 AVAssetTrack 数据。</p>
 <p>比如：一个视频文件里面包含了一个视频 track 和两个音频 track。<br>
 图：AVAsset 及其子类结构<br>
-<img src="http://localhost:4000/post-images/1632813359808.jpeg" alt="" loading="lazy"></p>
+<img src="https://smartxiaosiyu.github.io/post-images/1632813359808.jpeg" alt="" loading="lazy"></p>
 <p>可以使用 AVComposition 对 track 进行裁剪和变速等操作，也可以把多段 track 拼接到 AVComposition 里面，在处理完 track 的拼接和修改后，得到最终的 AVComposition，它是 AVAsset 的子类，也就是说可以把它传递到 AVPlayer、AVAssetImageGenerator、AVExportSession 和 AVAssetReader 里面作为数据源，把 AVComposition 当成是一个视频数据进行处理。</p>
 <h3 id="2-视频画面拼接混音处理">2、视频画面拼接/混音处理</h3>
 <ul>
@@ -123,7 +123,7 @@ AVFoundation 类 API 中最核心的类是 AVVideoComposition / AVMutableVideoCo
 <p><strong>AVVideoComposition / AVMutableVideoComposition 对两个或多个视频轨道组合在一起的方法给出了一个总体描述</strong>。它由一组时间范围和描述组合行为的介绍内容组成。这些信息出现在组合资源内的任意时间点。</p>
 <p>AVVideoComposition / AVMutableVideoComposition 管理所有视频轨道，可以决定最终视频的尺寸，裁剪需要在这里进行；</p>
 <p><strong>AVMutableCompositionTrack 将多个 AVAsset 集合到一起合成新视频中轨道信息，有音频轨、视频轨等，里面可以插入各种对应的素材（画中画，水印等）；</strong></p>
-<figure data-type="image" tabindex="1"><img src="http://localhost:4000/post-images/1632813569403.jpeg" alt="" loading="lazy"></figure>
+<figure data-type="image" tabindex="1"><img src="https://smartxiaosiyu.github.io/post-images/1632813569403.jpeg" alt="" loading="lazy"></figure>
 <ul>
 <li>2.2 AVFoundation 中的音频处理<br>
 AVFoundation 提供了 AVAudioMix 用于处理音频数据。 AVAudioMix 这个类很简单，只有一个 inputParameters 属性，它是一个 AVAudioMixInputParameters 数组。具体的音频处理都在 AVAudioMixInputParameters 里进行配置。AVAudioMixInputParameters 只能绑定单个 AVAssetTrack 的音频数据。</li>
@@ -142,7 +142,7 @@ AVMutableVideoCompositionLayerInstruction 视频层编辑指令，可以用它�
 https://www.codersrc.com/archives/10539.html</p>
 <h3 id="总结总体流程">总结总体流程</h3>
 <p>AVFoundation 视频剪辑的整体工作流程：<br>
-<img src="http://localhost:4000/post-images/1632815232101.png" alt="" loading="lazy"></p>
+<img src="https://smartxiaosiyu.github.io/post-images/1632815232101.png" alt="" loading="lazy"></p>
 <p>拆解下步骤：</p>
 <ul>
 <li>1.创建一个或多个 AVAsset。</li>
@@ -152,14 +152,14 @@ https://www.codersrc.com/archives/10539.html</p>
 </ul>
 <h2 id="avcomposition">AVComposition</h2>
 <p><strong>AVComposition</strong> 是一个或多个 AVCompositionTrack <strong>音视频轨道的集合</strong>。其中 <strong>AVCompositionTrack</strong> 又可以<strong>包含来自多个 AVAsset 的 AVAssetTrack</strong>。<br>
-<img src="http://localhost:4000/post-images/1632815522710.png" alt="" loading="lazy"></p>
+<img src="https://smartxiaosiyu.github.io/post-images/1632815522710.png" alt="" loading="lazy"></p>
 <h2 id="avvideocomposition">AVVideoComposition</h2>
 <p>AVVideoComposition 可以用来指定渲染大小和渲染缩放，以及帧率。此外，还存储了实现 AVVideoCompositionInstructionProtocol 协议的 Instruction（指令）数组，这些 Instruction 存储了混合的参数。有了这些混合参数之后，AVVideoComposition 可以通过一个实现 AVVideoCompositing 协议的 Compositor（混合器） 来混合对应的图像帧。</p>
 <p>整体工作流如下图所示：<br>
-<img src="http://localhost:4000/post-images/1632815956180.png" alt="" loading="lazy"></p>
+<img src="https://smartxiaosiyu.github.io/post-images/1632815956180.png" alt="" loading="lazy"></p>
 <h2 id="avaudiomix">AVAudioMix</h2>
 <p>使用 AVAudioMix，你可以在 AVComposition 的音频轨道上处理音频。AVAudioMix 包含一组的 AVAudioMixInputParameters，每个 AVAudioMixInputParameters 对应一个音频的 AVCompositionTrack。如下图所示<br>
-<img src="http://localhost:4000/post-images/1632816124491.png" alt="" loading="lazy"></p>
+<img src="https://smartxiaosiyu.github.io/post-images/1632816124491.png" alt="" loading="lazy"></p>
 <p>https://xie.infoq.cn/article/9735e9fb133b5d294b175b4bd</p>
 
               </div>
@@ -191,7 +191,7 @@ https://www.codersrc.com/archives/10539.html</p>
         
           <div class="next-post">
             <div class="next">下一篇</div>
-            <a href="http://localhost:4000/post/gpuimage/">
+            <a href="https://smartxiaosiyu.github.io/post/gpuimage/">
               <h3 class="post-title">
                 GPUImage
               </h3>
@@ -203,7 +203,7 @@ https://www.codersrc.com/archives/10539.html</p>
 
         <div class="site-footer">
   Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a>
-  <a class="rss" href="http://localhost:4000/atom.xml" target="_blank">
+  <a class="rss" href="https://smartxiaosiyu.github.io/atom.xml" target="_blank">
     <i class="ri-rss-line"></i> RSS
   </a>
 </div>
