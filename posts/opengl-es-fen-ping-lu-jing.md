@@ -10,7 +10,7 @@ isTop: false
 
 ## 原始图片渲染到屏幕上去
 
- + 1.创建上下文
+ <!-- + 1.创建上下文
     self.context = [[EAGLContext alloc] initWithAPI:kEAGLRenderingAPIOpenGLES2];
     [EAGLContext setCurrentContext:self.context];
 
@@ -52,7 +52,7 @@ isTop: false
         glFramebufferRenderbuffer(GL_FRAMEBUFFER,
                                  GL_COLOR_ATTACHMENT0,
                                 `GL_RENDERBUFFER,
-                                renderBuffer);
+                                renderBuffer); -->
                                 
  + 6.读取图片，把图片载入到纹理中去
     ```将图片解压缩成位图 载入到纹理去```
