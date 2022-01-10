@@ -13,19 +13,27 @@ isTop: false
  + 1.创建上下文
     self.context = [[EAGLContext alloc] initWithAPI:kEAGLRenderingAPIOpenGLES2];
     [EAGLContext setCurrentContext:self.context];
+
  + 2.开辟顶点数组内存空间
-    typedef struct {
+  ```
+   typedef struct {
     GLKVector3 positionCoord; // (X, Y, Z)
     GLKVector2 textureCoord; // (U, V)
     } SenceVertex;
     self.vertices = malloc(sizeof(SenceVertex) * 4);
+    ```
+
  + 3.初始化顶点(0,1,2,3)的顶点坐标以及纹理坐标
-  self.vertices[0] = (SenceVertex){{-1, 1, 0}, {0, 1}};
+   ```
+   self.vertices[0] = (SenceVertex){{-1, 1, 0}, {0, 1}};
     self.vertices[1] = (SenceVertex){{-1, -1, 0}, {0, 0}};
     self.vertices[2] = (SenceVertex){{1, 1, 0}, {1, 1}};
     self.vertices[3] = (SenceVertex){{1, -1, 0}, {1, 0}};
+ ```
+
  + 4.创建图层
-    CAEAGLLayer *layer = [[CAEAGLLayer alloc] init];
+    ```CAEAGLLayer *layer = [[CAEAGLLayer alloc] init];```
+
  + 5.绑定渲染缓存区
     渲染缓存区、帧缓存区
     
@@ -45,10 +53,12 @@ isTop: false
                                  GL_COLOR_ATTACHMENT0,
                                 `GL_RENDERBUFFER,
                                 renderBuffer);
+                                
  + 6.读取图片，把图片载入到纹理中去
-    将图片解压缩成位图 载入到纹理去
+    ```将图片解压缩成位图 载入到纹理去```
+
  + 7.设置视口
-    glViewport(0, 0, self.drawableWidth, self.drawableHeight);
+   ``` glViewport(0, 0, self.drawableWidth, self.drawableHeight);```
  + 8.设置顶点缓存区
    将我们的顶点数据拷贝到缓存中去
 
