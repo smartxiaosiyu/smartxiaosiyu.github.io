@@ -1,19 +1,405 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
-    <id>https://smartxiaosiyu.github.io</id>
+    <id>http://localhost:4000</id>
     <title>SmartXiaosiyu</title>
-    <updated>2021-11-17T06:34:03.820Z</updated>
+    <updated>2022-01-05T08:58:27.946Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
-    <link rel="alternate" href="https://smartxiaosiyu.github.io"/>
-    <link rel="self" href="https://smartxiaosiyu.github.io/atom.xml"/>
+    <link rel="alternate" href="http://localhost:4000"/>
+    <link rel="self" href="http://localhost:4000/atom.xml"/>
     <subtitle>BugMaker</subtitle>
-    <logo>https://smartxiaosiyu.github.io/images/avatar.png</logo>
-    <icon>https://smartxiaosiyu.github.io/favicon.ico</icon>
-    <rights>All rights reserved 2021, SmartXiaosiyu</rights>
+    <logo>http://localhost:4000/images/avatar.png</logo>
+    <icon>http://localhost:4000/favicon.ico</icon>
+    <rights>All rights reserved 2022, SmartXiaosiyu</rights>
+    <entry>
+        <title type="html"><![CDATA[iOS 内存]]></title>
+        <id>http://localhost:4000/post/ios-nei-cun/</id>
+        <link href="http://localhost:4000/post/ios-nei-cun/">
+        </link>
+        <updated>2021-12-15T09:37:42.000Z</updated>
+        <content type="html"><![CDATA[<h3 id="内存布局">内存布局</h3>
+<p><img src="http://localhost:4000/post-images/1639624670540.png" alt="" loading="lazy"><br>
+代码段：编译之后的代码<br>
+数据段： 字符串常量  已初始化数据：已初始化的全局变量、静态变量  未初始化数据：未初始化的全局变<br>
+量、静态变量<br>
+堆：alloc malloc动态分配的内存 分配内存的空间地址越来越大<br>
+栈：函数调用开销，局部变量。分配的内存空间地址越来越小<br>
+堆空间越来越大 栈空间越来越小</p>
+<h3 id="tagged-point">Tagged Point</h3>
+<ul>
+<li>从64位开始，iOS引入了Tagged Point技术，用于优化NSNumber、NSDate、NSString等小对象的存储</li>
+<li>在没有使用Tagged Point之前 NSNumber、NSDate、NSString他们是对象 需要动态分配内存，维护引用技术等 NSNumber指针指向的是堆中NSNumber对象的地址值 指针8个字节 对象16个字节 一共24个字节</li>
+<li>使用 Tagged Point之后，NSNumber指针里存储的数据变成了：Tag+Data 数据直接存在指针中</li>
+<li>但是当指针不够存储数据的时候 才会使用动态内存的方式来存储数据</li>
+<li>obj_mgsend 可以识别出来如果是Tagged Point，直接从指针中取出值 不需要找到isa指向的类对象 再从类对象找方法 节省了内存开销 查找开销</li>
+<li>如何判断一个指针是否为Tagged Pointer？<br>
+iOS平台，最高有效位是1（第64bit）<br>
+Mac平台，最低有效位是1<br>
+<img src="http://localhost:4000/post-images/1639636465743.png" alt="" loading="lazy"></li>
+</ul>
+<figure data-type="image" tabindex="1"><img src="http://localhost:4000/post-images/1639735258084.png" alt="" loading="lazy"></figure>
+<h3 id="copy">Copy</h3>
+<p>拷贝的目的 产生一个新副本对象 修改了源对象 不会影响副本对象 反之亦然<br>
+copy 就相当于 retain操作<br>
+copy 不可变拷贝 产生不可变副本 浅拷贝 指针拷贝 计数器+1 的操作 没产生新对象<br>
+mutableCopy 可变拷贝 产生可变副本  深拷贝 内容拷贝 产生新对象</p>
+<figure data-type="image" tabindex="2"><img src="http://localhost:4000/post-images/1640347715615.png" alt="" loading="lazy"></figure>
+<p><img src="http://localhost:4000/post-images/1640416746636.jpeg" alt="" loading="lazy"><br>
+<img src="http://localhost:4000/post-images/1640416752678.jpeg" alt="" loading="lazy"></p>
+<p>属性不可以是mutableCopy<br>
+对象copy必须遵循Copying协议 是一个新的对象</p>
+<h3 id="引用计数存储">引用计数存储</h3>
+<p><img src="http://localhost:4000/post-images/1640503801508.png" alt="" loading="lazy"><br>
+<img src="http://localhost:4000/post-images/1640503821772.png" alt="" loading="lazy"><br>
+如果extra_rc 存不下引用计数的值 has_sidetable_rc变成1 就会 存储在SideTable类中<br>
+<img src="http://localhost:4000/post-images/1640693158136.png" alt="" loading="lazy"><br>
+获取 引用计数值<br>
+<img src="http://localhost:4000/post-images/1640504815778.png" alt="" loading="lazy"><br>
+<img src="http://localhost:4000/post-images/1640504823834.png" alt="" loading="lazy"></p>
+<p>retain<br>
+<img src="http://localhost:4000/post-images/1640504834582.png" alt="" loading="lazy"><br>
+release<br>
+<img src="http://localhost:4000/post-images/1640504842986.png" alt="" loading="lazy"></p>
+<h3 id="weak指针">weak指针</h3>
+<p>weak指针指向的对象如果释放了，则这个指针会自动释放<br>
+将弱引用存到哈希里 当对象释放的时候 清空weak指针</p>
+<h3 id="arc">ARC</h3>
+<p>LLVM和runtime系统相互协作的一个结果<br>
+利用LLVM编译器帮我们自动release<br>
+弱引用是利用runtime</p>
+<h3 id="dealloc">Dealloc</h3>
+<p><img src="http://localhost:4000/post-images/1640693014995.png" alt="" loading="lazy"><br>
+<img src="http://localhost:4000/post-images/1640693452325.png" alt="" loading="lazy"><br>
+<img src="http://localhost:4000/post-images/1640693461628.png" alt="" loading="lazy"><br>
+<img src="http://localhost:4000/post-images/1640693467045.png" alt="" loading="lazy"></p>
+<h3 id="autoreleasepool">AutoReleasePool</h3>
+<p><img src="http://localhost:4000/post-images/1641282087999.png" alt="" loading="lazy"><br>
+<img src="http://localhost:4000/post-images/1641282100148.png" alt="" loading="lazy"></p>
+<p>每个AutoreleasePoolPage对象占用4096字节内存，除了用来存放它内部的成员变量，剩下的空间用来存放autorelease对象的地址<br>
+所有的AutoreleasePoolPage对象通过双向链表的形式连接在一起<br>
+<img src="http://localhost:4000/post-images/1641282280295.png" alt="" loading="lazy"><br>
+调用push方法会将一个POOL_BOUNDARY入栈，并且返回其存放的内存地址</p>
+<p>调用pop方法时传入一个POOL_BOUNDARY的内存地址，会从最后一个入栈的对象开始发送release消息，直到遇到这个POOL_BOUNDARY</p>
+<p>id *next指向了下一个能存放autorelease对象地址的区域</p>
+<h3 id="runloop和autorelease">Runloop和Autorelease</h3>
+<ul>
+<li>autorelease对象在什么时机会被调用release？？<br>
+iOS在主线程的Runloop中注册了2个Observer<br>
+第1个Observer监听了kCFRunLoopEntry事件，会调用objc_autoreleasePoolPush()<br>
+第2个Observer<br>
+监听了kCFRunLoopBeforeWaiting事件，会调用objc_autoreleasePoolPop()、objc_autoreleasePoolPush()<br>
+监听了kCFRunLoopBeforeExit事件，会调用objc_autoreleasePoolPop()</li>
+<li>方法里有局部对象， 出了方法后会立即释放吗<br>
+MRC的话 RunloopkCFRunLoopBeforeWaiting或者kCFRunLoopBeforeExit 时候释放<br>
+ARC的话 默认函数内就释放 因为函数结束前调用release</li>
+</ul>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[iOS 分类]]></title>
+        <id>http://localhost:4000/post/ios-fen-lei/</id>
+        <link href="http://localhost:4000/post/ios-fen-lei/">
+        </link>
+        <updated>2021-12-13T07:58:22.000Z</updated>
+        <content type="html"><![CDATA[<p>编译出来的结果<br>
+<img src="http://localhost:4000/post-images/1639382328780.png" alt="" loading="lazy"></p>
+<p>运行时<br>
+将 rw-&gt;methods 指向的数组扩容，将原来的方法列表移到最后，add分类到数组里，优先调用最后面编译的分类，再调用原来的方法</p>
+<h3 id="category的加载处理过程">Category的加载处理过程</h3>
+<p>通过Runtime加载某个类的所有Category数据</p>
+<p>把所有Category的方法、属性、协议数据，合并到一个大数组中<br>
+后面参与编译的Category数据，会在数组的前面</p>
+<p>将合并后的分类数据（方法、属性、协议），插入到类原来数据的前面</p>
+<h3 id="类扩展和分类的区别">类扩展和分类的区别</h3>
+<p>类扩展 编译的时候 就已经合并在类中了 无非将.h里公开声明里的东西变成.m里私有的<br>
+<img src="http://localhost:4000/post-images/1639383526599.png" alt="" loading="lazy"><br>
+分类是运行时机制 再将分类的东西合并到类里面</p>
+<p><img src="http://localhost:4000/post-images/1639387605285.png" alt="" loading="lazy"><br>
+<img src="http://localhost:4000/post-images/1639387680149.png" alt="" loading="lazy"></p>
+<h3 id="memmove和memcpy">memmove和memcpy</h3>
+<p>1234 -&gt; 0124<br>
+memmove  直接可以<br>
+memcpy 变成0114</p>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[iOS 底层]]></title>
+        <id>http://localhost:4000/post/ios-di-ceng/</id>
+        <link href="http://localhost:4000/post/ios-di-ceng/">
+        </link>
+        <updated>2021-12-05T08:12:26.000Z</updated>
+        <content type="html"><![CDATA[<h3 id="加壳">加壳</h3>
+<p>从AppStore下载的App，会被加密<br>
+利用特殊的算法，对我们可执行文件的编码进行改变</p>
+<p>壳程序里面有（可执行文件（已加密））———&gt; 执行到———&gt;内存中（壳程序里面有（可执行文件（已加密）））———&gt;解密 ———&gt;内存中（壳程序里面有（可执行文件（解密）））</p>
+<p>脱壳<br>
+硬脱壳： 通过解密算法 从壳程序里解出可执行文件<br>
+动态脱壳：当壳程序执行到内存中解密出可执行文件 ，我们从内存中拿到解密后的可执行文件</p>
+<h3 id="ios签名机制">iOS签名机制</h3>
+<p>加密方法有两个</p>
+<ul>
+<li>对称密码 加密和解密用的同一个密钥</li>
+<li>非对称密码（公钥密码）加密和解密用的密钥是不一样的<br>
+密钥 56bit</li>
+</ul>
+<h3 id="对称密码">对称密码：</h3>
+<p>**DES ** 只能加密64bit的明文 已经被破解<br>
+<strong>3DES</strong> 3DES，将DES重复3次所得到的一种密码算法，也叫做3重DES 目前还被一些银行等机构使用，但处理速度不高，安全性逐渐暴露出问题<br>
+<strong>AES</strong> 取代DES成为新标准的一种对称密码算法 它经过了全世界密码学家所进行的高品质验证工作</p>
+<h3 id="如何解决密钥配送问题">如何解决密钥配送问题</h3>
+<p>有以下几种解决密钥配送的方法</p>
+<ul>
+<li>事先共享密钥</li>
+<li>密钥分配中心</li>
+<li>Diffie-Hellman密钥交换</li>
+</ul>
+<h3 id="公钥密码">公钥密码</h3>
+<p>公钥密码中，密钥分为加密密钥、解密密钥2种，它们并不是同一个密钥<br>
+加密密钥，一般是公开的，因此该密钥称为公钥（public key）<br>
+解密密钥，由消息接收者自己保管的，不能公开，因此也称为私钥（private key）<br>
+公钥和私钥是一 一对应的，是不能单独生成的，一对公钥和密钥统称为密钥对（key pair）<br>
+由公钥加密的密文，必须使用与该公钥对应的私钥才能解密<br>
+由私钥加密的密文，必须使用与该私钥对应的公钥才能解密<br>
+<img src="http://localhost:4000/post-images/1638709484493.png" alt="" loading="lazy"><br>
+目前使用最广泛的公钥密码算法是RSA</p>
+<h3 id="解决密钥配送问题">解决密钥配送问题</h3>
+<p>由消息的接收者，生成一对公钥、私钥<br>
+将公钥发给消息的发送者<br>
+消息的发送者使用公钥加密消息</p>
+<p>对称密码的缺点<br>
+不能很好地解决密钥配送问题</p>
+<p>公钥密码的缺点<br>
+加密解密速度比较慢</p>
+<p>混合密码系统，是将对称密码和公钥密码的优势相结合的方法<br>
+解决了公钥密码速度慢的问题<br>
+并通过公钥密码解决了对称密码的密钥配送问题</p>
+<p>网络上的密码通信所用的SSL/TLS都运用了混合密码系统</p>
+<h3 id="混合密码-加密">混合密码-加密</h3>
+<p><img src="http://localhost:4000/post-images/1638710695280.png" alt="" loading="lazy"><br>
+<img src="http://localhost:4000/post-images/1638710701498.png" alt="" loading="lazy"></p>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[iOS 签名机制]]></title>
+        <id>http://localhost:4000/post/ios-qian-ming-ji-zhi/</id>
+        <link href="http://localhost:4000/post/ios-qian-ming-ji-zhi/">
+        </link>
+        <updated>2021-12-05T08:12:26.000Z</updated>
+        <content type="html"><![CDATA[<h3 id="加壳">加壳</h3>
+<p>从AppStore下载的App，会被加密<br>
+利用特殊的算法，对我们可执行文件的编码进行改变</p>
+<p>壳程序里面有（可执行文件（已加密））———&gt; 执行到———&gt;内存中（壳程序里面有（可执行文件（已加密）））———&gt;解密 ———&gt;内存中（壳程序里面有（可执行文件（解密）））</p>
+<p>脱壳<br>
+硬脱壳： 通过解密算法 从壳程序里解出可执行文件<br>
+动态脱壳：当壳程序执行到内存中解密出可执行文件 ，我们从内存中拿到解密后的可执行文件</p>
+<h3 id="ios签名机制">iOS签名机制</h3>
+<p>加密方法有两个</p>
+<ul>
+<li>对称密码 加密和解密用的同一个密钥</li>
+<li>非对称密码（公钥密码）加密和解密用的密钥是不一样的<br>
+密钥 56bit</li>
+</ul>
+<h3 id="对称密码">对称密码：</h3>
+<p>**DES ** 只能加密64bit的明文 已经被破解<br>
+<strong>3DES</strong> 3DES，将DES重复3次所得到的一种密码算法，也叫做3重DES 目前还被一些银行等机构使用，但处理速度不高，安全性逐渐暴露出问题<br>
+<strong>AES</strong> 取代DES成为新标准的一种对称密码算法 它经过了全世界密码学家所进行的高品质验证工作</p>
+<h3 id="如何解决密钥配送问题">如何解决密钥配送问题</h3>
+<p>有以下几种解决密钥配送的方法</p>
+<ul>
+<li>事先共享密钥</li>
+<li>密钥分配中心</li>
+<li>Diffie-Hellman密钥交换</li>
+</ul>
+<h3 id="公钥密码">公钥密码</h3>
+<p>公钥密码中，密钥分为加密密钥、解密密钥2种，它们并不是同一个密钥<br>
+加密密钥，一般是公开的，因此该密钥称为公钥（public key）<br>
+解密密钥，由消息接收者自己保管的，不能公开，因此也称为私钥（private key）<br>
+公钥和私钥是一 一对应的，是不能单独生成的，一对公钥和密钥统称为密钥对（key pair）<br>
+由公钥加密的密文，必须使用与该公钥对应的私钥才能解密<br>
+由私钥加密的密文，必须使用与该私钥对应的公钥才能解密<br>
+<img src="http://localhost:4000/post-images/1638709484493.png" alt="" loading="lazy"><br>
+目前使用最广泛的公钥密码算法是RSA</p>
+<h3 id="解决密钥配送问题">解决密钥配送问题</h3>
+<p>由消息的接收者，生成一对公钥、私钥<br>
+将公钥发给消息的发送者<br>
+消息的发送者使用公钥加密消息</p>
+<p>对称密码的缺点<br>
+不能很好地解决密钥配送问题</p>
+<p>公钥密码的缺点<br>
+加密解密速度比较慢</p>
+<p>混合密码系统，是将对称密码和公钥密码的优势相结合的方法<br>
+解决了公钥密码速度慢的问题<br>
+并通过公钥密码解决了对称密码的密钥配送问题</p>
+<p>网络上的密码通信所用的SSL/TLS都运用了混合密码系统</p>
+<h3 id="混合密码-加密">混合密码-加密</h3>
+<p><img src="http://localhost:4000/post-images/1638710695280.png" alt="" loading="lazy"><br>
+<img src="http://localhost:4000/post-images/1638710701498.png" alt="" loading="lazy"></p>
+<h3 id="单向散列函数">单向散列函数</h3>
+<p>单向散列函数，可以根据根据消息内容计算出散列值<br>
+散列值的长度和消息的长度无关，无论消息是1bit、10M、100G，单向散列函数都会计算出固定长度的散列值</p>
+<ul>
+<li>根据任意长度的消息，计算出固定长度的散列值</li>
+<li>计算速度快，能快速计算出散列值</li>
+<li>消息不同，散列值也不同</li>
+<li>具备单向性</li>
+</ul>
+<h3 id="数字签名">数字签名</h3>
+<p><img src="http://localhost:4000/post-images/1638873958154.png" alt="" loading="lazy"><br>
+数字签名不能保证机密性？<br>
+数字签名的作用不是为了保证机密性，仅仅是为了能够识别内容有没有被篡改</p>
+<p>数字签名的作用<br>
+确认消息的完整性<br>
+识别消息是否被篡改<br>
+防止消息发送人否认</p>
+<h3 id="数字签名无法解决的问题">数字签名无法解决的问题</h3>
+<p>要正确使用签名，前提是<br>
+用于验证签名的公钥必须属于真正的发送者</p>
+<p>如果遭遇了中间人攻击，那么<br>
+公钥将是伪造的<br>
+数字签名将失效</p>
+<p>所以在验证签名之前，首先得先验证公钥的合法性</p>
+<p>如何验证公钥的合法性？<br>
+证书<br>
+<img src="http://localhost:4000/post-images/1638876813483.png" alt="" loading="lazy"><br>
+密码学中的证书，全称叫公钥证书（Public-key Certificate，PKC），跟驾驶证类似<br>
+里面有姓名、邮箱等个人信息，以及此人的公钥<br>
+并由认证机构（Certificate Authority，CA）施加数字签名</p>
+<p>CA就是能够认定“公钥确实属于此人”并能够生成数字签名的个人或者组织<br>
+<img src="http://localhost:4000/post-images/1638878379794.png" alt="" loading="lazy"></p>
+<figure data-type="image" tabindex="1"><img src="http://localhost:4000/post-images/1638878575199.png" alt="" loading="lazy"></figure>
+<h3 id="ios签名机制-流程图">iOS签名机制 – 流程图</h3>
+<p><img src="http://localhost:4000/post-images/1638881402683.png" alt="" loading="lazy"><br>
+安装</p>
+<ul>
+<li>1.Mac私钥签名App 生成  -》（App和App内容签名）</li>
+<li>2.App私钥签名 Mac公钥 生成  -》（Mac公钥和Mac公钥签名）</li>
+<li>3.App私钥签名 （Mac公钥和Mac公钥签名）+ Devices + app id + entitlements 生成 -》 （（Mac公钥和Mac公钥签名）+ Devices + app id + entitlements 和 签名）<br>
+验证</li>
+<li>App公钥验证安装3的签名 和 安装3的内容验证</li>
+<li>核实Devices + app id + entitlements</li>
+<li>App公钥验证安装2的签名获取 Mac公钥</li>
+<li>Mac公钥 验证安装1的签名 核实App内容</li>
+</ul>
+<p>签名机制就是为了验证App不被人篡改</p>
+<p>CertificateSigningRequest.certSigningRequest文件<br>
+就是Mac设备的公钥</p>
+<p>ios_development.cer、ios_distribution.cer文件<br>
+利用Apple后台的私钥，对Mac设备的公钥进行签名后的证书文件  安装2</p>
+<p>生成mobileprovision 选择设备、证书  安装3</p>
+<figure data-type="image" tabindex="2"><img src="http://localhost:4000/post-images/1638883511070.png" alt="" loading="lazy"></figure>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[iOS 定时器]]></title>
+        <id>http://localhost:4000/post/ios-ji-shi-qi/</id>
+        <link href="http://localhost:4000/post/ios-ji-shi-qi/">
+        </link>
+        <updated>2021-11-25T03:21:58.000Z</updated>
+        <content type="html"><![CDATA[<p><img src="http://localhost:4000/post-images/1637810663803.png" alt="" loading="lazy"><br>
+self 对Timer是强引用 Timer对self是弱引用</p>
+<h3 id="nstimer-循环引用">NSTimer 循环引用</h3>
+<pre><code>self.timer = [NSTimer scheduledTimerWithTimeInterval:1.0 target:self selector:@selector(timerTest) userInfo:nil repeats:YES];
+</code></pre>
+<p>self 对Timer是强引用 Timer对self是强引用</p>
+<p>更改为以下代码：</p>
+<pre><code>self.timer = [NSTimer scheduledTimerWithTimeInterval:1.0 target:[MJProxy proxyWithTarget:self] selector:@selector(timerTest) userInfo:nil repeats:YES];
+</code></pre>
+<pre><code>@interface MJProxy : NSObject
++ (instancetype)proxyWithTarget:(id)target;
+@property (weak, nonatomic) id target;
+@end
+</code></pre>
+<pre><code>+ (instancetype)proxyWithTarget:(id)target
+{
+    MJProxy *proxy = [[MJProxy alloc] init];
+    proxy.target = target;
+    return proxy;
+}
+
+- (id)forwardingTargetForSelector:(SEL)aSelector
+{
+    return self.target;
+}
+
+@end
+</code></pre>
+<p><img src="http://localhost:4000/post-images/1637824068622.png" alt="" loading="lazy"><br>
+Timer对OtherObject是强引用 OtherObject对self是弱引用 self 对Timer是强引用<br>
+self 释放了 timer释放了 OtherObject释放了</p>
+<h3 id="nsproxy">NSProxy</h3>
+<p>继承NSProxy类 不需要init 专门用来做消息转发<br>
+直接做消息转发 不会先从父类找方法 因为没有方法</p>
+<pre><code>+ (instancetype)proxyWithTarget:(id)target
+{
+    // NSProxy对象不需要调用init，因为它本来就没有init方法
+    MJProxy *proxy = [MJProxy alloc];
+    proxy.target = target;
+    return proxy;
+}
+
+- (NSMethodSignature *)methodSignatureForSelector:(SEL)sel
+{
+    return [self.target methodSignatureForSelector:sel];
+}
+
+- (void)forwardInvocation:(NSInvocation *)invocation
+{
+    [invocation invokeWithTarget:self.target];
+}
+@end
+</code></pre>
+<pre><code>@interface MJProxy : NSProxy
++ (instancetype)proxyWithTarget:(id)target;
+@property (weak, nonatomic) id target;
+@end
+</code></pre>
+<p>如果MJProxy MJProxy1有test方法则直接实现</p>
+<h3 id="gcd定时器">GCD定时器</h3>
+<p>NSTimer依赖于RunLoop，如果RunLoop的任务过于繁重，可能会导致NSTimer不准时</p>
+<p>而GCD的定时器会更加准时<br>
+GCD和内核挂钩</p>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[CAShapeLayer]]></title>
+        <id>http://localhost:4000/post/cashapelayer/</id>
+        <link href="http://localhost:4000/post/cashapelayer/">
+        </link>
+        <updated>2021-11-24T07:39:49.000Z</updated>
+        <content type="html"><![CDATA[<p>关于CAShapeLayer和DrawRect的比较</p>
+<p>DrawRect：DrawRect属于CoreGraphic框架，占用CPU，消耗性能大<br>
+CAShapeLayer：CAShapeLayer属于CoreAnimation框架，通过GPU来渲染图形，节省性能。动画渲染直接提交给手机GPU，不消耗内存</p>
+<h3 id="布局">布局</h3>
+<p>要分析CALayer的anchorPoint和position属性,首先要讨论一下CALayer的布局.<br>
+我们所熟悉的UIView有三个重要的布局属性:frame,bounds和center,CALayer对应的叫做 frame,bounds和position.</p>
+<p>frame代表了图层的外部坐标(在父图层上占据的空间)<br>
+bounds为内部坐标<br>
+position代表了相对父图层anchorPoint的位置</p>
+<h3 id="锚点">锚点</h3>
+<ul>
+<li>和position共同决定图层相对父图层的位置,即frame的x,y</li>
+<li>在图层旋转时的固定点<br>
+锚点使用单位坐标来描述,范围为左上角{0, 0}到右下角{1, 1},默认坐标是{0.5, 0.5}.</li>
+</ul>
+<h3 id="锚点和position的关系">锚点和position的关系</h3>
+<p>position是图层的anchorPoint在父图层中的位置坐标.<br>
+anchorPoint和position共同决定图层相对父图层的位置,即frame属性的frame.origin.<br>
+单方面修改anchorPoint或者position并不会对彼此产生影响,修改其中一个值,受影响的只会是frame.origin.<br>
+anchorPoint如果是0.5，0。5 就相当于 中心点 那可以理解成 子view的中心点在父view的位置坐标</p>
+<p>position.x =  frame.origin.x - anchorPoint.x * bounds.size.width；</p>
+<p>position.y =  frame.origin.y - anchorPoint.y * bounds.size.height</p>
+<h3 id="总结">总结</h3>
+<p>单方面修改anchorPoint或者position并不会对彼此产生影响,修改其中一个值,受影响的只会是frame.origin.</p>
+<p>anchorPoint和position共同决定了frame<br>
+frame.origin.x = position.x - anchorPoint.x * bounds.size.width；<br>
+frame.origin.y = position.y - anchorPoint.y * bounds.size.height</p>
+<p>anchorPoint是图层在旋转时的固定点</p>
+<p>https://www.jianshu.com/p/998a6119a275</p>
+]]></content>
+    </entry>
     <entry>
         <title type="html"><![CDATA[iOS 多线程]]></title>
-        <id>https://smartxiaosiyu.github.io/post/ios-duo-xian-cheng/</id>
-        <link href="https://smartxiaosiyu.github.io/post/ios-duo-xian-cheng/">
+        <id>http://localhost:4000/post/ios-duo-xian-cheng/</id>
+        <link href="http://localhost:4000/post/ios-duo-xian-cheng/">
         </link>
         <updated>2021-10-22T03:46:39.000Z</updated>
         <content type="html"><![CDATA[<pre><code>// 题目：写出NSLog的打印结果（来自美团 GCD 面试题）
@@ -165,12 +551,14 @@ Qos指定了列队工作的优先级，系统会根据优先级来调度工作�
 <p>降低资源消耗：通过重复利用现有的线程来执行任务，避免多次创建和销毁线程。<br>
 提高相应速度：因为省去了创建线程这个步骤，所以在拿到任务时，可以立刻开始执行。<br>
 提供附加功能：线程池的可拓展性使得我们可以自己加入新的功能，比如说定时、延时来执行某些线程。</p>
+<p>###线程同步、线程依赖、线程组<br>
+https://www.cnblogs.com/chglog/p/6782413.html</p>
 ]]></content>
     </entry>
     <entry>
         <title type="html"><![CDATA[iOS AVFoundation 音视频剪辑和预览（合并、混音、插入、裁剪）]]></title>
-        <id>https://smartxiaosiyu.github.io/post/ios-avfoundation-yin-pin-jian-ji-he-yu-lan-he-bing-hun-yin-cha-ru-cai-jian/</id>
-        <link href="https://smartxiaosiyu.github.io/post/ios-avfoundation-yin-pin-jian-ji-he-yu-lan-he-bing-hun-yin-cha-ru-cai-jian/">
+        <id>http://localhost:4000/post/ios-avfoundation-yin-pin-jian-ji-he-yu-lan-he-bing-hun-yin-cha-ru-cai-jian/</id>
+        <link href="http://localhost:4000/post/ios-avfoundation-yin-pin-jian-ji-he-yu-lan-he-bing-hun-yin-cha-ru-cai-jian/">
         </link>
         <updated>2021-09-28T03:47:13.000Z</updated>
         <content type="html"><![CDATA[<h3 id="音频合并">音频合并</h3>
@@ -185,7 +573,7 @@ https://www.twblogs.net/a/5b8ce6c72b7177188336bec1/?lang=zh-cn</p>
 <p>在 AVFoundation 中，视频和音频数据可以用 AVAsset 表示，AVAsset 里面包含了 AVAssetTrack 数据。</p>
 <p>比如：一个视频文件里面包含了一个视频 track 和两个音频 track。<br>
 图：AVAsset 及其子类结构<br>
-<img src="https://smartxiaosiyu.github.io/post-images/1632813359808.jpeg" alt="" loading="lazy"></p>
+<img src="http://localhost:4000/post-images/1632813359808.jpeg" alt="" loading="lazy"></p>
 <p>可以使用 AVComposition 对 track 进行裁剪和变速等操作，也可以把多段 track 拼接到 AVComposition 里面，在处理完 track 的拼接和修改后，得到最终的 AVComposition，它是 AVAsset 的子类，也就是说可以把它传递到 AVPlayer、AVAssetImageGenerator、AVExportSession 和 AVAssetReader 里面作为数据源，把 AVComposition 当成是一个视频数据进行处理。</p>
 <h3 id="2-视频画面拼接混音处理">2、视频画面拼接/混音处理</h3>
 <ul>
@@ -195,7 +583,7 @@ AVFoundation 类 API 中最核心的类是 AVVideoComposition / AVMutableVideoCo
 <p><strong>AVVideoComposition / AVMutableVideoComposition 对两个或多个视频轨道组合在一起的方法给出了一个总体描述</strong>。它由一组时间范围和描述组合行为的介绍内容组成。这些信息出现在组合资源内的任意时间点。</p>
 <p>AVVideoComposition / AVMutableVideoComposition 管理所有视频轨道，可以决定最终视频的尺寸，裁剪需要在这里进行；</p>
 <p><strong>AVMutableCompositionTrack 将多个 AVAsset 集合到一起合成新视频中轨道信息，有音频轨、视频轨等，里面可以插入各种对应的素材（画中画，水印等）；</strong></p>
-<figure data-type="image" tabindex="1"><img src="https://smartxiaosiyu.github.io/post-images/1632813569403.jpeg" alt="" loading="lazy"></figure>
+<figure data-type="image" tabindex="1"><img src="http://localhost:4000/post-images/1632813569403.jpeg" alt="" loading="lazy"></figure>
 <ul>
 <li>2.2 AVFoundation 中的音频处理<br>
 AVFoundation 提供了 AVAudioMix 用于处理音频数据。 AVAudioMix 这个类很简单，只有一个 inputParameters 属性，它是一个 AVAudioMixInputParameters 数组。具体的音频处理都在 AVAudioMixInputParameters 里进行配置。AVAudioMixInputParameters 只能绑定单个 AVAssetTrack 的音频数据。</li>
@@ -214,7 +602,7 @@ AVMutableVideoCompositionLayerInstruction 视频层编辑指令，可以用它�
 https://www.codersrc.com/archives/10539.html</p>
 <h3 id="总结总体流程">总结总体流程</h3>
 <p>AVFoundation 视频剪辑的整体工作流程：<br>
-<img src="https://smartxiaosiyu.github.io/post-images/1632815232101.png" alt="" loading="lazy"></p>
+<img src="http://localhost:4000/post-images/1632815232101.png" alt="" loading="lazy"></p>
 <p>拆解下步骤：</p>
 <ul>
 <li>1.创建一个或多个 AVAsset。</li>
@@ -224,21 +612,21 @@ https://www.codersrc.com/archives/10539.html</p>
 </ul>
 <h2 id="avcomposition">AVComposition</h2>
 <p><strong>AVComposition</strong> 是一个或多个 AVCompositionTrack <strong>音视频轨道的集合</strong>。其中 <strong>AVCompositionTrack</strong> 又可以<strong>包含来自多个 AVAsset 的 AVAssetTrack</strong>。<br>
-<img src="https://smartxiaosiyu.github.io/post-images/1632815522710.png" alt="" loading="lazy"></p>
+<img src="http://localhost:4000/post-images/1632815522710.png" alt="" loading="lazy"></p>
 <h2 id="avvideocomposition">AVVideoComposition</h2>
 <p>AVVideoComposition 可以用来指定渲染大小和渲染缩放，以及帧率。此外，还存储了实现 AVVideoCompositionInstructionProtocol 协议的 Instruction（指令）数组，这些 Instruction 存储了混合的参数。有了这些混合参数之后，AVVideoComposition 可以通过一个实现 AVVideoCompositing 协议的 Compositor（混合器） 来混合对应的图像帧。</p>
 <p>整体工作流如下图所示：<br>
-<img src="https://smartxiaosiyu.github.io/post-images/1632815956180.png" alt="" loading="lazy"></p>
+<img src="http://localhost:4000/post-images/1632815956180.png" alt="" loading="lazy"></p>
 <h2 id="avaudiomix">AVAudioMix</h2>
 <p>使用 AVAudioMix，你可以在 AVComposition 的音频轨道上处理音频。AVAudioMix 包含一组的 AVAudioMixInputParameters，每个 AVAudioMixInputParameters 对应一个音频的 AVCompositionTrack。如下图所示<br>
-<img src="https://smartxiaosiyu.github.io/post-images/1632816124491.png" alt="" loading="lazy"></p>
+<img src="http://localhost:4000/post-images/1632816124491.png" alt="" loading="lazy"></p>
 <p>https://xie.infoq.cn/article/9735e9fb133b5d294b175b4bd</p>
 ]]></content>
     </entry>
     <entry>
         <title type="html"><![CDATA[GPUImage]]></title>
-        <id>https://smartxiaosiyu.github.io/post/gpuimage/</id>
-        <link href="https://smartxiaosiyu.github.io/post/gpuimage/">
+        <id>http://localhost:4000/post/gpuimage/</id>
+        <link href="http://localhost:4000/post/gpuimage/">
         </link>
         <updated>2021-09-27T03:20:23.000Z</updated>
         <content type="html"><![CDATA[<p>https://www.jianshu.com/p/fb8964955e24</p>
@@ -246,8 +634,8 @@ https://www.codersrc.com/archives/10539.html</p>
     </entry>
     <entry>
         <title type="html"><![CDATA[音视频基础]]></title>
-        <id>https://smartxiaosiyu.github.io/post/yin-shi-pin-ji-chu/</id>
-        <link href="https://smartxiaosiyu.github.io/post/yin-shi-pin-ji-chu/">
+        <id>http://localhost:4000/post/yin-shi-pin-ji-chu/</id>
+        <link href="http://localhost:4000/post/yin-shi-pin-ji-chu/">
         </link>
         <updated>2021-09-23T07:51:24.000Z</updated>
         <content type="html"><![CDATA[<p><strong>解协议</strong>的作用，就是将<strong>流媒体协议的数据</strong>，解析为标准的相应的<strong>封装格式数据</strong>。视音频在网络上传播的时候，常常采用各种流媒体协议，例如HTTP，RTMP，或是MMS等等。这些协议在传输视音频数据的同时，也会传输一些信令数据。这些信令数据包括对播放的控制（播放，暂停，停止），或者对网络状态的描述等。解协议的过程中会<strong>去除掉信令数据而只保留视音频数据</strong>。例如，采用RTMP协议传输的数据，经过解协议操作后，输出FLV格式的数据。</p>
@@ -304,406 +692,35 @@ CDN工作原理：比如请求流媒体数据<br>
 这种群集技术可以用最少的投资获得接近于大型主机的性能。</p>
 <p><strong>QoS（带宽管理</strong>）:限制每一个组群的带宽，让有限的带宽发挥最大的效用</p>
 <p>https://www.cnblogs.com/oc-bowen/p/5895482.html</p>
-]]></content>
-    </entry>
-    <entry>
-        <title type="html"><![CDATA[FFMpeg ]]></title>
-        <id>https://smartxiaosiyu.github.io/post/ffmpeg/</id>
-        <link href="https://smartxiaosiyu.github.io/post/ffmpeg/">
-        </link>
-        <updated>2021-09-23T07:15:12.000Z</updated>
-        <content type="html"><![CDATA[<blockquote>
-<p>FFmpeg全名是Fast Forward MPEG(Moving Picture Experts Group)是一个集成了各种编解码器的库，可以说是一个全能型的工具，从视频采集、视频编码到视频传输（包括RTP、RTCP、RTMP、RTSP等等协议）都可以直接使用FFMPEG来完成，更重要的一点FFMPEG是跨平台的，Windows、Linux、Aandroid、IOS这些主流系统通吃。因此初期强烈建议直接使用FFMPEG。</p>
-</blockquote>
-<p><strong>ffmpeg是用于转码的应用程序。</strong><br>
-<strong>ffplay是用于播放的应用程序</strong><br>
-<strong>ffprobe是用于查看文件格式的应用程序</strong></p>
-<h3 id="库文件">库文件</h3>
-<p>库文件是计算机上的一类文件，提供给使用者一些开箱即用的变量、函数或类。库文件分为静态库和动态库（dll），静态库和动态库的区别体现在程序的链接阶段：静态库在程序的链接阶段被复制到了程序中；动态库在链接阶段没有被复制到程序中，而是程序在运行时由系统动态加载到内存中供程序调用。使用动态库系统只需载入一次，不同的程序可以得到内存中相同的动态库的副本，因此节省了很多内存，而且使用动态库也便于模块化更新程序。<br>
-在操作系统中，许多应用程序并不是只有一个完整的可执行文件，大多数程序模块被分割成一些相对独立的动态库。当我们执行某一个程序时，相应的动态库文件就会被调用。一个应用程序可使用多个动态库文件，一个动态库文件也可能被不同的应用程序使用，这样的动态库文件被称为共享库文件。</p>
-<p><strong>①DLL文件是怎么产生的</strong></p>
-<p>许多应用程序被分割成一些相对独立的动态链接库，放置于系统中，就产生了DLL文件。</p>
-<p><strong>②DLL文件是什么</strong></p>
-<p>DLL(Dynamic Link Library)文件为动态链接库文件，又称“应用程序拓展”，是软件文件类型。在Windows中，许多应用程序并不是一个完整的可执行文件，它们被分割成一些相对独立的动态链接库，即DLL文件，放置于系统中。当我们执行某一个程序时，相应的DLL文件就会被调用。一个应用程序可使用多个DLL文件，一个DLL文件也可能被不同的应用程序使用，这样的DLL文件被称为共享DLL文件。</p>
-<p><strong>③DLL文件有什么用</strong></p>
-<p>DLL文件中存放的是各类程序的函数(子过程)实现过程，当程序需要调用函数时需要先载入DLL，然后取得函数的地址，最后进行调用。使用DLL文件的好处是程序不需要在运行之初加载所有代码，只有在程序需要某个函数的时候才从DLL中取出。另外，使用DLL文件还可以减小程序的体积。</p>
-<h3 id="ffmpeg-的三种版本">FFmpeg 的三种版本</h3>
-<p>分为3个版本：Static，Shared，Dev。前两个版本可以直接在命令行中使用，他们的区别在于：<br>
-<strong>Static 静态库版本</strong>：ffmpeg.exe，ffplay.exe，ffprobe.exe，每个exe的体积都很大，相关的Dll已经被编译到exe里面去了。作为工具而言此版本就可以满足我们的需求；<br>
-<strong>Shared（动态库版本）</strong>：里面除了3个应用程序：ffmpeg.exe，ffplay.exe，ffprobe.exe之外，还有一些Dll，比如说avcodec-54.dll之类的。Shared里面的exe体积很小，他们在运行的时候，到相应的Dll中调用功能。程序运行过程必须依赖于提供的dll文件；<br>
-<strong>Dev（开发者版本）</strong>：是用于开发的，里面包含了库文件xxx.lib以及头文件xxx.h，这个版本不包含exe文件。dev版本中include文件夹内文件用途</p>
-<blockquote>
-<p>libavcodec：用于各种类型声音/图像编解码；<br>
-libavdevice：用于音视频数据采集和渲染等功能的设备相关;<br>
-libavfilter：包含多媒体处理常用的滤镜功能;<br>
-libavformat：包含多种多媒体容器格式的封装、解封装工具;<br>
-libavutil：包含一些公共的工具函数；<br>
-libpostproc：用于后期效果处理；<br>
-libswresample：用于音频重采样和格式转换等功能;<br>
-libswscale：用于视频场景比例缩放、色彩映射转换；</p>
-</blockquote>
-<h3 id="sdl">SDL</h3>
-<p>SDL库的作用说白了就是封装了复杂的视音频底层操作，简化了视音频处理的难度<br>
-SDL（Simple DirectMedia Layer）是一套开放源代码的跨平台多媒体开发库，使用C语言写成。SDL提供了数种控制图像、声音、输出入的函数，让开发者只要用相同或是相似的代码就可以开发出跨多个平台（Linux、Windows、Mac OS X等）的应用软件。目前SDL多用于开发游戏、模拟器、媒体播放器等多媒体应用领域。</p>
-<p>https://blog.csdn.net/leixiaohua1020/article/details/15811977</p>
-]]></content>
-    </entry>
-    <entry>
-        <title type="html"><![CDATA[ijkPlayer]]></title>
-        <id>https://smartxiaosiyu.github.io/post/ijkplayer/</id>
-        <link href="https://smartxiaosiyu.github.io/post/ijkplayer/">
-        </link>
-        <updated>2021-09-23T03:50:54.000Z</updated>
-        <content type="html"><![CDATA[<p>https://www.jianshu.com/p/7b2f1df74420<br>
-https://juejin.cn/post/6844903698473156615</p>
-]]></content>
-    </entry>
-    <entry>
-        <title type="html"><![CDATA[音视频基础知识---协议相关RTSP RTMP HLS]]></title>
-        <id>https://smartxiaosiyu.github.io/post/yin-shi-pin-ji-chu-zhi-shi-xie-yi-xiang-guan-rtsp-rtmp-hls/</id>
-        <link href="https://smartxiaosiyu.github.io/post/yin-shi-pin-ji-chu-zhi-shi-xie-yi-xiang-guan-rtsp-rtmp-hls/">
-        </link>
-        <updated>2021-09-16T03:37:38.000Z</updated>
-        <content type="html"><![CDATA[<h3 id="udp-tcp">UDP、TCP</h3>
-<p>UDP/TCP本质上是一种网络传输协议，负责、并规范了信息的传递<br>
-<img src="https://smartxiaosiyu.github.io/post-images/1631763941223.jpeg" alt="" loading="lazy"></p>
-<h3 id="rtsp">RTSP</h3>
-<p>RTSP，是目前三大流媒体协议之一，英文全称为：Real Time Streaming Protocol，即<strong>实时流传输协议</strong>，它是由Real Networks 和 Netscape2家公司共同创立。<strong>它本身并不传输数据</strong>，传输数据的动作可以让UDP/TCP协议完成，而且RTSP可以选择基于RTP协议传输。</p>
-<ul>
-<li>RTSP对流媒体提供了诸如暂停，快进等控制，它不仅提供了对于视频流的控制还定义了流格式，如TS、 mp4 格式。通常应用于安防视频监控等场景，如公安调查监控进行视频的查看、回放、快进、后退等操作，十分友好。</li>
-<li>最大的特点除了<strong>控制视频操作</strong>外还<strong>具有低延时的特点</strong>，通常可实现毫秒级的延时，但是也存在一些弊端，如该视频流<strong>技术实现复杂</strong>，而且<strong>对浏览器很挑剔</strong>，且flash插件播不了，这也极大的限制了它的发展。</li>
-</ul>
-<h3 id="rtmp">RTMP</h3>
-<p>RTMP，英文全称为：Real Time Messaging Protocol，即<strong>实时消息传输协议</strong>，由Adobe公司创立。RTMP主要<strong>基于TCP协议传输</strong>，主要传输 flv， f4v 格式流，最大的特点是装个插件可以在各大浏览器进行播放，播放门槛相对不高，可在手机上得到充分的应用、推广，因此比较受欢迎，<strong>目前也是视频云服务的主推流协议</strong>。此外RTMP<strong>时延也比较低</strong>，目前常用于手机直播、语音通话等场景。</p>
-<ul>
-<li>这种视频流协议传输的数据主要包含2部分，第一，基本单元为Message（消息），第二，最小单元是Chunk（消息块），发送端会把需要传输的媒体数据封装成消息，然后把消息拆分成消息块，每一个消息具有特定的id号，后面将根据这个id号，将一个个零散的Chunk（消息块）又重新拼接成消息（有点小蝌蚪找妈妈的感觉，拆散又合体）。</li>
-</ul>
-<h3 id="hls">HLS</h3>
-<p>HLS，英文全称为：HTTP Live Streaming，由苹果公司提出，它是<strong>基于Http的流媒体网络传输协议</strong>，主要传输TS格式流，最大的特点是<strong>安卓、苹果都能兼容，通用性强</strong>，而且码流切换流畅，满足不同网络、不同画质的用户播放需要，但是因为该种视频流协议也存在较为致命的<strong>缺陷</strong>，那就是<strong>网络延时太高</strong>。</p>
-<ul>
-<li>本质上HLS视频流传输是将整个视频流分成一个个小切片，可理解为切土豆片，这些小片都是基于HTTP文件来下载——先下载，后观看。</li>
-<li>用户观看视频实际上是下载这些小的视频切片，每次只下载一些，苹果官方建议是请求到3个片之后才开始播放，若是直播，时延将超10秒，所以比较适合于点播。</li>
-<li>因此HLS视频的切片一般建议10s，时间间隔太短就切容易造成碎片化太严重不方便数据存储和处理，太长容易造成时延加重。</li>
-</ul>
-<h3 id="rtsp-rtmp-hls对比总结">RTSP、RTMP、HLS对比总结</h3>
-<figure data-type="image" tabindex="1"><img src="https://smartxiaosiyu.github.io/post-images/1631764453146.jpeg" alt="" loading="lazy"></figure>
-]]></content>
-    </entry>
-    <entry>
-        <title type="html"><![CDATA[iOS AVAudioFoundation 音频导出]]></title>
-        <id>https://smartxiaosiyu.github.io/post/ios-avaudiofoundation-yin-pin-dao-chu/</id>
-        <link href="https://smartxiaosiyu.github.io/post/ios-avaudiofoundation-yin-pin-dao-chu/">
-        </link>
-        <updated>2021-09-16T03:34:33.000Z</updated>
-        <content type="html"><![CDATA[<h3 id="avassetreader">AVAssetReader</h3>
-<p>当我们要去操作音视频数据资源 asset可以用AVAssetReader， 比如读取 asset 中的音频轨道来展示波形等等<br>
-AVAssetReader 不适用于做实时处理。AVAssetReader 没法用来处理 HLS 之类的实时数据流</p>
-<h4 id="读取-asset">读取 Asset</h4>
-<p>每一个 AVAssetReader 一次只能<strong>与一个 asset 关联</strong>，但是这个 asset 可以<strong>包含多个轨道</strong>。由于这个原因通常我们需要为 AVAssetReader 指定一个 AVAssetReaderOutput 的具体子类来具体操作 asset 的读取</p>
-<h4 id="创建-asset-reader">创建 Asset Reader</h4>
-<p>初始化 AVAssetReader 时需要传入相应读取的 asset</p>
-<pre><code>NSError *outError;
-AVAsset *someAsset = &lt;#AVAsset that you want to read#&gt;;
-AVAssetReader *assetReader = [AVAssetReader assetReaderWithAsset:someAsset error:&amp;outError];
-BOOL success = (assetReader != nil);
-</code></pre>
-<h4 id="创建-asset-reader-outputs">创建 Asset Reader Outputs</h4>
-<p>在完成创建 asset reader 后，创建<strong>至少一个 output 对象</strong>来<strong>接收读取的媒体数据</strong>。当创建 output 对象时，要记得设置 alwaysCopiesSampleData 属性为 NO，这样会获得性能上的提升。</p>
-<p>如果我们想从媒体资源中读取一个或多个轨道，并且可能会转换数据的格式，那么可以使用 AVAssetReaderTrackOutput 类，为每个 AVAssetTrack 轨道使用一个 track output 对象</p>
-<p>下面的示例展示了使用 asset reader 来把一个 audio track 压缩为线性的 PCM</p>
-<pre><code>AVAsset *localAsset = assetReader.asset;
-// Get the audio track to read.
-AVAssetTrack *audioTrack = [[localAsset tracksWithMediaType:AVMediaTypeAudio] objectAtIndex:0];
-// Decompression settings for Linear PCM.
-NSDictionary *decompressionAudioSettings = @{AVFormatIDKey: [NSNumber numberWithUnsignedInt:kAudioFormatLinearPCM]};
-// Create the output with the audio track and decompression settings.
-AVAssetReaderOutput *trackOutput = [AVAssetReaderTrackOutput assetReaderTrackOutputWithTrack:audioTrack outputSettings:decompressionAudioSettings];
-// Add the output to the reader if possible.
-if ([assetReader canAddOutput:trackOutput]) {
-    [assetReader addOutput:trackOutput];
-}
-</code></pre>
-<p>下面的代码展示了如何基于一个 asset 来创建我们的 audio mix output 对象去处理所有的音频轨道，然后压缩这些音频轨道为线性 PCM 数据，并为 output 对象设置 audioMix 属性</p>
-<pre><code>AVAudioMix *audioMix = &lt;#An AVAudioMix that specifies how the audio tracks from the AVAsset are mixed#&gt;;
-// Assumes that assetReader was initialized with an AVComposition object.
-AVComposition *composition = (AVComposition *) assetReader.asset;
-
-// Get the audio tracks to read.
-NSArray *audioTracks = [composition tracksWithMediaType:AVMediaTypeAudio];
-
-// Get the decompression settings for Linear PCM.
-NSDictionary *decompressionAudioSettings = @{AVFormatIDKey: [NSNumber numberWithUnsignedInt:kAudioFormatLinearPCM]};
-
-// Create the audio mix output with the audio tracks and decompression setttings.
-AVAssetReaderOutput *audioMixOutput = [AVAssetReaderAudioMixOutput assetReaderAudioMixOutputWithAudioTracks:audioTracks audioSettings:decompressionAudioSettings];
-
-// Associate the audio mix used to mix the audio tracks being read with the output.
-audioMixOutput.audioMix = audioMix;
-
-// Add the output to the reader if possible.
-if ([assetReader canAddOutput:audioMixOutput]) {
-    [assetReader addOutput:audioMixOutput];
-}
-</code></pre>
-<p>下面的代码展示了，如果读取多个视频轨道的媒体数据并将他们压缩为 ARGB 格式。</p>
-<pre><code>AVVideoComposition *videoComposition = &lt;#An AVVideoComposition that specifies how the video tracks from the AVAsset are composited#&gt;;
-// Assumes assetReader was initialized with an AVComposition.
-AVComposition *composition = (AVComposition *) assetReader.asset;
-
-// Get the video tracks to read.
-NSArray *videoTracks = [composition tracksWithMediaType:AVMediaTypeVideo];
-
-// Decompression settings for ARGB.
-NSDictionary *decompressionVideoSettings = @{(id) kCVPixelBufferPixelFormatTypeKey: [NSNumber numberWithUnsignedInt:kCVPixelFormatType_32ARGB], (id) kCVPixelBufferIOSurfacePropertiesKey: [NSDictionary dictionary]};
-
-// Create the video composition output with the video tracks and decompression setttings.
-AVAssetReaderOutput *videoCompositionOutput = [AVAssetReaderVideoCompositionOutput assetReaderVideoCompositionOutputWithVideoTracks:videoTracks videoSettings:decompressionVideoSettings];
-
-// Associate the video composition used to composite the video tracks being read with the output.
-videoCompositionOutput.videoComposition = videoComposition;
-
-// Add the output to the reader if possible.
-if ([assetReader canAddOutput:videoCompositionOutput]) {
-    [assetReader addOutput:videoCompositionOutput];
-}
-</code></pre>
-<h4 id="读取-asset-的媒体数据">读取 Asset 的媒体数据</h4>
-<p>在 output 对象创建完成后，接着就要开始读取数据了，这时候我们需要调用 asset reader 的 startReading 接口。接着，使用 copyNextSampleBuffer 接口来从各个 output 来获取媒体数据。</p>
-<pre><code>// Start the asset reader up.
-[self.assetReader startReading];
-BOOL done = NO;
-while (!done) {
-    // Copy the next sample buffer from the reader output.
-    CMSampleBufferRef sampleBuffer = [self.assetReaderOutput copyNextSampleBuffer];
-    if (sampleBuffer) {
-        // Do something with sampleBuffer here.
-        CFRelease(sampleBuffer);
-        sampleBuffer = NULL;
-    } else {
-        // Find out why the asset reader output couldn't copy another sample buffer.
-        if (self.assetReader.status == AVAssetReaderStatusFailed) {
-            NSError *failureError = self.assetReader.error;
-            // Handle the error here.
-        } else {
-            // The asset reader output has read all of its samples.
-            done = YES;
-        } 
-    }
-}
-</code></pre>
-]]></content>
-    </entry>
-    <entry>
-        <title type="html"><![CDATA[日积月累]]></title>
-        <id>https://smartxiaosiyu.github.io/post/ri-ji-yue-lei/</id>
-        <link href="https://smartxiaosiyu.github.io/post/ri-ji-yue-lei/">
-        </link>
-        <updated>2021-09-14T11:40:03.000Z</updated>
-        <content type="html"><![CDATA[<h3 id="异或">异或</h3>
-<pre><code>0^0=0,0^1=1 0异或任何数＝任何数
-
-1^0=1,1^1=0 1异或任何数－任何数取反
-
-任何数异或自己＝把自己置0
-</code></pre>
-<h3 id="按位与">按位与</h3>
-<pre><code>（1）&amp;可以用来取出特定的位
-1&amp;1 = 1 除此之外都是0
-0011 &amp; 0001 可以取出最后一位 
-掩码  xxMask  一般用来按位与值的 宏定义 1&lt;&lt;0 1&lt;&lt;1
-
-（2）将某一位置为0 将掩码取反&amp;这个二进制 ～掩码 = 掩码取反
-</code></pre>
-<pre><code>加两个感叹号 可以强转成具体的布尔值 !!(5) 
-</code></pre>
-<h3 id="按位或">按位或</h3>
-<pre><code>“或” 有一个1 就是1
-（1）将某一位置为1 将掩码｜这个二进制 00000010
-</code></pre>
-<h3 id="位域">位域</h3>
-<pre><code> struct {
-     char tall : 1:
-     char rich : 1;
-     char handsome : 1;
- }_tallRichHandsome
- 代表占一位
-</code></pre>
-<h3 id="lldb调试器">lldb调试器</h3>
-<pre><code>p/x 变量 
-
-打印内存地址 p/x &amp;(变量 )   address 
-
-x address 查看内容
-</code></pre>
-<p><strong>布尔类型 8位</strong></p>
-<pre><code>把1位的值 扩展8位 则其他位会变成1 
-2位的值 扩展8位 则正常 拉伸操作
-</code></pre>
-<h3 id="判断视频方向">判断视频方向</h3>
-<pre><code>static func orientationFromTransform(_ transform: CGAffineTransform)
-    -&gt; (orientation: UIImage.Orientation, isPortrait: Bool) {
-        var assetOrientation = UIImage.Orientation.up
-        var isPortrait = false
-        if transform.a == 0 &amp;&amp; transform.b == 1.0 &amp;&amp; transform.c == -1.0 &amp;&amp; transform.d == 0 {
-            assetOrientation = .right
-            isPortrait = true
-        } else if transform.a == 0 &amp;&amp; transform.b == 1.0 &amp;&amp; transform.c == 1.0 &amp;&amp; transform.d == 0 {
-            assetOrientation = .rightMirrored
-            isPortrait = true
-        } else if transform.a == 0 &amp;&amp; transform.b == -1.0 &amp;&amp; transform.c == 1.0 &amp;&amp; transform.d == 0 {
-            assetOrientation = .left
-            isPortrait = true
-        } else if transform.a == 0 &amp;&amp; transform.b == -1.0 &amp;&amp; transform.c == -1.0 &amp;&amp; transform.d == 0 {
-            assetOrientation = .leftMirrored
-            isPortrait = true
-        } else if transform.a == 1.0 &amp;&amp; transform.b == 0 &amp;&amp; transform.c == 0 &amp;&amp; transform.d == 1.0 {
-            assetOrientation = .up
-        } else if transform.a == -1.0 &amp;&amp; transform.b == 0 &amp;&amp; transform.c == 0 &amp;&amp; transform.d == -1.0 {
-            assetOrientation = .down
-        }
-        return (assetOrientation, isPortrait)
-}
-</code></pre>
-<p>0xFF 无符号 255 有符号-1</p>
-<h3 id="共用体">共用体</h3>
-<p>union {<br>
-char wrb;<br>
-}_wrb</p>
-<p>有些枚举 ｜ ｜ ｜  当枚举值很特殊 是2的整数次幂 则可以使用 + 但是不推荐用</p>
-<h3 id="静态库和动态库">静态库和动态库</h3>
-<p>静态库：链接时候完整的拷贝到可执行文件，多次使用多次拷贝，造成冗余，使包的体积变大<br>
-动态库：链接时不复制，程序的运行时，由系统加载到内存中，供系统调用，省内存，和其他应用共用<br>
-<strong>iOS的静态库？</strong><br>
-.a和.framework 样式<br>
-<strong>OS的动态库？</strong><br>
-.dylib和.framework<br>
-<strong>为什么framework既是静态又是动态？</strong><br>
-系统的framework是动态的，我们自己创建的是静态的。<br>
-<strong>.a 和 .framework 的区别是什么？</strong><br>
-.a 是单纯的二进制文件，.framework是二进制问价+资源文件。<br>
-其中.a 不能直接使用，需要 .h文件配合，而.framework则可以直接使用。<br>
-.framework = .a + .h + sorrceFile(资源文件)</p>
-<h3 id="cmtime">CMTime</h3>
-<p>虽然很多通用的开发环境使用双精度类型无法应用于更多的高级时基媒体的开发中。比如，一个单一舍入错误就会导致丢帧或音频丢失。于是苹果在Core Media框架中定义了CMTime数据类型作为时间的格式</p>
-<pre><code>typedef struct
-   
-     CMTimeValue    value;      
-     CMTimeScale    timescale;  
-     CMTimeFlags    flags;      
-     CMTimeEpoch    epoch;      
-   } CMTime;
-</code></pre>
-<p>CMTime计算<br>
-CMTime t4 =CMTimeAdd(t1, t2); 相加<br>
-CMTime t5 =CMTimeSubtract(t3, t1); 相减</p>
-<p><strong>CMTimeMake(a,b) a当前第几帧, b每秒钟多少帧，当前播放时间a/b。 CMTimeMakeWithSeconds(a,b) a当前时间,b每秒钟多少帧。</strong></p>
-<h3 id="cmtimerange">CMTimeRange</h3>
-<p>Core Media框架还为时间范围提供了一个数据类型，称为CMTimeRange</p>
-<pre><code>typedef struct
-{
-    CMTime          start;      
-    CMTime          duration;   
-} CMTimeRange;
-</code></pre>
-<p>创建如下：</p>
-<pre><code> CMTimeRange timeRange1 = CMTimeRangeMake(t1, t2);
- CMTimeRange timeRange2 = CMTimeRangeFromTimeToTime(t4, t3);
-</code></pre>
-<h3 id="cmtimerange的交集和并集">CMTimeRange的交集和并集</h3>
-<pre><code>  //0-5s
-   CMTimeRange range1 =CMTimeRangeMake(kCMTimeZero, CMTimeMake(5,1));
-  //2-5s
-   CMTimeRange range2 =CMTimeRangeMake(CMTimeMake(2, 1), CMTimeMake(5,1));
-   //交叉时间范围 2-5s
-   CMTimeRange intersectionRange =CMTimeRangeGetIntersection(range1, range2);
-   CMTimeRangeShow(intersectionRange);
-   
-   //总和时间范围 7s
-   CMTimeRange unionRange =CMTimeRangeGetUnion(range1, range2);
-   CMTimeRangeShow(unionRange);
-</code></pre>
-<h3 id="析构函数">析构函数</h3>
-<p>C++的析构函数 == OC的 dealloc 释放 更快</p>
-<h3 id="有符号取值">有符号取值</h3>
-<p>5bits 0x00010000  第五位是符号为 为1的时候是负数  然后先取反码 再取 补码 （原码+1）</p>
-<h3 id="git版本控制忽略部分文件方法gitignore">Git版本控制忽略部分文件方法(.gitignore)</h3>
-<p>https://github.com/github/gitignore<br>
-vim 文件</p>
-<pre><code>            *.a       # 忽略所有 .a 结尾的文件            
-            !lib.a    # 但 lib.a 除外            
-            /TODO     # 仅仅忽略项目根目录下的 TODO 文件，不包括 subdir/TODO           
-            build/    # 忽略 build/ 目录下的所有文件            
-            doc/*.txt # 会忽略 doc/notes.txt 但不包括 doc/server/arch.txt
-</code></pre>
-<p><strong>将.gitignore文件提交到仓库</strong></p>
-<pre><code>git add .gitignore
-git commit -m &quot;添加项目忽略文件&quot;
-git push
-</code></pre>
-<h3 id="注释">注释</h3>
-<p>https://www.cxyzjd.com/article/qq_14920635/89676810</p>
-<h3 id="swift-resultsuccessfailure">Swift Result&lt;Success,Failure&gt;</h3>
-<p>https://juejin.cn/post/6844903875971907598</p>
-<h3 id="cabasicanimation动画及其keypath值和作用">CABasicAnimation动画及其keypath值和作用</h3>
-<p>https://www.cnblogs.com/liuluoxing/p/5765089.html</p>
-]]></content>
-    </entry>
-    <entry>
-        <title type="html"><![CDATA[OpenGl ES 缩放 灵魂出窍滤镜]]></title>
-        <id>https://smartxiaosiyu.github.io/post/opengl-es-suo-fang-lu-jing/</id>
-        <link href="https://smartxiaosiyu.github.io/post/opengl-es-suo-fang-lu-jing/">
-        </link>
-        <updated>2021-09-11T13:58:09.000Z</updated>
-        <content type="html"><![CDATA[<h3 id="缩放滤镜">缩放滤镜</h3>
-<p>修改顶点坐标和纹理坐标的映射关系<br>
-放大过程顶点着色器完成</p>
-<pre><code>attribute vec4 Position;
-attribute vec2 TextureCoords;
-varying vec2 TextureCoordsVarying;
-
-uniform float Time;
-
-const float PI = 3.1415926;
-
-void main (void) {
-    float duration = 0.6;
-    float maxAmplitude = 0.3;
-    
-    float time = mod(Time, duration);
-    float amplitude = 1.0 + maxAmplitude * abs(sin(time * (PI / duration)));
-    
-    gl_Position = vec4(Position.x * amplitude, Position.y * amplitude, Position.zw);
-    TextureCoordsVarying = TextureCoords;
-}
-</code></pre>
-<h3 id="灵魂出窍滤镜">灵魂出窍滤镜</h3>
-<pre><code>precision highp float;
-
-uniform sampler2D Texture;
-varying vec2 TextureCoordsVarying;
-
-uniform float Time;
-
-void main (void) {
-    float duration = 0.7;
-    float maxAlpha = 0.4;
-    float maxScale = 1.8;
-    
-    float progress = mod(Time, duration) / duration; // 0~1
-    float alpha = maxAlpha * (1.0 - progress);
-    float scale = 1.0 + (maxScale - 1.0) * progress;
-    
-    float weakX = 0.5 + (TextureCoordsVarying.x - 0.5) / scale;
-    float weakY = 0.5 + (TextureCoordsVarying.y - 0.5) / scale;
-    vec2 weakTextureCoords = vec2(weakX, weakY);
-    
-    vec4 weakMask = texture2D(Texture, weakTextureCoords);
-    
-    vec4 mask = texture2D(Texture, TextureCoordsVarying);
-    
-    gl_FragColor = mask * (1.0 - alpha) + weakMask * alpha;
-}
-</code></pre>
+<h3 id="yuv-的采样与格式">YUV 的采样与格式</h3>
+<p>https://mp.weixin.qq.com/s/KKfkS5QpwPAdYcEwFAN9VA</p>
+<h3 id="divx-avc-hevc格式的区别">DIVX、AVC、HEVC格式的区别</h3>
+<p>DIVX格式：这种编码也就是早期的一种MEPG格式-4衍生出来的一种格式，也是我们通常说的DVDrip格式；<br>
+AVC格式：（即H264格式）也是目前的主流视频压缩编码，不论是电脑，手机，硬盘播放器，高清盒子，都支持多H264的解码，这种格式的视频质量好，且兼容性很不错，是理想的视频编码格式，在不知道用哪种视频编码格式的时候选用这种一般是不会出问题的。<br>
+HEVC格式：（H265格式）是当前最新的视频压缩编码，编码效率比H264有较大提升。可以说，同等文件大小，H265的视频质量最好；同等视频质量，H265的体积最小。但是，因为编码比较新，有些播放软件、高清播放机、高清盒子、智能电视、智能手机是不支持这种编码的。</p>
+<h3 id="编码中的规格">编码中的规格</h3>
+<p>https://blog.csdn.net/ameyume/article/details/6547923</p>
+<h3 id="关于gop和帧率-码率的关系">关于GOP和帧率、码率的关系</h3>
+<p>https://zhuanlan.zhihu.com/p/259870429</p>
+<p>M值表示I帧或者P帧之间的帧数目，N值表示GOP的长度。如上图所示M = 1，则表示两个P帧相差1帧（无B帧），N = 30, 则表示GOP长度为30<br>
+M = 1 IPPPPPPI P帧之间无B帧<br>
+M = 3 IPBBPBBPI P帧之间两个B帧</p>
+<h3 id="dts-pts-的概念">DTS、PTS 的概念</h3>
+<p>DTS（Decoding Time Stamp）：即解码时间戳，这个时间戳的意义在于告诉播放器该在什么时候解码这一帧的数据。<br>
+PTS（Presentation Time Stamp）：即显示时间戳，这个时间戳用来告诉播放器该在什么时候显示这一帧的数据。<br>
+需要注意的是：虽然 DTS、PTS 是用于指导播放端的行为，但它们是在编码的时候由编码器生成的。</p>
+<p>当视频流中没有 B 帧时，通常 DTS 和 PTS 的顺序是一致的。但如果有 B 帧时，就回到了我们前面说的问题：解码顺序和播放顺序不一致了。</p>
+<p>比如一个视频中，帧的显示顺序是：I B B P，现在我们需要在解码 B 帧时知道 P 帧中信息，因此这几帧在视频流中的顺序可能是：I P B B，这时候就体现出每帧都有 DTS 和 PTS 的作用了。DTS 告诉我们该按什么顺序解码这几帧图像，PTS 告诉我们该按什么顺序显示这几帧图像。顺序大概如下：</p>
+<p>PTS: 1 4 2 3<br>
+DTS: 1 2 3 4<br>
+Stream: I P B B</p>
+<h3 id="ios-录播视频清晰度提升">iOS 录播视频清晰度提升</h3>
+<p>https://toutiao.io/posts/zrh0ah/preview</p>
+<h3 id="cmsamplebuffer深拷贝">CMSampleBuffer深拷贝</h3>
+<p>https://www.jianshu.com/p/9fe6e76a289b<br>
+https://qa.1r1g.com/sf/ask/2683475581/</p>
+<h3 id="深入理解-cvpixelbufferref">深入理解 CVPixelBufferRef</h3>
+<p>https://zhuanlan.zhihu.com/p/24762605</p>
 ]]></content>
     </entry>
 </feed>
