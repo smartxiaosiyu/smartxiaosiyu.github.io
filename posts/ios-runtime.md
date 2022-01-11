@@ -2,7 +2,7 @@
 title: 'iOS Runtime'
 date: 2021-09-14 19:49:51
 tags: [iOS]
-published: false
+published: true
 hideInList: false
 feature: 
 isTop: false
@@ -179,8 +179,48 @@ OC中的方法调用，其实都是转换为objc_msgSend函数的调用
 ![](https://smartxiaosiyu.github.io/post-images/1636282412947.png)
 ![](https://smartxiaosiyu.github.io/post-images/1636282421258.jpg)
 
+
+实例的class方法直接返回 类对象 object_getClass(self)
+实例的object_getClass(self) 直接返回 类对象
+类的class方法直接返回 self
+类的object_getClass(类对象) 直接返回 元类对象
+
 ### 栈空间分布
 ![](https://smartxiaosiyu.github.io/post-images/1635854968046.png)
 
 ![](https://smartxiaosiyu.github.io/post-images/1636293981407.png)
 ![](https://smartxiaosiyu.github.io/post-images/1636293991588.JPG)
+**person调用run方法 实际就是**
+**person 实例对象 ->isa ->类对象 类对象找到run方法调用**
+**person找isa  实际上就是找指向的那块内存的 最前面的八个字节并且取出 **
+
+### Runtime 设置成员变量值
+![](https://smartxiaosiyu.github.io/post-images/1637322148975.png)
+
+数组就可以当指针用
+
+### Runtime 字典转模型
+![](https://smartxiaosiyu.github.io/post-images/1637323503762.png)
+
+### API
+![](https://smartxiaosiyu.github.io/post-images/1637415110902.png)
+![](https://smartxiaosiyu.github.io/post-images/1637415125719.png)
+![](https://smartxiaosiyu.github.io/post-images/1637415133409.png)
+![](https://smartxiaosiyu.github.io/post-images/1637415139745.png)
+![](https://smartxiaosiyu.github.io/post-images/1637415145903.png)
+
+### 面试题
+什么是Runtime？平时项目中有用过么？
+OC是一门动态性比较强的编程语言，允许很多操作推迟到程序运行时再进行
+OC的动态性就是由Runtime来支撑和实现的，Runtime是一套C语言的API，封装了很多动态性相关的函数
+平时编写的OC代码，底层都是转换成了Runtime API进行调用
+
+具体应用
+利用关联对象（AssociatedObject）给分类添加属性
+遍历类的所有成员变量（修改textfield的占位文字颜色、字典转模型、自动归档解档）
+交换方法实现（交换系统的方法）
+利用消息转发机制解决方法找不到的异常问题
+......
+
+### 方法交换
+![](https://smartxiaosiyu.github.io/post-images/1637419811043.png)

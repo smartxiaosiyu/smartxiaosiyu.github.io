@@ -80,3 +80,44 @@ CDN工作原理：比如请求流媒体数据
 **QoS（带宽管理**）:限制每一个组群的带宽，让有限的带宽发挥最大的效用
 
 https://www.cnblogs.com/oc-bowen/p/5895482.html
+
+###  YUV 的采样与格式
+https://mp.weixin.qq.com/s/KKfkS5QpwPAdYcEwFAN9VA
+
+### DIVX、AVC、HEVC格式的区别
+DIVX格式：这种编码也就是早期的一种MEPG格式-4衍生出来的一种格式，也是我们通常说的DVDrip格式；
+AVC格式：（即H264格式）也是目前的主流视频压缩编码，不论是电脑，手机，硬盘播放器，高清盒子，都支持多H264的解码，这种格式的视频质量好，且兼容性很不错，是理想的视频编码格式，在不知道用哪种视频编码格式的时候选用这种一般是不会出问题的。
+HEVC格式：（H265格式）是当前最新的视频压缩编码，编码效率比H264有较大提升。可以说，同等文件大小，H265的视频质量最好；同等视频质量，H265的体积最小。但是，因为编码比较新，有些播放软件、高清播放机、高清盒子、智能电视、智能手机是不支持这种编码的。
+
+### 编码中的规格
+https://blog.csdn.net/ameyume/article/details/6547923
+
+### 关于GOP和帧率、码率的关系
+https://zhuanlan.zhihu.com/p/259870429
+
+M值表示I帧或者P帧之间的帧数目，N值表示GOP的长度。如上图所示M = 1，则表示两个P帧相差1帧（无B帧），N = 30, 则表示GOP长度为30
+M = 1 IPPPPPPI P帧之间无B帧
+M = 3 IPBBPBBPI P帧之间两个B帧
+
+### DTS、PTS 的概念
+DTS（Decoding Time Stamp）：即解码时间戳，这个时间戳的意义在于告诉播放器该在什么时候解码这一帧的数据。
+PTS（Presentation Time Stamp）：即显示时间戳，这个时间戳用来告诉播放器该在什么时候显示这一帧的数据。
+需要注意的是：虽然 DTS、PTS 是用于指导播放端的行为，但它们是在编码的时候由编码器生成的。
+
+当视频流中没有 B 帧时，通常 DTS 和 PTS 的顺序是一致的。但如果有 B 帧时，就回到了我们前面说的问题：解码顺序和播放顺序不一致了。
+
+比如一个视频中，帧的显示顺序是：I B B P，现在我们需要在解码 B 帧时知道 P 帧中信息，因此这几帧在视频流中的顺序可能是：I P B B，这时候就体现出每帧都有 DTS 和 PTS 的作用了。DTS 告诉我们该按什么顺序解码这几帧图像，PTS 告诉我们该按什么顺序显示这几帧图像。顺序大概如下：
+
+   PTS: 1 4 2 3
+   DTS: 1 2 3 4
+Stream: I P B B
+
+### iOS 录播视频清晰度提升
+https://toutiao.io/posts/zrh0ah/preview
+
+### CMSampleBuffer深拷贝
+https://www.jianshu.com/p/9fe6e76a289b
+https://qa.1r1g.com/sf/ask/2683475581/
+
+### 深入理解 CVPixelBufferRef
+https://zhuanlan.zhihu.com/p/24762605
